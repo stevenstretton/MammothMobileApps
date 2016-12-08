@@ -4,15 +4,15 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content>  
+<ion-content>
 
 <ion-list>
 
   <ion-list-header>
     Your Friends...
   </ion-list-header>
-  
-  <ion-item>
+
+  <ion-item *ngFor="let friend of friends">
     <ion-avatar item-left>
       <img src="assets/img/hall.jpg">
     </ion-avatar>
