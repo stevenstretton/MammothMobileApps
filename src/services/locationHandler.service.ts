@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class locationHandler {
+export class LocationHandler {
 	constructor() {}
 
 	startLoggingLocation(): void {

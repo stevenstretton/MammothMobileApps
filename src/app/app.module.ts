@@ -12,8 +12,8 @@ import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
 
 import { FirebaseGET } from '../services/firebaseGET.service';
 import { FirebasePUSH } from '../services/firebasePUSH.service';
-import { authenticationHandler } from '../services/authenticationHandler.service';
-import { locationHandler } from '../services/locationHandler.service';
+import { AuthenticationHandler } from '../services/authenticationHandler.service';
+import { LocationHandler } from '../services/locationHandler.service';
 
 // Must export the config
 export const firebaseConfig = {
@@ -57,8 +57,8 @@ const myFirebaseAuthConfig = {
 	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
 		FirebaseGET,
 		FirebasePUSH,
-		authenticationHandler,
-		locationHandler
+		AuthenticationHandler,
+		LocationHandler
 	]
 })
 export class AppModule {

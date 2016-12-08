@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFire, AuthMethods, AuthProviders } from 'angularfire2';
 
 @Injectable()
-export class authenticationHandler {
+export class AuthenticationHandler {
 	constructor(private af: AngularFire) {}
 
 	loginFirebase(email, password): void {
@@ -11,6 +11,7 @@ export class authenticationHandler {
 			password: password
 		});
 
+		// This will get the current user logged into Firebase
 		this.af.auth.subscribe(user => {
 			if (user) {
 				console.log(user);
