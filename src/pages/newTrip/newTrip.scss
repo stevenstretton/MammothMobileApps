@@ -1,3 +1,11 @@
 page-newTrip {
   
+  .label{
+    color: color($colors, text-light);
+  }
+  ion-item-divider{
+    .label{
+      color: color($colors, text-dark);
+    }
+  }
 }

@@ -9,7 +9,6 @@
 <ion-content class="outer-content">
 
   <ion-list>
-
     <ion-list-header>
       Enter the details for the new trip...
     </ion-list-header>
@@ -26,7 +25,14 @@
 
     <ion-item>
       <ion-label>Description</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-textarea></ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      Choose an image for your trip...
+      <button ion-button clear item-right icon-only>
+        <ion-icon name="camera"></ion-icon>
+      </button>
     </ion-item>
 
     <ion-item>
@@ -43,7 +49,66 @@
       <ion-label>Ends</ion-label>
       <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="event.timeEnds"></ion-datetime>
     </ion-item>
+  </ion-list>
 
+  <ion-list>
+    <ion-item-divider color="light">
+      Choose participants from your friends list:
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label>Friends</ion-label>
+      <button ion-button clear item-right>View</button>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-item-divider color="light">
+      Add custom items to a list for the participants to remember:
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label>Item</ion-label>
+      <ion-input type="text"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Short Description</ion-label>
+      <ion-input type="text"></ion-input>
+    </ion-item>
+  </ion-list>
+
+  <ion-list>
+    <ion-item-divider color="light">
+      Your list:
+    </ion-item-divider>
+
+    <ion-item-sliding>
+      <ion-item>
+        Passport  
+        <ion-note item-right>
+          DO NOT FORGET
+        </ion-note>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button icon-only color="danger">
+          <ion-icon name="trash"></ion-icon>            
+        </button>      
+      </ion-item-options>
+    </ion-item-sliding>
+    <ion-item-sliding>
+      <ion-item>
+        Travel money  
+        <ion-note item-right>
+          Approx €200 
+        </ion-note>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button icon-only color="danger">
+          <ion-icon name="trash"></ion-icon>            
+        </button>      
+      </ion-item-options>
+    </ion-item-sliding>
   </ion-list>
 
   <div padding>

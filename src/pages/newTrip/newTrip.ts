@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 
-import { NavController } from 'ionic-angular';
+import { NavController} from 'ionic-angular';
 
 @Component({
   selector: 'page-newTrip',
-  templateUrl: 'newTrip.html'
+  templateUrl: 'newTrip.html',
 })
 export class NewTrip {
 
@@ -16,5 +16,4 @@ export class NewTrip {
     timeStarts: '00:00',
     timeEnds: '2016-01-02'
   }
-
 }
