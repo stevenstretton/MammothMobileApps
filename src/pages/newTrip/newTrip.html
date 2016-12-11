@@ -1,8 +1,14 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      New Trip
+      New Trip  
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-right color="royal">
+        Choose template
+        <ion-icon name="options"></ion-icon>
+      </button>
+    </ion-buttons>    
   </ion-navbar>
 </ion-header>
 
@@ -30,7 +36,7 @@
 
     <ion-item>
       Choose an image for your trip...
-      <button ion-button clear item-right icon-only>
+      <button ion-button clear item-right icon-only (click)="presentActionSheet()">
         <ion-icon name="camera"></ion-icon>
       </button>
     </ion-item>
@@ -76,11 +82,15 @@
       <ion-label>Short Description</ion-label>
       <ion-input type="text"></ion-input>
     </ion-item>
+
+    <div padding>
+      <button ion-button outline color="primary" block>Add Item</button>
+    </div>
   </ion-list>
 
   <ion-list>
     <ion-item-divider color="light">
-      Your list:
+      Trip list:
     </ion-item-divider>
 
     <ion-item-sliding>

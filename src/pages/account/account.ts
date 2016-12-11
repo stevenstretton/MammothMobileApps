@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { App } from 'ionic-angular';
 
 import { NavController, ActionSheetController, Platform } from 'ionic-angular';
+import { Login } from '../login/login';
 
 @Component({
   selector: 'page-account',
@@ -9,10 +11,15 @@ import { NavController, ActionSheetController, Platform } from 'ionic-angular';
 export class Account {
 
   constructor(
+    private app: App,
     public navCtrl: NavController, 
     public actionSheetCtrl: ActionSheetController,
     public platform: Platform
     ) {}
+
+    public logout(){
+      this.app.getRootNav().setRoot(Login)
+    }
 
     presentActionSheet() {
     let actionSheet = this.actionSheetCtrl.create({
