@@ -12,7 +12,10 @@ import { NewTrip } from '../pages/newTrip/newTrip';
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
 
 import { Friends } from '../pages/friends/friends';
+
 import { Account } from '../pages/account/account';
+import { LocationModal } from '../pages/account/locationModal/locationModal';
+
 import { TabsPage } from '../pages/tabs/tabs';
 
 @NgModule({
@@ -26,6 +29,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     ViewTrip,
     Friends,
     Account,
+    LocationModal,
     TabsPage
   ],
   imports: [
@@ -40,6 +44,7 @@ import { TabsPage } from '../pages/tabs/tabs';
     ViewTrip,
     Notifications,
     NewTrip,
+    LocationModal,
     Friends,
     Account,
     TabsPage

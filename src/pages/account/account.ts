@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { App } from 'ionic-angular';
 
-import { NavController, ActionSheetController, Platform } from 'ionic-angular';
+import { NavController, ActionSheetController, Platform, ModalController } from 'ionic-angular';
 import { Login } from '../login/login';
+import { LocationModal } from '../account/locationModal/locationModal';
 
 @Component({
   selector: 'page-account',
@@ -14,11 +15,17 @@ export class Account {
     private app: App,
     public navCtrl: NavController, 
     public actionSheetCtrl: ActionSheetController,
-    public platform: Platform
+    public platform: Platform,
+    public modalCtrl: ModalController
     ) {}
 
     public logout(){
       this.app.getRootNav().setRoot(Login)
+    }
+
+    presentModal() {
+      let modal = this.modalCtrl.create(LocationModal);
+      modal.present();
     }
 
     presentActionSheet() {
