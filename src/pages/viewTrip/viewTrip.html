@@ -1,0 +1,108 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      [Trip Name]
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+
+  <!-- a single card -->
+  <ion-card>  
+
+    <div style="position:relative">
+      <img src="assets/img/nin-live.png"/>
+      <ion-fab right top>
+        <button ion-fab class="fab-pin" (click)="goToMap()">
+          <ion-icon name="pin"></ion-icon>
+        </button>
+      </ion-fab>
+    </div>
+
+    <ion-card-content>      
+      <p>        
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+        Nunc a rhoncus nisi. Nullam consequat eros sem, 
+        non venenatis lorem fermentum at.
+      </p>
+    </ion-card-content>
+
+    <ion-item>
+      <ion-icon name="navigate" item-left small></ion-icon>
+      <p>Location</p>
+      <h2>London</h2>      
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="calendar" item-left small></ion-icon>
+      <p>Start Date</p>
+      <h2>12-06-2017</h2>      
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="clock" item-left small></ion-icon>
+      <p>Start Time</p>
+      <h2>12:00</h2>      
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="calendar" item-left small></ion-icon>
+      <p>End Date</p>
+      <h2>14-06-2017</h2>      
+    </ion-item>  
+
+    <ion-list padding-bottom>
+      <ion-list-header no-lines>
+        Participants...
+      </ion-list-header>
+
+      <ion-item>
+        <ion-avatar item-left>
+          <img src="assets/img/ashworth.jpg">
+        </ion-avatar>
+        <h2>Will Ashworth</h2>
+        <p>Trip Lead</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-avatar item-left>
+          <img src="assets/img/marriott.jpg">
+        </ion-avatar>
+        <h2>George Marriott</h2>
+      </ion-item>
+
+      <ion-item>
+        <ion-avatar item-left>
+          <img src="assets/img/allen.jpg">
+        </ion-avatar>
+        <h2>Tim Allen</h2>
+      </ion-item>  
+    </ion-list>  
+
+    <ion-list padding-bottom>
+      <ion-list-header no-lines>
+        Trip List...
+      </ion-list-header>
+
+      <ion-item>
+        <ion-label>Passport</ion-label>
+        <ion-note item-right>
+          DO NOT FORGET
+        </ion-note>
+        <ion-checkbox color="positive" checked="false"></ion-checkbox>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>Travel Money</ion-label>
+        <ion-note item-right>
+          Approx €200
+        </ion-note>
+        <ion-checkbox color="positive" checked="false"></ion-checkbox>
+      </ion-item>
+    </ion-list>
+
+  </ion-card>
+  <!-- card end -->
+
+</ion-content>

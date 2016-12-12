@@ -5,6 +5,7 @@
 </ion-header>
 
 <ion-content class="cards-bg">
+
     <!-- a single card -->
     <ion-card>
 
@@ -30,7 +31,7 @@
 
     <ion-row no-padding>
       <ion-col>
-        <button ion-button clear small color="positive">
+        <button ion-button clear small color="positive" (click)="goToTrip()">
           View More Trip Information
         </button>
       </ion-col>
@@ -38,6 +39,37 @@
   </ion-card>
   <!-- card end -->
 
+  <!-- a single card -->
+  <ion-card>
 
+    <ion-item>
+      <ion-avatar item-left>
+        <img src="assets/img/ashworth.jpg">
+      </ion-avatar>
+      <h2>Trip Lead</h2>
+      <p>Will Ashworth</p>
+    </ion-item>
+
+    <img src="assets/img/badu-live.png"/>
+    <ion-card-content>
+      <ion-card-title>
+        London
+      </ion-card-title>
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        Nunc a rhoncus nisi. Nullam consequat eros sem,
+        non venenatis lorem fermentum at.
+      </p>
+    </ion-card-content>
+
+    <ion-row no-padding>
+      <ion-col>
+        <button ion-button clear small color="positive">
+          View More Trip Information
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-card>
+  <!-- card end -->
 
 </ion-content>
