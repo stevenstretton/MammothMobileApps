@@ -1,19 +1,15 @@
 import { Component } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
-import { Map } from '../map/map';
 
 @Component({
-  selector: 'page-viewTrip',
-  templateUrl: 'viewTrip.html'
+  selector: 'page-map',
+  templateUrl: 'map.html'
 })
-export class ViewTrip {
+export class Map {
 
   constructor(public navCtrl: NavController) {
 
-  }
-  goToMap(){
-    this.navCtrl.push(Map)
   }
 
 }

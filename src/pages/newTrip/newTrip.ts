@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 
-import { NavController, ActionSheetController, Platform} from 'ionic-angular';
+import { NavController, ActionSheetController, Platform, ModalController} from 'ionic-angular';
+import { FriendsModal } from '../newTrip/friendsModal/friendsModal';
 
 @Component({
   selector: 'page-newTrip',
@@ -11,13 +12,19 @@ export class NewTrip {
   constructor(
     public navCtrl: NavController, 
     public actionSheetCtrl: ActionSheetController,
-    public platform: Platform
+    public platform: Platform,
+    public modalCtrl: ModalController
     ) {}
 
   public event = {
     month: '2016-01-01',
     timeStarts: '00:00',
     timeEnds: '2016-01-02'
+  }
+
+  presentModal() {
+    let modal = this.modalCtrl.create(FriendsModal);
+    modal.present();
   }
 
   presentActionSheet() {

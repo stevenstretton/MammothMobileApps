@@ -9,6 +9,7 @@ import { MyTrips } from '../pages/myTrips/myTrips';
 import { Notifications } from '../pages/notifications/notifications';
 
 import { NewTrip } from '../pages/newTrip/newTrip';
+import { FriendsModal } from '../pages/newTrip/friendsModal/friendsModal';
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
 
 import { Friends } from '../pages/friends/friends';
@@ -16,6 +17,7 @@ import { Friends } from '../pages/friends/friends';
 import { Account } from '../pages/account/account';
 import { LocationModal } from '../pages/account/locationModal/locationModal';
 
+import { Map } from '../pages/map/map';
 import { TabsPage } from '../pages/tabs/tabs';
 
 @NgModule({
@@ -26,10 +28,12 @@ import { TabsPage } from '../pages/tabs/tabs';
     MyTrips,
     Notifications,
     NewTrip,
+    FriendsModal,
     ViewTrip,
     Friends,
     Account,
     LocationModal,
+    Map,
     TabsPage
   ],
   imports: [
@@ -44,9 +48,11 @@ import { TabsPage } from '../pages/tabs/tabs';
     ViewTrip,
     Notifications,
     NewTrip,
+    FriendsModal,
     LocationModal,
     Friends,
     Account,
+    Map,
     TabsPage
   ],
   providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
