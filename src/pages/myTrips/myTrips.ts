@@ -9,9 +9,8 @@ import { ViewTrip } from '../viewTrip/viewTrip';
 })
 export class MyTrips {
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController) {}
 
-  }
   goToTrip(){
     this.navCtrl.push(ViewTrip)
   }

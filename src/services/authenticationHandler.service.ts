@@ -1,14 +1,25 @@
 import { Injectable } from '@angular/core';
-import { AngularFire, AuthMethods, AuthProviders } from 'angularfire2';
+import { AngularFire, FirebaseAuth, FirebaseAuthState, AuthMethods, AuthProviders } from 'angularfire2';
 
 @Injectable()
 export class AuthenticationHandler {
-	constructor(public af: AngularFire) {
+	private authState: FirebaseAuthState;
+	private currentUser: FirebaseAuthState;
+
+	constructor(public auth$: FirebaseAuth) {
+		this.authState = auth$.getAuth();
+		auth$.subscribe((state: FirebaseAuthState) => {
+			this.authState = state;
+		});
+	}
+
+	get authenticated(): boolean {
+		return this.authState !== null;
 	}
 
 	loginFirebase(email, password): any {
 		return new Promise((resolve, reject) => {
-			this.af.auth.login({
+			this.auth$.login({
 				email: email,
 				password: password
 			}).then((successResponse) => {
@@ -20,20 +31,26 @@ export class AuthenticationHandler {
 	}
 
 	logoutFirebase(): void {
-		// This may be auth.signOut() instead
-		this.af.auth.logout();
+		this.auth$.logout();
+	}
+
+	getCurrentUser(): FirebaseAuthState {
+		this.auth$.subscribe((user) => {
+			this.currentUser = user;
+		});
+		return this.currentUser;
 	}
 
 	// This may need to change
 	// Visit: https://github.com/angular/angularfire2/blob/master/docs/5-user-authentication.md for more information
 	loginFacebook(): void {
-		this.af.auth.login({
+		this.auth$.login({
 			provider: AuthProviders.Facebook,
 			method: AuthMethods.Popup
 		})
 	}
 
 	logoutFacebook(): void {
-		this.af.auth.logout();
+		this.auth$.logout();
 	}
 }
