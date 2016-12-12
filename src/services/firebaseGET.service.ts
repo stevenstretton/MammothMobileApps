@@ -12,4 +12,12 @@ export class FirebaseGET {
 	getAllUsers(): FirebaseListObservable<any> {
 		return this.af.database.list('/users');
 	}
+
+	getCurrentUser(): void {
+		this.af.auth.subscribe(user => {
+			if (user) {
+				console.log(user);
+			}
+		})
+	}
 }

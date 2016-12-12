@@ -3,20 +3,20 @@ import { AngularFire, AuthMethods, AuthProviders } from 'angularfire2';
 
 @Injectable()
 export class AuthenticationHandler {
-	constructor(private af: AngularFire) {}
+	constructor(public af: AngularFire) {
+	}
 
-	loginFirebase(email, password): void {
-		this.af.auth.login({
-			email: email,
-			password: password
+	loginFirebase(email, password): any {
+		return new Promise((resolve, reject) => {
+			this.af.auth.login({
+				email: email,
+				password: password
+			}).then((successResponse) => {
+				resolve(successResponse);
+			}).catch((errorResponse) => {
+				reject(errorResponse);
+			});
 		});
-
-		// This will get the current user logged into Firebase
-		this.af.auth.subscribe(user => {
-			if (user) {
-				console.log(user);
-			}
-		})
 	}
 
 	logoutFirebase(): void {

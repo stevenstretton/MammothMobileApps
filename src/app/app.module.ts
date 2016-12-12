@@ -36,46 +36,53 @@ export const firebaseConfig = {
 	messagingSenderId: "516201909596"
 };
 
-const myFirebaseAuthConfig = {
+const firebaseAuthConfig = {
 	provider: AuthProviders.Password,
 	method: AuthMethods.Password
 };
 
 @NgModule({
-  declarations: [
-    Login,
-    Register,
-    MyApp,
-    MyTrips,
-    Notifications,
-    NewTrip,
-    FriendsModal,
-    ViewTrip,
-    Friends,
-    Account,
-    LocationModal,
-    Map,
-    TabsPage
-  ],
-  imports: [
-    IonicModule.forRoot(MyApp)
-  ],
-  bootstrap: [IonicApp],
-  entryComponents: [
-    Login,
-    Register,
-    MyApp,
-    MyTrips,
-    ViewTrip,
-    Notifications,
-    NewTrip,
-    FriendsModal,
-    LocationModal,
-    Friends,
-    Account,
-    Map,
-    TabsPage
-  ],
-  providers: [{provide: ErrorHandler, useClass: IonicErrorHandler}]
+	declarations: [
+		Login,
+		Register,
+		MyApp,
+		MyTrips,
+		Notifications,
+		NewTrip,
+		FriendsModal,
+		ViewTrip,
+		Friends,
+		Account,
+		LocationModal,
+		Map,
+		TabsPage
+	],
+	imports: [
+		BrowserModule,
+		IonicModule.forRoot(MyApp),
+		AngularFireModule.initializeApp(firebaseConfig, firebaseAuthConfig)
+	],
+	bootstrap: [IonicApp],
+	entryComponents: [
+		Login,
+		Register,
+		MyApp,
+		MyTrips,
+		ViewTrip,
+		Notifications,
+		NewTrip,
+		FriendsModal,
+		LocationModal,
+		Friends,
+		Account,
+		Map,
+		TabsPage
+	],
+	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
+		FirebaseGET,
+		FirebasePUSH,
+		AuthenticationHandler,
+		LocationHandler]
 })
-export class AppModule {}
+export class AppModule {
+}
