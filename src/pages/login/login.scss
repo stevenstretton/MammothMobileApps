@@ -1,1 +1,12 @@
-page-login {}
+page-login {
+
+  .app-title{
+    font-size: 40px;
+    font-weight: 300;
+
+    text-align: center;    
+    margin: 100px 0px 50px;
+
+    color: color($colors, primary);
+  }
+}
