@@ -1,15 +1,33 @@
 import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseListObservable } from 'angularfire2';
+import { AngularFire, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 
 @Injectable()
 export class FirebaseGET {
+	private allUsers: Array<any>;
+	private allTrips: Array<any>;
+
 	constructor(private af: AngularFire) {}
 
-	getAllTrips(): FirebaseListObservable<any> {
-		return this.af.database.list('/trips');
+	setAllTrips(callback): void {
+		this.af.database.list('/trips').forEach((trip) => {
+			this.allTrips = trip;
+			callback();
+		});
 	}
 
-	getAllUsers(): FirebaseListObservable<any> {
-		return this.af.database.list('/users');
+
+	setAllUsers(callback): void {
+		this.af.database.list('/users').forEach((user) => {
+			this.allUsers = user;
+			callback();
+		});
+	}
+
+	getAllTrips(): Array<any> {
+		return this.allTrips;
+	}
+
+	getAllUsers(): Array<any> {
+		return this.allUsers;
 	}
 }

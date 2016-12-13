@@ -8,9 +8,9 @@ import { FirebaseListObservable } from 'angularfire2';
   templateUrl: 'friends.html'
 })
 export class Friends {
-  friends: FirebaseListObservable<any[]>;
+  friends: Array<any>;
 
   constructor(public navCtrl: NavController, private firebaseTripGet: FirebaseGET) {
-    this.friends = this.firebaseTripGet.getAllTrips();
+    //this.friends = this.firebaseTripGet.getAllTrips();
   }
 }

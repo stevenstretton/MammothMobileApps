@@ -2,10 +2,10 @@
   <ion-navbar>
     <ion-title>Account</ion-title>
     <ion-buttons end>
-      <button ion-button icon-right icon-only (click)="logout()">        
+      <button ion-button icon-right icon-only (click)="logout()">
         <ion-icon name="exit"></ion-icon>
       </button>
-    </ion-buttons>  
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -16,48 +16,48 @@
       Your Account...
     </ion-list-header>
   </ion-list>
-    
+
   <ion-card>
     <ion-list>
 
       <ion-item>
         <ion-avatar item-left (click)="presentActionSheet()">
-          <img src="/assets/img/hall.jpg">
+          <img src="{{ photoUrl }}">
           <ion-icon name="camera" class="edit-image"></ion-icon>
         </ion-avatar>
-        <h2>Darryl Hall</h2>
+        <h2>{{ firstName }} {{ lastName }}</h2>
         <p>Some description</p>
       </ion-item>
 
       <ion-item>
         Username
         <ion-note item-right>
-          darrylhall
-        </ion-note>  
+          {{ username }}
+        </ion-note>
       </ion-item>
 
       <ion-item>
-        Email  
+        Email
         <ion-note item-right>
-          darrylhall93@gmail.com
+          {{ email }}
         </ion-note>
       </ion-item>
 
       <ion-item-sliding>
         <ion-item>
-          Password  
+          Password
           <ion-note item-right>
-            ********
+            {{ password }}
           </ion-note>
         </ion-item>
         <ion-item-options side="right">
           <button ion-button icon-only color="positive">
-            <ion-icon name="create"></ion-icon>            
-          </button>      
+            <ion-icon name="create"></ion-icon>
+          </button>
         </ion-item-options>
       </ion-item-sliding>
 
-    </ion-list>    
+    </ion-list>
   </ion-card>
 
   <ion-list>

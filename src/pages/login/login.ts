@@ -3,8 +3,9 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
-import { AuthenticationHandler } from "../../services/authenticationHandler.service"
-import { authDataToAuthState } from "angularfire2/auth";
+import { AuthenticationHandler } from "../../services/authenticationHandler.service";
+import { UserService } from "../../services/user.service"
+import { FirebaseGET } from "../../services/firebaseGET.service"
 
 @Component({
 	selector: 'page-login',
@@ -14,12 +15,21 @@ export class Login {
 	username: string;
 	password: string;
 
-	constructor(public navCtrl: NavController, public authenticationHandler: AuthenticationHandler) {}
+	constructor(public navCtrl: NavController,
+	            public authenticationHandler: AuthenticationHandler,
+				public userService: UserService,
+				public firebaseGet: FirebaseGET) {}
 
 	login(): void {
 		let loginPromise = this.authenticationHandler.loginFirebase(this.username, this.password);
 
 		loginPromise.then((successResponse) => {
+			this.firebaseGet.setAllTrips(() => {
+				this.firebaseGet.setAllUsers(() => {
+					this.userService.setTheCurrentUser();
+				});
+			});
+
 			this.navCtrl.setRoot(TabsPage)
 		}).catch((errorResponse) => {
 			// do something with errorResponse

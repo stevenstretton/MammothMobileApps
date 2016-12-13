@@ -5,20 +5,39 @@ import { NavController, ActionSheetController, Platform, ModalController } from 
 import { Login } from '../login/login';
 import { LocationModal } from "./locationModal/locationModal"
 
-import { AuthenticationHandler } from "../../services/authenticationHandler.service"
+import { AuthenticationHandler } from "../../services/authenticationHandler.service";
+import { FirebaseGET } from "../../services/firebaseGET.service";
+import { UserService } from "../../services/user.service";
 
 @Component({
 	selector: 'page-account',
 	templateUrl: 'account.html'
 })
 export class Account {
+	private username: string;
+	private password: string;
+	private email: string;
+	private photoUrl: string;
+	private firstName: string;
+	private lastName: string;
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
 	            public actionSheetCtrl: ActionSheetController,
 	            public platform: Platform,
 	            public modalCtrl: ModalController,
-	            public authenticationHandler: AuthenticationHandler) {
+	            public authenticationHandler: AuthenticationHandler,
+				public firebaseGet: FirebaseGET,
+				public userService: UserService) {
+
+		let currentUser = this.userService.getTheCurrentUser();
+
+		this.firstName = currentUser.getFirstName();
+		this.lastName = currentUser.getLastName();
+		this.email = currentUser.getEmail();
+		this.username = currentUser.getUsername();
+		this.photoUrl = currentUser.getPhotoUrl();
+		this.password = "Password";
 	}
 
 	logout(): void {

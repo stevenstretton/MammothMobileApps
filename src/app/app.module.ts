@@ -26,6 +26,7 @@ import { FirebaseGET } from '../services/firebaseGET.service';
 import { FirebasePUSH } from '../services/firebasePUSH.service';
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
 import { LocationHandler } from '../services/locationHandler.service';
+import { UserService } from '../services/user.service';
 
 // Must export the config
 export const firebaseConfig = {
@@ -82,7 +83,8 @@ const firebaseAuthConfig = {
 		FirebaseGET,
 		FirebasePUSH,
 		AuthenticationHandler,
-		LocationHandler]
+		LocationHandler,
+		UserService]
 })
 export class AppModule {
 }

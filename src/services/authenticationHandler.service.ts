@@ -1,20 +1,21 @@
 import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseAuth, FirebaseAuthState, AuthMethods, AuthProviders } from 'angularfire2';
 
+import { FirebaseGET } from "./firebaseGET.service";
+
+
 @Injectable()
 export class AuthenticationHandler {
 	private authState: FirebaseAuthState;
 	private currentUser: FirebaseAuthState;
 
-	constructor(public auth$: FirebaseAuth) {
+	constructor(public auth$: FirebaseAuth,
+	            public firebaseGet: FirebaseGET) {
+
 		this.authState = auth$.getAuth();
 		auth$.subscribe((state: FirebaseAuthState) => {
 			this.authState = state;
 		});
-	}
-
-	get authenticated(): boolean {
-		return this.authState !== null;
 	}
 
 	loginFirebase(email, password): any {
