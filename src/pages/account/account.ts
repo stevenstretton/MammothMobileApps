@@ -20,6 +20,8 @@ export class Account {
 	private photoUrl: string;
 	private firstName: string;
 	private lastName: string;
+	private isSharingLocation: boolean;
+	private _trips: Array<any>;
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -38,11 +40,15 @@ export class Account {
 		this.username = currentUser.getUsername();
 		this.photoUrl = currentUser.getPhotoUrl();
 		this.password = "Password";
+		this.isSharingLocation = currentUser.getIsSharingLocation();
+		this._trips = currentUser.getTrips();
+
+		console.log(this._trips);
 	}
 
 	logout(): void {
 		this.authenticationHandler.logoutFirebase();
-		console.log(this.authenticationHandler.getCurrentUser());
+
 		this.app.getRootNav().setRoot(Login);
 	}
 

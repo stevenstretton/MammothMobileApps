@@ -67,23 +67,20 @@
 
     <ion-item>
       <ion-label>Share Your Location</ion-label>
-      <ion-toggle checked="false"></ion-toggle>
+      <ion-toggle [(ngModel)]="isSharingLocation"></ion-toggle>
     </ion-item>
   </ion-list>
 
-  <ion-list>
+  <ion-list *ngIf="isSharingLocation">
     <ion-item-divider color="light">Location sharing for each event:</ion-item-divider>
-    <ion-item>
-      <h2>O2 Academy</h2>
-      <p>10th December 2016</p>
-      <button ion-button clear item-right (click)="presentModal()">View</button>
-    </ion-item>
-
-    <ion-item>
-      <h2>London</h2>
-      <p>12th June 2017</p>
-      <button ion-button clear item-right (click)="presentModal()">View</button>
-    </ion-item>
+	  <ion-list *ngFor="let trip of _trips">
+		  <ion-item>
+			  <h2>{{ trip.name }}</h2>
+			  <p>{{ trip.startDate }}</p>
+			  <p *ngIf="trip.lead">Lead</p>
+			  <button ion-button clear item-right (click)="presentModal()">View</button>
+		  </ion-item>
+	  </ion-list>
   </ion-list>
 
 </ion-content>

@@ -35,7 +35,7 @@ export class AuthenticationHandler {
 		this.auth$.logout();
 	}
 
-	getCurrentUser(): FirebaseAuthState {
+	getCurrentFirebaseUser(): FirebaseAuthState {
 		this.auth$.subscribe((user) => {
 			this.currentUser = user;
 		});

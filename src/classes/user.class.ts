@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { FirebaseGET } from "../../services/firebaseGET.service"
+import { aTrip } from "./trip.class"
 
 @Component({
 	selector: 'page-account',
@@ -14,6 +14,8 @@ export class aUser {
 	private _photoUrl: string;
 	private _firstName: string;
 	private _lastName: string;
+	private _isSharingLocation: boolean;
+	private _trips: Array<any>;
 
 	constructor() {
 		this._uid = null;
@@ -23,6 +25,8 @@ export class aUser {
 		this._photoUrl = null;
 		this._firstName = null;
 		this._lastName = null;
+		this._isSharingLocation = false;
+		this._trips = [];
 	}
 
 	setUid(uid): void {
@@ -79,5 +83,26 @@ export class aUser {
 
 	getLastName(): string {
 		return this._lastName;
+	}
+
+	setIsSharingLocation(isSharingLocation): void {
+		console.log(isSharingLocation);
+		this._isSharingLocation = isSharingLocation;
+	}
+
+	getIsSharingLocation(): boolean {
+		return this._isSharingLocation;
+	}
+
+	addTrip(trip): void {
+		this._trips.push(trip);
+	}
+
+	setTrips(trips): void {
+		this._trips = trips;
+	}
+
+	getTrips(): Array<aTrip> {
+		return this._trips;
 	}
 }

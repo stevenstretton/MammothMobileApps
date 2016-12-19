@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
+import { AngularFire } from 'angularfire2';
 
 @Injectable()
 export class FirebaseGET {
@@ -15,16 +15,15 @@ export class FirebaseGET {
 		});
 	}
 
+	getAllTrips(): Array<any> {
+		return this.allTrips;
+	}
 
 	setAllUsers(callback): void {
 		this.af.database.list('/users').forEach((user) => {
 			this.allUsers = user;
 			callback();
 		});
-	}
-
-	getAllTrips(): Array<any> {
-		return this.allTrips;
 	}
 
 	getAllUsers(): Array<any> {
