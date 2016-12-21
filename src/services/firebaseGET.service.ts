@@ -3,31 +3,31 @@ import { AngularFire, FirebaseObjectObservable, FirebaseListObservable } from 'a
 
 @Injectable()
 export class FirebaseGET {
-	private allUsers: Array<any>;
-	private allTrips: Array<any>;
-
-	private singleUser: any;
+	private _allUsers: Array<any>;
+	private _allTrips: Array<any>;
 
 	constructor(private af: AngularFire) {}
 
-	setAllTrips(): void {
+	setAllTrips(callback): void {
 		this.af.database.list('/trips').forEach((trip) => {
-			this.allTrips = trip;
+			this._allTrips = trip;
+			callback();
 		});
 	}
 
 	getAllTrips(): Array<any> {
-		return this.allTrips;
+		return this._allTrips;
 	}
 
-	setAllUsers(): void {
+	setAllUsers(callback): void {
 		this.af.database.list('/users').forEach((user) => {
-			this.allUsers = user;
+			this._allUsers = user;
+			callback();
 		});
 	}
 
 	getAllUsers(): Array<any> {
-		return this.allUsers;
+		return this._allUsers;
 	}
 
 	getUserWithID(userID, callback): void {
@@ -36,7 +36,9 @@ export class FirebaseGET {
 		});
 	}
 
-	getTripWithID(tripID): FirebaseListObservable<any> {
-		return this.af.database.list('trips/' + tripID);
+	getTripWithID(tripID, callback): void {
+		this.af.database.object('trips/' + tripID).forEach((trip) => {
+			callback(trip);
+		});
 	}
 }

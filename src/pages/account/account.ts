@@ -4,18 +4,18 @@ import { App } from 'ionic-angular';
 import { NavController, ActionSheetController, Platform, ModalController } from 'ionic-angular';
 import { Login } from '../login/login';
 import { LocationModal } from "./locationModal/locationModal";
-import { FirebaseAuthState } from 'angularfire2';
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebaseGET.service";
-import { FirebaseListObservable } from 'angularfire2';
+import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 
 @Component({
 	selector: 'page-account',
 	templateUrl: 'account.html'
 })
 export class Account {
-	private _currentUser: FirebaseListObservable<any>;
+	private _currentUser: any;
+	private _currentUserTrips: Array<any>;
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -24,13 +24,25 @@ export class Account {
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET) {
+		this._currentUserTrips = [];
 
-		let currentUser = this.authenticationHandler.getCurrentFirebaseUser();
+		let currentUser = this.authenticationHandler.getCurrentFirebaseUser(),
+			allTrips = this.firebaseGet.getAllTrips();
 
 		this.firebaseGet.getUserWithID(currentUser.uid, (currentUser) => {
 			this._currentUser = currentUser;
+		});
 
-			console.log(this._currentUser);
+		allTrips.forEach((trip) => {
+			if (trip.leadOrganiser === currentUser.uid) {
+				this._currentUserTrips.push(trip);
+			} else {
+				trip.friends.forEach((friendID) => {
+					if (friendID === currentUser.uid) {
+						this._currentUserTrips.push(trip);
+					}
+				})
+			}
 		});
 	}
 
@@ -40,29 +52,35 @@ export class Account {
 		this.app.getRootNav().setRoot(Login);
 	}
 
-	presentModal(name, friends, leadOrganiser): void {
+	presentModal(name, friendsID, leadOrganiserID): void {
 		let tripMembersID = [],
 			tripMembers = [],
 			allUsers = this.firebaseGet.getAllUsers();
 
-		if (leadOrganiser !== this._currentUser) {
-			tripMembersID.push(leadOrganiser);
+		if (leadOrganiserID !== this._currentUser.$key) {
+			tripMembersID.push(leadOrganiserID);
 		} else {
-			friends.forEach((friend) => {
-				if (friend !== this._currentUser) {
-					tripMembersID.push(friend);
+			friendsID.forEach((friendID) => {
+				if (friendID !== this._currentUser.$key) {
+					tripMembersID.push(friendID);
 				}
 			});
 		}
 
 		allUsers.forEach((user) => {
-			tripMembersID.forEach((member) => {
-				if (user.$key === member) {
-					//tripMembers.push(this.firebaseGet.getUserWithID(user.$key));
+			console.log("user.$key: " + user.$key);
+			tripMembersID.forEach((memberID) => {
+				console.log("memberID: " + memberID);
+				if (user.$key === memberID) {
+					this.firebaseGet.getUserWithID(user.$key, (firebaseUser) => {
+						console.log("firebaseUser:");
+						console.log(firebaseUser);
+						console.log("\n");
+						tripMembers.push(firebaseUser);
+					});
 				}
 			});
 		});
-
 
 		let modal = this.modalCtrl.create(LocationModal, {
 			name: name,

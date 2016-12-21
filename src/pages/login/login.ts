@@ -22,10 +22,15 @@ export class Login {
 		let loginPromise = this.authenticationHandler.loginFirebase(this.username, this.password);
 
 		loginPromise.then((successResponse) => {
-			this.firebaseGet.setAllTrips();
-			this.firebaseGet.setAllUsers();
-
-			this.navCtrl.setRoot(TabsPage);
+			// TODO: Figure out another way to do this
+			// Currently you have to wait until all trips have been pulled from firebase before a user logs in
+			// This is because if the data has not been pulled from firebase, exceptions will be thrown as...
+			// Cannot read Property of undefined
+			this.firebaseGet.setAllTrips(() => {
+				this.firebaseGet.setAllUsers(() => {
+					this.navCtrl.setRoot(TabsPage);
+				});
+			});
 		}).catch((errorResponse) => {
 			// do something with errorResponse
 		});
