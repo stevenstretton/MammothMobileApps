@@ -4,7 +4,6 @@ import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { UserService } from "../../services/user.service"
 import { FirebaseGET } from "../../services/firebaseGET.service"
 
 @Component({
@@ -17,20 +16,16 @@ export class Login {
 
 	constructor(public navCtrl: NavController,
 	            public authenticationHandler: AuthenticationHandler,
-				public userService: UserService,
 				public firebaseGet: FirebaseGET) {}
 
 	login(): void {
 		let loginPromise = this.authenticationHandler.loginFirebase(this.username, this.password);
 
 		loginPromise.then((successResponse) => {
-			this.firebaseGet.setAllTrips(() => {
-				this.firebaseGet.setAllUsers(() => {
-					this.userService.setTheCurrentUser();
-				});
-			});
+			this.firebaseGet.setAllTrips();
+			this.firebaseGet.setAllUsers();
 
-			this.navCtrl.setRoot(TabsPage)
+			this.navCtrl.setRoot(TabsPage);
 		}).catch((errorResponse) => {
 			// do something with errorResponse
 		});

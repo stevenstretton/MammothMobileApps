@@ -1,102 +1,33 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Friends</ion-title>
-    <ion-buttons end>
-      <button ion-button icon-only>
-        <ion-icon name="person-add"></ion-icon>
-      </button>
-    </ion-buttons>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>Friends</ion-title>
+		<ion-buttons end>
+			<button ion-button icon-only>
+				<ion-icon name="person-add"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
 </ion-header>
 
 <ion-content>
-
-<ion-list>
-
-  <ion-list-header>
-    Your Friends...
-  </ion-list-header>
-
-  <ion-item-sliding>
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/hall.jpg">
-      </ion-avatar>
-      <h2>Darryl Hall</h2>
-      <p>Some description</p>
-    </ion-item>
-    <ion-item-options side="right">
-      <button ion-button color="danger">
-        <ion-icon name="close"></ion-icon>
-        Unfriend
-      </button>
-    </ion-item-options>
-  </ion-item-sliding>
-
-  <ion-item-sliding>
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/ashworth.jpg">
-      </ion-avatar>
-      <h2>Will Ashworth</h2>
-      <p>Some description</p>
-    </ion-item>
-    <ion-item-options side="right">
-      <button ion-button color="danger">
-        <ion-icon name="close"></ion-icon>
-        Unfriend
-      </button>
-    </ion-item-options>
-  </ion-item-sliding>
-
-  <ion-item-sliding>
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/stretton.jpg">
-      </ion-avatar>
-      <h2>Steven Stretton</h2>
-      <p>Some description</p>
-    </ion-item>
-    <ion-item-options side="right">
-      <button ion-button color="danger">
-        <ion-icon name="close"></ion-icon>
-        Unfriend
-      </button>
-    </ion-item-options>
-  </ion-item-sliding>
-
-  <ion-item-sliding>
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/marriott.jpg">
-      </ion-avatar>
-      <h2>George Marriott</h2>
-      <p>Some description</p>
-    </ion-item>
-    <ion-item-options side="right">
-      <button ion-button color="danger">
-        <ion-icon name="close"></ion-icon>
-        Unfriend
-      </button>
-    </ion-item-options>
-  </ion-item-sliding>
-
-  <ion-item-sliding>
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/allen.jpg">
-      </ion-avatar>
-      <h2>Tim Allen</h2>
-      <p>Some description</p>
-    </ion-item>
-    <ion-item-options side="right">
-      <button ion-button color="danger">
-        <ion-icon name="close"></ion-icon>
-        Unfriend
-      </button>
-    </ion-item-options>
-  </ion-item-sliding>
-
-</ion-list>
-
+	<ion-list-header>
+		Your Friends...
+	</ion-list-header>
+	<ion-list *ngFor="let friend of _friends">
+		<ion-item-sliding>
+			<ion-item>
+				<ion-avatar item-left>
+					<img src="{{ (friend | async)?.photoUrl }}">
+				</ion-avatar>
+				<h2>{{ (friend | async)?.firstName }} {{ (friend | async)?.lastName }}</h2>
+				<p>Some description</p>
+			</ion-item>
+			<ion-item-options side="right">
+				<button ion-button color="danger">
+					<ion-icon name="close"></ion-icon>
+					Unfriend
+				</button>
+			</ion-item-options>
+		</ion-item-sliding>
+	</ion-list>
 </ion-content>

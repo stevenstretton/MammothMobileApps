@@ -6,15 +6,15 @@ import { FirebaseGET } from "./firebaseGET.service";
 
 @Injectable()
 export class AuthenticationHandler {
-	private authState: FirebaseAuthState;
-	private currentUser: FirebaseAuthState;
+	private _authState: FirebaseAuthState;
+	private _currentUser: FirebaseAuthState;
 
 	constructor(public auth$: FirebaseAuth,
 	            public firebaseGet: FirebaseGET) {
 
-		this.authState = auth$.getAuth();
+		this._authState = auth$.getAuth();
 		auth$.subscribe((state: FirebaseAuthState) => {
-			this.authState = state;
+			this._authState = state;
 		});
 	}
 
@@ -37,9 +37,9 @@ export class AuthenticationHandler {
 
 	getCurrentFirebaseUser(): FirebaseAuthState {
 		this.auth$.subscribe((user) => {
-			this.currentUser = user;
+			this._currentUser = user;
 		});
-		return this.currentUser;
+		return this._currentUser;
 	}
 
 	// This may need to change

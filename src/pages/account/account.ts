@@ -3,25 +3,19 @@ import { App } from 'ionic-angular';
 
 import { NavController, ActionSheetController, Platform, ModalController } from 'ionic-angular';
 import { Login } from '../login/login';
-import { LocationModal } from "./locationModal/locationModal"
+import { LocationModal } from "./locationModal/locationModal";
+import { FirebaseAuthState } from 'angularfire2';
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebaseGET.service";
-import { UserService } from "../../services/user.service";
+import { FirebaseListObservable } from 'angularfire2';
 
 @Component({
 	selector: 'page-account',
 	templateUrl: 'account.html'
 })
 export class Account {
-	private username: string;
-	private password: string;
-	private email: string;
-	private photoUrl: string;
-	private firstName: string;
-	private lastName: string;
-	private isSharingLocation: boolean;
-	private _trips: Array<any>;
+	private _currentUser: FirebaseListObservable<any>;
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -29,21 +23,15 @@ export class Account {
 	            public platform: Platform,
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
-				public firebaseGet: FirebaseGET,
-				public userService: UserService) {
+	            public firebaseGet: FirebaseGET) {
 
-		let currentUser = this.userService.getTheCurrentUser();
+		let currentUser = this.authenticationHandler.getCurrentFirebaseUser();
 
-		this.firstName = currentUser.getFirstName();
-		this.lastName = currentUser.getLastName();
-		this.email = currentUser.getEmail();
-		this.username = currentUser.getUsername();
-		this.photoUrl = currentUser.getPhotoUrl();
-		this.password = "Password";
-		this.isSharingLocation = currentUser.getIsSharingLocation();
-		this._trips = currentUser.getTrips();
+		this.firebaseGet.getUserWithID(currentUser.uid, (currentUser) => {
+			this._currentUser = currentUser;
 
-		console.log(this._trips);
+			console.log(this._currentUser);
+		});
 	}
 
 	logout(): void {
@@ -52,12 +40,41 @@ export class Account {
 		this.app.getRootNav().setRoot(Login);
 	}
 
-	presentModal() {
-		let modal = this.modalCtrl.create(LocationModal);
+	presentModal(name, friends, leadOrganiser): void {
+		let tripMembersID = [],
+			tripMembers = [],
+			allUsers = this.firebaseGet.getAllUsers();
+
+		if (leadOrganiser !== this._currentUser) {
+			tripMembersID.push(leadOrganiser);
+		} else {
+			friends.forEach((friend) => {
+				if (friend !== this._currentUser) {
+					tripMembersID.push(friend);
+				}
+			});
+		}
+
+		allUsers.forEach((user) => {
+			tripMembersID.forEach((member) => {
+				if (user.$key === member) {
+					//tripMembers.push(this.firebaseGet.getUserWithID(user.$key));
+				}
+			});
+		});
+
+
+		let modal = this.modalCtrl.create(LocationModal, {
+			name: name,
+			members: tripMembers
+		});
+		modal.onDidDismiss(() => {
+
+		});
 		modal.present();
 	}
 
-	presentActionSheet() {
+	presentActionSheet(): void {
 		let actionSheet = this.actionSheetCtrl.create({
 			title: 'Edit Profile Picture',
 			buttons: [

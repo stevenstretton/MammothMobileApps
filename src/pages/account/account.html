@@ -22,24 +22,24 @@
 
       <ion-item>
         <ion-avatar item-left (click)="presentActionSheet()">
-          <img src="{{ photoUrl }}">
+          <img src="{{ (_currentUser | async)?.photoUrl }}">
           <ion-icon name="camera" class="edit-image"></ion-icon>
         </ion-avatar>
-        <h2>{{ firstName }} {{ lastName }}</h2>
+        <h2>{{ (_currentUser | async)?.firstName }} {{ (_currentUser | async)?.lastName }}</h2>
         <p>Some description</p>
       </ion-item>
 
       <ion-item>
         Username
         <ion-note item-right>
-          {{ username }}
+			{{ (_currentUser | async)?.username }}
         </ion-note>
       </ion-item>
 
       <ion-item>
         Email
         <ion-note item-right>
-          {{ email }}
+			{{ (_currentUser | async)?.email }}
         </ion-note>
       </ion-item>
 
@@ -47,7 +47,7 @@
         <ion-item>
           Password
           <ion-note item-right>
-            {{ password }}
+            **********
           </ion-note>
         </ion-item>
         <ion-item-options side="right">
@@ -65,20 +65,20 @@
       Manage your location settings:
     </ion-list-header>
 
-    <ion-item>
-      <ion-label>Share Your Location</ion-label>
-      <ion-toggle [(ngModel)]="isSharingLocation"></ion-toggle>
-    </ion-item>
+    <!--<ion-item>-->
+      <!--<ion-label>Share Your Location</ion-label>-->
+      <!--<ion-toggle [(ngModel)]=""></ion-toggle>-->
+    <!--</ion-item>-->
   </ion-list>
 
-  <ion-list *ngIf="isSharingLocation">
+  <ion-list *ngIf="(_currentUser | async)?.shareLocation">
     <ion-item-divider color="light">Location sharing for each event:</ion-item-divider>
-	  <ion-list *ngFor="let trip of _trips">
+	  <ion-list *ngFor="let trip of (_currentUser | async)?.trips">
 		  <ion-item>
 			  <h2>{{ trip.name }}</h2>
 			  <p>{{ trip.startDate }}</p>
-			  <p *ngIf="trip.lead">Lead</p>
-			  <button ion-button clear item-right (click)="presentModal()">View</button>
+			  <p *ngIf="trip.leadOrganiser === _currentUserUid">Lead</p>
+			  <button ion-button clear item-right (click)="presentModal(trip.name, trip.friends, trip.leadOrganiser)">View</button>
 		  </ion-item>
 	  </ion-list>
   </ion-list>
