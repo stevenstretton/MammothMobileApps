@@ -31,14 +31,22 @@ export class FirebaseGET {
 	}
 
 	getUserWithID(userID, callback): void {
-		this.af.database.object('users/' + userID).forEach((user) => {
-			callback(user);
+		let userObjectObservable = this.af.database.object('users/' + userID, {
+			preserveSnapshot: true
+		});
+
+		userObjectObservable.subscribe(snapshot => {
+			callback(snapshot.val());
 		});
 	}
 
 	getTripWithID(tripID, callback): void {
-		this.af.database.object('trips/' + tripID).forEach((trip) => {
-			callback(trip);
+		let tripObjectObservable = this.af.database.object('trips/' + tripID, {
+			preserveSnapshot: true
+		});
+
+		tripObjectObservable.subscribe(snapshot => {
+			callback(snapshot.val());
 		});
 	}
 }

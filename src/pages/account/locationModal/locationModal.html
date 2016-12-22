@@ -16,18 +16,13 @@
 	<ion-list-header>
 		Select who to share your location with...
 	</ion-list-header>
-	<ion-list *ngFor="let member of _tripMembers | async">
+	<ion-list *ngFor="let member of _tripMembers">
 		<ion-item>
 			<ion-avatar item-left>
-				<img src="{{ member.photoUrl }}">
+				<img src="{{ member.user.photoUrl }}">
 			</ion-avatar>
-			<ion-label>{{ member.firstName }} {{ member.lastName }}</ion-label>
-			<ion-checkbox color="positive" [(ngModel)]="member.checked" (click)="toggleClicked(member.$key, !member.checked)" item-right></ion-checkbox>
+			<ion-label>{{ member.user.firstName }} {{ member.user.lastName }}</ion-label>
+			<ion-checkbox color="positive" [(ngModel)]="member.checked" (click)="toggleClicked(member.userKey, !member.checked)" item-right></ion-checkbox>
 		</ion-item>
-
-		<div padding>
-			<button ion-button color="primary" block>Save Settings</button>
-		</div>
-
 	</ion-list>
 </ion-content>

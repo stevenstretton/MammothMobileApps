@@ -7,6 +7,7 @@ import { LocationModal } from "./locationModal/locationModal";
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebaseGET.service";
+import { FirebasePUSH } from "../../services/firebasePUSH.service";
 import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 
 @Component({
@@ -15,6 +16,7 @@ import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 })
 export class Account {
 	private _currentUser: any;
+	private _currentUserUid: any;
 	private _currentUserTrips: Array<any>;
 
 	constructor(private app: App,
@@ -23,26 +25,33 @@ export class Account {
 	            public platform: Platform,
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
-	            public firebaseGet: FirebaseGET) {
+	            public firebaseGet: FirebaseGET,
+				public firebasePush: FirebasePUSH) {
 		this._currentUserTrips = [];
 
 		let currentUser = this.authenticationHandler.getCurrentFirebaseUser(),
-			allTrips = this.firebaseGet.getAllTrips();
+			allTrips = this.firebaseGet.getAllTrips(),
+			tripMembers = [];
 
-		this.firebaseGet.getUserWithID(currentUser.uid, (currentUser) => {
-			this._currentUser = currentUser;
+		this._currentUserUid = currentUser.uid;
+
+
+		this.firebaseGet.getUserWithID(this._currentUserUid, (user) => {
+			this._currentUser = user;
 		});
 
 		allTrips.forEach((trip) => {
-			if (trip.leadOrganiser === currentUser.uid) {
-				this._currentUserTrips.push(trip);
-			} else {
-				trip.friends.forEach((friendID) => {
-					if (friendID === currentUser.uid) {
-						this._currentUserTrips.push(trip);
-					}
-				})
-			}
+			tripMembers.push(trip.leadOrganiser);
+			trip.friends.forEach((friend) => {
+				tripMembers.push(friend);
+			});
+
+			tripMembers.forEach((memberID) => {
+				if (memberID === this._currentUserUid) {
+					this._currentUserTrips.push(trip);
+				}
+			});
+			tripMembers = [];
 		});
 	}
 
@@ -52,42 +61,38 @@ export class Account {
 		this.app.getRootNav().setRoot(Login);
 	}
 
-	presentModal(name, friendsID, leadOrganiserID): void {
+	presentModal(tripID, tripName, friendIDs, leadOrganiserID): void {
+		friendIDs.push(leadOrganiserID);
+
 		let tripMembersID = [],
 			tripMembers = [],
 			allUsers = this.firebaseGet.getAllUsers();
 
-		if (leadOrganiserID !== this._currentUser.$key) {
-			tripMembersID.push(leadOrganiserID);
-		} else {
-			friendsID.forEach((friendID) => {
-				if (friendID !== this._currentUser.$key) {
-					tripMembersID.push(friendID);
-				}
-			});
-		}
+		friendIDs.forEach((memberID) => {
+			if (memberID !== this._currentUserUid) {
+				tripMembersID.push(memberID);
+			}
+		});
 
 		allUsers.forEach((user) => {
-			console.log("user.$key: " + user.$key);
 			tripMembersID.forEach((memberID) => {
-				console.log("memberID: " + memberID);
 				if (user.$key === memberID) {
 					this.firebaseGet.getUserWithID(user.$key, (firebaseUser) => {
-						console.log("firebaseUser:");
-						console.log(firebaseUser);
-						console.log("\n");
-						tripMembers.push(firebaseUser);
+						tripMembers.push({
+							userKey: user.$key,
+							user: firebaseUser
+						});
 					});
 				}
 			});
 		});
 
 		let modal = this.modalCtrl.create(LocationModal, {
-			name: name,
+			name: tripName,
 			members: tripMembers
 		});
-		modal.onDidDismiss(() => {
-
+		modal.onDidDismiss((usersToSeeLocation) => {
+			this.firebasePush.addMemberToSeeLocation(this._currentUserUid, tripID, usersToSeeLocation);
 		});
 		modal.present();
 	}

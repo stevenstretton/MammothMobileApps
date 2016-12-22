@@ -12,23 +12,31 @@ export class LocationModal {
 
 	private _usersToSeeLocation: Array<any>;
 
-	constructor(public platform: Platform,
-	            public viewCtrl: ViewController,
+	constructor(public viewCtrl: ViewController,
 				public params: NavParams) {
+		this._usersToSeeLocation = [];
+
 		this._tripName = params.get('name');
 		this._tripMembers = params.get('members');
 	}
 
 	dismiss() {
-		this.viewCtrl.dismiss();
+		this.viewCtrl.dismiss(this._usersToSeeLocation);
 	}
 
-	checkIfInArray(userID): boolean {
+	ifInArray(userID): boolean {
 		return (this._usersToSeeLocation.indexOf(userID) > -1);
 	}
 
-	toggleClicked(member, check): void {
-		console.log(member);
-		console.log(check);
+	toggleClicked(memberID, check): void {
+		if (check) {
+			if (!this.ifInArray(memberID)) {
+				this._usersToSeeLocation.push(memberID);
+			}
+		} else {
+			if (this.ifInArray(memberID)) {
+				this._usersToSeeLocation.splice(this._usersToSeeLocation.indexOf(memberID), 1);
+			}
+		}
 	}
 }

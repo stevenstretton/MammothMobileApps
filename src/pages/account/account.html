@@ -78,7 +78,7 @@
 			  <h2>{{ trip.name }}</h2>
 			  <p>{{ trip.startDate }}</p>
 			  <p *ngIf="trip.leadOrganiser === _currentUser.uid">Lead</p>
-			  <button ion-button clear item-right (click)="presentModal(trip.name, trip.friends, trip.leadOrganiser)">View</button>
+			  <button ion-button clear item-right (click)="presentModal(trip.$key, trip.name, trip.friends, trip.leadOrganiser)">View</button>
 		  </ion-item>
 	  </ion-list>
   </ion-list>
