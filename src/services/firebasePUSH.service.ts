@@ -22,6 +22,7 @@ export class FirebasePUSH {
 
 		// Maybe put this in a separate function with a callback
 		this.firebaseGet.getUserWithID(userID, (user) => {
+			// Need to work on deleting unwanted users as well...
 			if (typeof user.usersToSeeLocation !== "undefined") {
 				usersToSeeLoc.push(user.usersToSeeLocation);
 			}
@@ -39,6 +40,14 @@ export class FirebasePUSH {
 		// ...on callback do this
 		userObjectObservable.update({
 			usersToSeeLocation: usersToSeeLoc
+		});
+	}
+
+	updateShareLocation(userID, shareLocation): void {
+		const userObjectObservable = this.af.database.object("users/" + userID);
+
+		userObjectObservable.update({
+			shareLocation: shareLocation
 		});
 	}
 }

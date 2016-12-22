@@ -67,7 +67,7 @@
 
     <ion-item>
       <ion-label>Share Your Location</ion-label>
-      <ion-toggle [(ngModel)]="_currentUser.shareLocation"></ion-toggle>
+      <ion-toggle [(ngModel)]="_currentUser.shareLocation" (click)="changeSharingLocation()"></ion-toggle>
     </ion-item>
   </ion-list>
 

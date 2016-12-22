@@ -9,16 +9,16 @@
 		<ion-card>
 			<ion-item>
 				<ion-avatar item-left>
-					<img src="{{ (trip.lead | async)?.photoUrl }}">
+					<img src="{{ trip.lead.photoUrl }}">
 				</ion-avatar>
 				<h2>Trip Lead</h2>
-				<p>{{ (trip.lead | async)?.firstName }} {{ (trip.lead | async)?.lastName }}</p>
+				<p>{{ trip.lead.firstName }} {{ trip.lead.lastName }}</p>
 			</ion-item>
 
-			<img src="{{ (trip.trip | async)?.coverPhoto }}"/>
+			<img src="{{ trip.trip.coverPhotoUrl }}"/>
 			<ion-card-content>
 				<ion-card-title>
-					{{ (trip.trip | async)?.name }}
+					{{ trip.trip.name }}
 				</ion-card-title>
 				<p>
 					Lorem ipsum dolor sit amet, consectetur adipiscing elit.

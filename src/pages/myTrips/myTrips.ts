@@ -19,18 +19,24 @@ export class MyTrips {
 				public authenticationHandler: AuthenticationHandler) {
 		this._trips = [];
 
-		let currentUser = this.authenticationHandler.getCurrentFirebaseUser();
+		let currentUser = this.authenticationHandler.getCurrentFirebaseUser(),
+			allTrips = this.firebaseGet.getAllTrips();
 
-		//trips.forEach((trip) => {
-		//	this._trips.push({
-		//		lead: this.firebaseGet.getUserWithID(trip.leadOrganiser),
-		//		trip: this.firebaseGet.getTripWithID(trip.$key)
-		//	});
-		//});
+		allTrips.forEach((trip) => {
+			// determine they are a part of the trip
+			if ((trip.leadOrganiser === currentUser.uid) || (trip.friends.indexOf(currentUser.uid) > -1)) {
+				this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
+					this._trips.push({
+						lead: leadOrganiser,
+						trip: trip
+					});
+				});
+			}
+		});
 	}
 
 	goToTrip() {
-		this.navCtrl.push(ViewTrip)
+		this.navCtrl.push(ViewTrip);
 	}
 
 }

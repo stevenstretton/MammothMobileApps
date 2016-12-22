@@ -16,7 +16,6 @@ import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 })
 export class Account {
 	private _currentUser: any;
-	private _currentUserUid: any;
 	private _currentUserTrips: Array<any>;
 
 	constructor(private app: App,
@@ -33,10 +32,8 @@ export class Account {
 			allTrips = this.firebaseGet.getAllTrips(),
 			tripMembers = [];
 
-		this._currentUserUid = currentUser.uid;
 
-
-		this.firebaseGet.getUserWithID(this._currentUserUid, (user) => {
+		this.firebaseGet.getUserWithID(currentUser.uid, (user) => {
 			this._currentUser = user;
 		});
 
@@ -46,11 +43,9 @@ export class Account {
 				tripMembers.push(friend);
 			});
 
-			tripMembers.forEach((memberID) => {
-				if (memberID === this._currentUserUid) {
-					this._currentUserTrips.push(trip);
-				}
-			});
+			if (tripMembers.indexOf(currentUser.uid) > -1) {
+				this._currentUserTrips.push(trip);
+			}
 			tripMembers = [];
 		});
 	}
@@ -69,7 +64,7 @@ export class Account {
 			allUsers = this.firebaseGet.getAllUsers();
 
 		friendIDs.forEach((memberID) => {
-			if (memberID !== this._currentUserUid) {
+			if (memberID !== this._currentUser.key) {
 				tripMembersID.push(memberID);
 			}
 		});
@@ -78,10 +73,7 @@ export class Account {
 			tripMembersID.forEach((memberID) => {
 				if (user.$key === memberID) {
 					this.firebaseGet.getUserWithID(user.$key, (firebaseUser) => {
-						tripMembers.push({
-							userKey: user.$key,
-							user: firebaseUser
-						});
+						tripMembers.push(firebaseUser);
 					});
 				}
 			});
@@ -92,9 +84,13 @@ export class Account {
 			members: tripMembers
 		});
 		modal.onDidDismiss((usersToSeeLocation) => {
-			this.firebasePush.addMemberToSeeLocation(this._currentUserUid, tripID, usersToSeeLocation);
+			this.firebasePush.addMemberToSeeLocation(this._currentUser.key, tripID, usersToSeeLocation);
 		});
 		modal.present();
+	}
+
+	changeSharingLocation(): void {
+		this.firebasePush.updateShareLocation(this._currentUser.key, this._currentUser.shareLocation);
 	}
 
 	presentActionSheet(): void {

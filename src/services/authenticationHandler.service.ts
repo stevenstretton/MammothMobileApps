@@ -57,14 +57,17 @@ export class AuthenticationHandler {
 
 	addNewUserToDatabase(email, firstName, surname, username): void {
 		this._fb.auth().onAuthStateChanged((user) => {
-			const usersTable = this._fb.database().ref("/users/" + user.uid);
+			const usersTable = this.af.database.object("users/" + user.uid);
 
-			usersTable.set({
-				email: email,
-				firstName: firstName,
-				lastName: surname,
-				username: username,
-				shareLocation: 0
+			this._fb.storage().ref("default_image/placeholder-user.png").getDownloadURL().then((placeholderPhotoUrl) => {
+				usersTable.set({
+					email: email,
+					firstName: firstName,
+					lastName: surname,
+					username: username,
+					shareLocation: 0,
+					photoUrl: placeholderPhotoUrl
+				});
 			});
 		});
 	}
