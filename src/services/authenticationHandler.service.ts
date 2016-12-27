@@ -1,20 +1,27 @@
-import { Injectable } from '@angular/core';
-import { AngularFire, FirebaseAuth, FirebaseAuthState, AuthMethods, AuthProviders } from 'angularfire2';
+import { Injectable, Inject } from '@angular/core';
+import { AngularFire, FirebaseAuth, FirebaseAuthState, AuthMethods, AuthProviders, FirebaseApp } from 'angularfire2';
 
 import { FirebaseGET } from "./firebaseGET.service";
 
 
 @Injectable()
 export class AuthenticationHandler {
-	private authState: FirebaseAuthState;
-	private currentUser: FirebaseAuthState;
+	private _authState: FirebaseAuthState;
+	private _currentUser: FirebaseAuthState;
+
+	private _fb: any;
 
 	constructor(public auth$: FirebaseAuth,
-	            public firebaseGet: FirebaseGET) {
+	            public firebaseGet: FirebaseGET,
+				public af: AngularFire,
+				@Inject(FirebaseApp) firebaseApp: any) {
 
-		this.authState = auth$.getAuth();
+		this._fb = firebaseApp;
+
+		// Find out what this does
+		this._authState = auth$.getAuth();
 		auth$.subscribe((state: FirebaseAuthState) => {
-			this.authState = state;
+			this._authState = state;
 		});
 	}
 
@@ -35,11 +42,41 @@ export class AuthenticationHandler {
 		this.auth$.logout();
 	}
 
+	createFirebaseUser(email, password): any {
+		return new Promise((resolve, reject) => {
+			this.auth$.createUser({
+				email: email,
+				password: password
+			}).then((successResponse) => {
+				resolve(successResponse);
+			}).catch((errorResponse) => {
+				reject(errorResponse);
+			});
+		});
+	}
+
+	addNewUserToDatabase(email, firstName, surname, username): void {
+		this._fb.auth().onAuthStateChanged((user) => {
+			const usersTable = this.af.database.object("users/" + user.uid);
+
+			this._fb.storage().ref("default_image/placeholder-user.png").getDownloadURL().then((placeholderPhotoUrl) => {
+				usersTable.set({
+					email: email,
+					firstName: firstName,
+					lastName: surname,
+					username: username,
+					shareLocation: 0,
+					photoUrl: placeholderPhotoUrl
+				});
+			});
+		});
+	}
+
 	getCurrentFirebaseUser(): FirebaseAuthState {
 		this.auth$.subscribe((user) => {
-			this.currentUser = user;
+			this._currentUser = user;
 		});
-		return this.currentUser;
+		return this._currentUser;
 	}
 
 	// This may need to change
