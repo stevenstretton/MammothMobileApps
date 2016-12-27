@@ -35,8 +35,10 @@ export class MyTrips {
 		});
 	}
 
-	goToTrip() {
-		this.navCtrl.push(ViewTrip);
+	goToTrip(trip) {
+		this.navCtrl.push(ViewTrip, {
+			trip: trip
+		});
 	}
 
 }

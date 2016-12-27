@@ -30,7 +30,8 @@ export class FirebaseGET {
 					endTime: snapVal.endTime,
 					coverPhotoUrl: snapVal.coverPhotoUrl,
 					friends: snapVal.friends,
-					transport: snapVal.transport
+					transport: snapVal.transport,
+					items: snapVal.items
 				});
 			});
 			callback();
@@ -110,7 +111,8 @@ export class FirebaseGET {
 				endTime: snapVal.endTime,
 				coverPhotoUrl: snapVal.coverPhotoUrl,
 				friends: snapVal.friends,
-				transport: snapVal.transport
+				transport: snapVal.transport,
+				items: snapVal.items
 			});
 		});
 	}
