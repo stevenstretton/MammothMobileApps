@@ -28,14 +28,10 @@ export class Account {
 				public firebasePush: FirebasePUSH) {
 		this._currentUserTrips = [];
 
-		let currentUser = this.authenticationHandler.getCurrentFirebaseUser(),
-			allTrips = this.firebaseGet.getAllTrips(),
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+
+		let	allTrips = this.firebaseGet.getAllTrips(),
 			tripMembers = [];
-
-
-		this.firebaseGet.getUserWithID(currentUser.uid, (user) => {
-			this._currentUser = user;
-		});
 
 		allTrips.forEach((trip) => {
 			tripMembers.push(trip.leadOrganiser);
@@ -43,7 +39,7 @@ export class Account {
 				tripMembers.push(friend);
 			});
 
-			if (tripMembers.indexOf(currentUser.uid) > -1) {
+			if (tripMembers.indexOf(this._currentUser.key) > -1) {
 				this._currentUserTrips.push(trip);
 			}
 			tripMembers = [];

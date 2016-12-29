@@ -11,6 +11,7 @@ import { Notifications } from '../pages/notifications/notifications';
 
 import { NewTrip } from '../pages/newTrip/newTrip';
 import { FriendsModal } from '../pages/newTrip/friendsModal/friendsModal';
+import { AddFriendModal } from '../pages/friends/addFriendModal/addFriendModal';
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
 
 import { Friends } from '../pages/friends/friends';
@@ -56,6 +57,7 @@ const firebaseAuthConfig = {
 		Friends,
 		Account,
 		LocationModal,
+		AddFriendModal,
 		Map,
 		TabsPage
 	],
@@ -78,6 +80,7 @@ const firebaseAuthConfig = {
 		NewTrip,
 		FriendsModal,
 		LocationModal,
+		AddFriendModal,
 		Friends,
 		Account,
 		Map,

@@ -2,7 +2,7 @@
 	<ion-navbar>
 		<ion-title>Friends</ion-title>
 		<ion-buttons end>
-			<button ion-button icon-only>
+			<button ion-button icon-only (click)="presentAddFriendModal()">
 				<ion-icon name="person-add"></ion-icon>
 			</button>
 		</ion-buttons>
@@ -24,7 +24,7 @@
 			</ion-item>
 			<ion-item-options side="right">
 				<button ion-button color="danger">
-					<ion-icon name="close"></ion-icon>
+					<ion-icon name="close" (click)="unfriend(friend)"></ion-icon>
 					Unfriend
 				</button>
 			</ion-item-options>

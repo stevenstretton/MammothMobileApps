@@ -12,6 +12,7 @@ import { AuthenticationHandler } from "../../services/authenticationHandler.serv
 	templateUrl: 'myTrips.html'
 })
 export class MyTrips {
+	private _currentUser: any;
 	private _trips: Array<any>;
 
 	constructor(public navCtrl: NavController,
@@ -19,12 +20,13 @@ export class MyTrips {
 				public authenticationHandler: AuthenticationHandler) {
 		this._trips = [];
 
-		let currentUser = this.authenticationHandler.getCurrentFirebaseUser(),
-			allTrips = this.firebaseGet.getAllTrips();
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+
+		let	allTrips = this.firebaseGet.getAllTrips();
 
 		allTrips.forEach((trip) => {
 			// determine they are a part of the trip
-			if ((trip.leadOrganiser === currentUser.uid) || (trip.friends.indexOf(currentUser.uid) > -1)) {
+			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
 				this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
 					this._trips.push({
 						lead: leadOrganiser,

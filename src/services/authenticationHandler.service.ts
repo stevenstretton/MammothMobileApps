@@ -72,11 +72,17 @@ export class AuthenticationHandler {
 		});
 	}
 
-	getCurrentFirebaseUser(): FirebaseAuthState {
-		this.auth$.subscribe((user) => {
-			this._currentUser = user;
-		});
+	getCurrentUser(): any {
 		return this._currentUser;
+	}
+
+	setCurrentUser(): void {
+		this.auth$.subscribe((user) => {
+
+			this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
+				this._currentUser = currentUser;
+			});
+		});
 	}
 
 	// This may need to change
