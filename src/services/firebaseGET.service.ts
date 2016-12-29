@@ -88,7 +88,8 @@ export class FirebaseGET {
 				username: snapVal.username,
 				shareLocation: snapVal.shareLocation,
 				photoUrl: snapVal.photoUrl,
-				usersToSeeLocation: snapVal.usersToSeeLocation
+				usersToSeeLocation: snapVal.usersToSeeLocation,
+				friends: snapVal.friends
 			});
 		});
 	}

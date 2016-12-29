@@ -17,9 +17,9 @@
 		<ion-item-sliding>
 			<ion-item>
 				<ion-avatar item-left>
-					<img src="{{ (friend | async)?.photoUrl }}">
+					<img src="{{ friend.photoUrl }}">
 				</ion-avatar>
-				<h2>{{ (friend | async)?.firstName }} {{ (friend | async)?.lastName }}</h2>
+				<h2>{{ friend.firstName }} {{ friend.lastName }}</h2>
 				<p>Some description</p>
 			</ion-item>
 			<ion-item-options side="right">

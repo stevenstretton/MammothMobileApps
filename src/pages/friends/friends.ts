@@ -9,6 +9,7 @@ import { AuthenticationHandler } from "../../services/authenticationHandler.serv
 })
 export class Friends {
 	private _friends: Array<any>;
+	private _currentUser: any;
 
 	constructor(public navCtrl: NavController,
 				public firebaseGet: FirebaseGET,
@@ -17,8 +18,14 @@ export class Friends {
 
 		let currentUser = this.authenticationHandler.getCurrentFirebaseUser();
 
-		//friendIDs.forEach((friendID) => {
-		//	this._friends.push(this.firebaseGet.getUserWithID(friendID));
-		//});
+		this.firebaseGet.getUserWithID(currentUser.uid, (user) => {
+			this._currentUser = user;
+
+			this._currentUser.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (friend) => {
+					this._friends.push(friend);
+				});
+			});
+		});
 	}
 }
