@@ -64,9 +64,9 @@ const firebaseAuthConfig = {
 	imports: [
 		BrowserModule,
 		IonicModule.forRoot(MyApp),
-		// AgmCoreModule.forRoot({
-		// 	apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"
-		// }),
+		AgmCoreModule.forRoot({
+			apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"
+		}),
 		AngularFireModule.initializeApp(firebaseConfig, firebaseAuthConfig)
 	],
 	bootstrap: [IonicApp],

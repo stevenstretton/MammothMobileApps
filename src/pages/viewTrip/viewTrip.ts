@@ -27,6 +27,8 @@ export class ViewTrip {
 	}
 
 	goToMap() {
-		this.navCtrl.push(Map)
+		this.navCtrl.push(Map, {
+			tripMembers: this._tripMembers
+		});
 	}
 }
