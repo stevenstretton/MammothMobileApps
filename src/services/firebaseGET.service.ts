@@ -11,7 +11,7 @@ export class FirebaseGET {
 		this._allTrips = [];
 	}
 
-	setAllTrips(callback): void {
+	setAllTrips(): void {
 		let tripListObservable = this.af.database.list('/trips', {
 			preserveSnapshot: true
 		});
@@ -30,10 +30,10 @@ export class FirebaseGET {
 					endTime: snapVal.endTime,
 					coverPhotoUrl: snapVal.coverPhotoUrl,
 					friends: snapVal.friends,
-					transport: snapVal.transport
+					transport: snapVal.transport,
+					items: snapVal.items
 				});
 			});
-			callback();
 		});
 	}
 
@@ -41,7 +41,7 @@ export class FirebaseGET {
 		return this._allTrips;
 	}
 
-	setAllUsers(callback): void {
+	setAllUsers(): void {
 		let userListObservable = this.af.database.list('/users', {
 			preserveSnapshot: true
 		});
@@ -56,13 +56,14 @@ export class FirebaseGET {
 					email: snapVal.email,
 					firstName: snapVal.firstName,
 					lastName: snapVal.lastName,
-					username: snapVal.username,
+					username: snapVal._username,
 					shareLocation: snapVal.shareLocation,
 					photoUrl: snapVal.photoUrl,
-					usersToSeeLocation: snapVal.usersToSeeLocation
+					usersToSeeLocation: snapVal.usersToSeeLocation,
+					friends: snapVal.friends,
+					location: snapVal.location
 				});
 			});
-			callback();
 		});
 	}
 
@@ -84,10 +85,12 @@ export class FirebaseGET {
 				email: snapVal.email,
 				firstName: snapVal.firstName,
 				lastName: snapVal.lastName,
-				username: snapVal.username,
+				username: snapVal._username,
 				shareLocation: snapVal.shareLocation,
 				photoUrl: snapVal.photoUrl,
-				usersToSeeLocation: snapVal.usersToSeeLocation
+				usersToSeeLocation: snapVal.usersToSeeLocation,
+				friends: snapVal.friends,
+				location: snapVal.location
 			});
 		});
 	}
@@ -110,7 +113,8 @@ export class FirebaseGET {
 				endTime: snapVal.endTime,
 				coverPhotoUrl: snapVal.coverPhotoUrl,
 				friends: snapVal.friends,
-				transport: snapVal.transport
+				transport: snapVal.transport,
+				items: snapVal.items
 			});
 		});
 	}

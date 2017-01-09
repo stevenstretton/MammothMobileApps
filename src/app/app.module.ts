@@ -11,6 +11,7 @@ import { Notifications } from '../pages/notifications/notifications';
 
 import { NewTrip } from '../pages/newTrip/newTrip';
 import { FriendsModal } from '../pages/newTrip/friendsModal/friendsModal';
+import { AddFriendModal } from '../pages/friends/addFriendModal/addFriendModal';
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
 
 import { Friends } from '../pages/friends/friends';
@@ -26,6 +27,8 @@ import { FirebaseGET } from '../services/firebaseGET.service';
 import { FirebasePUSH } from '../services/firebasePUSH.service';
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
 import { LocationHandler } from '../services/locationHandler.service';
+
+import { AgmCoreModule } from "angular2-google-maps/core";
 
 // Must export the config
 export const firebaseConfig = {
@@ -54,12 +57,16 @@ const firebaseAuthConfig = {
 		Friends,
 		Account,
 		LocationModal,
+		AddFriendModal,
 		Map,
 		TabsPage
 	],
 	imports: [
 		BrowserModule,
 		IonicModule.forRoot(MyApp),
+		AgmCoreModule.forRoot({
+			apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"
+		}),
 		AngularFireModule.initializeApp(firebaseConfig, firebaseAuthConfig)
 	],
 	bootstrap: [IonicApp],
@@ -73,6 +80,7 @@ const firebaseAuthConfig = {
 		NewTrip,
 		FriendsModal,
 		LocationModal,
+		AddFriendModal,
 		Friends,
 		Account,
 		Map,
