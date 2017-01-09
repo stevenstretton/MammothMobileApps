@@ -14,13 +14,25 @@
 
 <ion-content>
 
-<ion-list>
-
   <ion-list-header>
     Select from your friends list...
   </ion-list-header>
 
-  <ion-item>
+<!--<ion-list>-->
+
+<ion-list *ngFor="let friend of _friends">
+			<ion-item>
+				<ion-avatar item-left>
+					<img src="{{ friend.photoUrl }}">
+				</ion-avatar>
+        <ion-label>{{ friend.firstName }} {{ friend.lastName }}</ion-label>
+        <ion-checkbox color="positive" [(ngModel)]="friend.checked"
+						  (click)="toggleClicked(friend, !friend.checked)"
+						  item-right></ion-checkbox>     
+			</ion-item>
+	</ion-list>
+
+  <!--<ion-item>
     <ion-avatar item-left>
       <img src="assets/img/ashworth.jpg">
     </ion-avatar>
@@ -56,6 +68,6 @@
     <button ion-button color="primary" block>Add to trip</button>
   </div>
 
-</ion-list>
+</ion-list>-->
 
 </ion-content>
