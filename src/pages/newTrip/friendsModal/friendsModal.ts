@@ -53,7 +53,7 @@ export class FriendsModal {
 		let inArray = false
 		
 		this._selectedFriends.forEach(oldFriend => {
-			if (oldFriend.key == friend.key)
+			if (oldFriend == friend.key)
 			{
 				inArray = true;
 				
