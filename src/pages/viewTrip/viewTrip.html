@@ -3,6 +3,11 @@
 		<ion-title>
 			{{ _trip.trip.name }}
 		</ion-title>
+		<ion-buttons end>
+		<button ion-button icon-only (click)="deleteTrip()">
+			<ion-icon name="trash"></ion-icon>
+		</button>
+		</ion-buttons> 
 	</ion-navbar>
 </ion-header>
 
@@ -37,7 +42,7 @@
 		<ion-item>
 			<ion-icon name="calendar" item-left small></ion-icon>
 			<p>Start Date</p>
-			<h2>{{ _trip.trip.startTime }}</h2>
+			<h2>{{ _trip.trip.startTime | date:'dd/MM/y' }}</h2>
 		</ion-item>
 
 		<ion-item>
@@ -49,7 +54,7 @@
 		<ion-item>
 			<ion-icon name="calendar" item-left small></ion-icon>
 			<p>End Date</p>
-			<h2>{{ _trip.trip.endTime }}</h2>
+			<h2>{{ _trip.trip.endTime | date:'dd/MM/y' }}</h2>
 		</ion-item>
 
 		<ion-item>
@@ -60,8 +65,11 @@
 			<p>Trip Lead</p>
 		</ion-item>
 
-		<ion-list padding-bottom *ngFor="let member of _tripMembers">
-			<ion-item>
+		<ion-list padding-bottom padding-top>
+			<ion-item-divider color="light">
+				Friends on Trip:
+			</ion-item-divider>
+			<ion-item *ngFor="let member of _tripMembers">
 				<ion-avatar item-left>
 					<img src="{{ member.photoUrl }}">
 				</ion-avatar>
@@ -69,8 +77,11 @@
 			</ion-item>
 		</ion-list>
 
-		<ion-list padding-bottom *ngFor="let item of _trip.trip.items">
-			<ion-item>
+		<ion-list padding-bottom >
+			<ion-item-divider color="light">
+				Trip list:
+			</ion-item-divider>
+			<ion-item *ngFor="let item of _trip.trip.items">
 				<ion-label>{{ item.name }}</ion-label>
 				<ion-note item-right>
 					{{ item.description }}

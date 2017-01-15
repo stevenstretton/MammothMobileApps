@@ -3,6 +3,11 @@
     <ion-title>
       New Trip  
     </ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="clearTrip()">
+        <span>Clear</span>
+      </button>
+    </ion-buttons>
     <ion-buttons end>
       <button ion-button icon-right icon-only color="royal">
         <ion-icon name="options"></ion-icon>
@@ -20,17 +25,17 @@
 
     <ion-item>
       <ion-label>Trip Name</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input type="text" [(ngModel)]="tripName"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Location</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input type="text" [(ngModel)]="tripLoc"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Description</ion-label>
-      <ion-textarea></ion-textarea>
+      <ion-textarea [(ngModel)]="tripDescription"></ion-textarea>
     </ion-item>
 
     <ion-item>
@@ -42,17 +47,17 @@
 
     <ion-item>
       <ion-label>Start Date</ion-label>
-      <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="event.month"></ion-datetime>
+      <ion-datetime displayFormat="DD MMM YYYY" min="2017" max="2020" [(ngModel)]="event.dateStart"></ion-datetime>
     </ion-item>
 
     <ion-item>
       <ion-label>Start Time</ion-label>
-      <ion-datetime displayFormat="h:mm A" pickerFormat="h mm A" [(ngModel)]="event.timeStarts"></ion-datetime>
+      <ion-datetime displayFormat="h:mm A"  pickerFormat="h mm A" [(ngModel)]="event.timeStart"></ion-datetime>
     </ion-item>
     
     <ion-item>
       <ion-label>Ends</ion-label>
-      <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="event.timeEnds"></ion-datetime>
+      <ion-datetime displayFormat="DD MMM YYYY" [(ngModel)]="event.dateEnd"></ion-datetime>
     </ion-item>
   </ion-list>
 
@@ -63,6 +68,7 @@
 
     <ion-item>
       <ion-label>Friends</ion-label>
+      <ion-badge item-right [hidden]="!_friendsAdded.length">{{_friendsAdded.length}}</ion-badge>
       <button ion-button clear item-right (click)="presentModal()">View</button>
     </ion-item>
   </ion-list>
@@ -74,51 +80,49 @@
 
     <ion-item>
       <ion-label>Item</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input type="text" [(ngModel)]="title">></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Short Description</ion-label>
-      <ion-input type="text"></ion-input>
+      <ion-input type="text" [(ngModel)]="descr"></ion-input>
     </ion-item>
 
     <div padding>
-      <button ion-button outline color="primary" block>Add Item</button>
+      <button ion-button outline color="primary" block (click)="addItem()">Add Item</button>
     </div>
   </ion-list>
 
+  <!--<ion-card>
+    <ion-card-header>
+      Trip list:
+    </ion-card-header>
+    -->
   <ion-list>
     <ion-item-divider color="light">
       Trip list:
     </ion-item-divider>
 
-    <ion-item-sliding>
+    <ion-item-sliding *ngFor="let item of _itemList">
       <ion-item>
-        Passport  
+        {{item.name}}
         <ion-note item-right>
-          DO NOT FORGET
+          {{item.description}}
         </ion-note>
       </ion-item>
       <ion-item-options side="right">
-        <button ion-button icon-only color="danger">
-          <ion-icon name="trash"></ion-icon>            
+        <button ion-button icon-only color="danger" (click)="deleteItem(item)">
+          <ion-icon name="trash" ></ion-icon>            
         </button>      
       </ion-item-options>
-    </ion-item-sliding>
-    <ion-item-sliding>
-      <ion-item>
-        Travel money  
-        <ion-note item-right>
-          Approx €200 
-        </ion-note>
-      </ion-item>
-      <ion-item-options side="right">
-        <button ion-button icon-only color="danger">
-          <ion-icon name="trash"></ion-icon>            
-        </button>      
-      </ion-item-options>
-    </ion-item-sliding>
-  </ion-list>
+    </ion-item-sliding> 
+
+    <ion-item item-note [hidden]="_itemList.length" >
+      None
+    </ion-item>
+    
+    </ion-list>
+  <!--</ion-card>-->
 
   <div padding>
     <button ion-button color="primary" block (click)="pushTrip()">Create Trip</button>

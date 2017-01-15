@@ -9,6 +9,12 @@
         <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
       </button>
     </ion-buttons>
+    <ion-buttons end>
+      <button ion-button (click)="submit()">
+        <span showWhen="ios">Done</span>
+        <ion-icon name="md-checkmark" showWhen="android,windows"></ion-icon>
+      </button>
+    </ion-buttons>  
   </ion-toolbar>
 </ion-header>
 
@@ -18,56 +24,17 @@
     Select from your friends list...
   </ion-list-header>
 
-<!--<ion-list>-->
 
-<ion-list *ngFor="let friend of _friends">
-			<ion-item>
+<ion-list >
+			<ion-item *ngFor="let friend of _friends">
 				<ion-avatar item-left>
-					<img src="{{ friend.photoUrl }}">
+					<img src="{{ friend.friend.photoUrl }}">
 				</ion-avatar>
-        <ion-label>{{ friend.firstName }} {{ friend.lastName }}</ion-label>
-        <ion-checkbox color="positive" [(ngModel)]="friend.checked"
-						  (click)="toggleClicked(friend, !friend.checked)"
+        <ion-label>{{ friend.friend.firstName }} {{ friend.friend.lastName }}</ion-label>
+        <ion-checkbox checked="{{friend.checked}}" color="positive" [(ngModel)]="friend.checked"
+						  (click)="toggleClicked(friend, friend.checked)"
 						  item-right></ion-checkbox>     
 			</ion-item>
 	</ion-list>
-
-  <!--<ion-item>
-    <ion-avatar item-left>
-      <img src="assets/img/ashworth.jpg">
-    </ion-avatar>
-    <ion-label>Will Ashworth</ion-label>
-    <ion-checkbox color="positive" checked="false" item-right></ion-checkbox>      
-  </ion-item>
-
-  <ion-item>
-    <ion-avatar item-left>
-      <img src="assets/img/allen.jpg">
-    </ion-avatar>
-    <ion-label>Tim Allen</ion-label>
-    <ion-checkbox color="positive" checked="false" item-right></ion-checkbox>      
-  </ion-item>
-
-  <ion-item>
-    <ion-avatar item-left>
-      <img src="assets/img/marriott.jpg">
-    </ion-avatar>
-    <ion-label>George Marriott</ion-label>
-    <ion-checkbox color="positive" checked="false" item-right></ion-checkbox>      
-  </ion-item>
-  
-  <ion-item>
-    <ion-avatar item-left>
-      <img src="assets/img/stretton.jpg">
-    </ion-avatar>
-    <ion-label>Steven Stretton</ion-label>
-    <ion-checkbox color="positive" checked="false" item-right></ion-checkbox>      
-  </ion-item>
-
-  <div padding>
-    <button ion-button color="primary" block>Add to trip</button>
-  </div>
-
-</ion-list>-->
 
 </ion-content>

@@ -13,14 +13,14 @@
 	<ion-list-header>
 		Your Friends...
 	</ion-list-header>
-	<ion-list *ngFor="let friend of _friends">
-		<ion-item-sliding>
+	<ion-list>
+		<ion-item-sliding *ngFor="let friend of _friends">
 			<ion-item>
 				<ion-avatar item-left>
 					<img src="{{ friend.photoUrl }}">
 				</ion-avatar>
 				<h2>{{ friend.firstName }} {{ friend.lastName }}</h2>
-				<p>Some description</p>
+				<p>{{ friend.username }}</p>
 			</ion-item>
 			<ion-item-options side="right">
 				<button ion-button color="danger">

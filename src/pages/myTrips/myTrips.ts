@@ -43,4 +43,31 @@ export class MyTrips {
 		});
 	}
 
+	fetchTrips() {
+		let	allTrips = this.firebaseGet.getAllTrips();
+		this._trips = [];
+
+		allTrips.forEach((trip) => {
+			// determine they are a part of the trip
+			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
+				this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
+					this._trips.push({
+						lead: leadOrganiser,
+						trip: trip
+					});
+				});
+			}
+		});
+	}
+
+	doRefresh(refresher) {
+    console.log('Begin async operation', refresher);
+	//this.fetchTrips();
+
+    setTimeout(() => {
+      console.log('Async operation has ended');
+      refresher.complete();
+    }, 2000);
+  }
+
 }

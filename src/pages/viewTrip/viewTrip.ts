@@ -31,4 +31,8 @@ export class ViewTrip {
 			tripMembers: this._tripMembers
 		});
 	}
+
+	deleteTrip() {
+		// code to delete trip here
+	}
 }

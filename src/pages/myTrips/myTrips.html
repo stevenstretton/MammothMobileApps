@@ -5,6 +5,15 @@
 </ion-header>
 
 <ion-content class="cards-bg">
+	<ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Loading Trips...">
+    </ion-refresher-content>
+  </ion-refresher>
+
 	<ion-list *ngFor="let trip of _trips">
 		<ion-card>
 			<ion-item>
