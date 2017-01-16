@@ -14,8 +14,8 @@
 
 <ion-content>
 	<ion-searchbar (ionInput)="updateSearchResults($event)"></ion-searchbar>
-	<ion-list *ngFor="let person of _people">
-		<ion-item>
+	<ion-list>
+		<ion-item *ngFor="let person of _people">
 			<ion-avatar item-left>
 				<img src="{{ person.photoUrl }}">
 			</ion-avatar>

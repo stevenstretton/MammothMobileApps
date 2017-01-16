@@ -20,7 +20,7 @@
   <ion-card>
     <ion-list>
 
-      <ion-item>
+      <ion-item padding-bottom>
         <ion-avatar item-left (click)="presentActionSheet()">
           <img src="{{ _currentUser.photoUrl }}">
           <ion-icon name="camera" class="edit-image"></ion-icon>
@@ -29,7 +29,7 @@
         <!--<p>Some description</p>-->
       </ion-item>
 
-      <ion-item>
+      <ion-item >
         Username
         <ion-note item-right>
 			{{ _currentUser.username }}
