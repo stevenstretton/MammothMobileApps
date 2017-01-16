@@ -58,7 +58,7 @@ export class FriendsModal {
 
 	// There is a better way to do this:
 	//
-	// return (this._selectedFriends.indexOf(friend) > -1);
+	// return (this._selectedFriends.indexOf(friend.key) > -1);
 	ifInArray(friend): boolean {
 		let inArray = false
 
