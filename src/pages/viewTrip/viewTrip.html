@@ -25,7 +25,11 @@
 			</ion-fab>
 		</div>
 
+		<!--<ion-card-header >
+			Trip Description
+		</ion-card-header>-->
 		<ion-card-content>
+			
 			<p>
 				{{ _trip.trip.description }}
 			</p>
@@ -46,7 +50,7 @@
 		<ion-item>
 			<ion-icon name="clock" item-left small></ion-icon>
 			<p>Start Time</p>
-			<!--<h2>{{ _trip.trip.start.time | date:'HH:m' }}</h2>-->
+			<!--<h2>{{ _trip.trip.start.time | date:'shortTime' }}</h2>-->
 			<h2>{{ _trip.trip.start.time }}</h2>
 		</ion-item>
 
