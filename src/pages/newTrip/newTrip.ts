@@ -12,15 +12,15 @@ import { FriendsModal } from './friendsModal/friendsModal';
 export class NewTrip {
 
 	// These can all be private
-	public _friendsAdded: Array<any>;
+	private _friendsAdded: Array<any>;
 	private _currentUser: any;
 	private _tripInfo: any;
 	private _itemList: Array<any>;
-	title;
-	descr;
-	tripName;
-	tripLoc;
-	tripDescription;
+	private _title;
+	private _descr;
+	private _tripName;
+	private _tripLoc;
+	private _tripDescription;
 
 	constructor(public navCtrl: NavController,
 	            public actionSheetCtrl: ActionSheetController,
@@ -36,11 +36,11 @@ export class NewTrip {
 		this._itemList = [];
 
 		// This doesn't need to be here
-		this._tripInfo;
+		//this._tripInfo;
 
 	}
 
-	public event = {
+	private _event = {
 		dateStart: '2017-01-01',
 		//today: Date.now(),
 		//month: Date.now(),
@@ -83,23 +83,22 @@ export class NewTrip {
 	pushTrip() {
 
 		this._tripInfo = {
-			name: this.tripName,
-			location: this.tripLoc,
-			description: this.tripDescription,
+			name: this._tripName,
+			location: this._tripLoc,
+			description: this._tripDescription,
 			transport: "car",
 			friends: this._friendsAdded,
 			items: this._itemList,
-			//startDate: this.event.dateStart,
-      startTime: this.event.dateStart,
-      //endDate: this.event.dateEnd,
-      //startTime: this.event.timeStart,
-			endTime: this.event.dateEnd,
+      start: {date: this._event.dateStart, time: this._event.timeStart},
+      end: {date: this._event.dateEnd},
+      // startTime: this.event.dateStart,
+			// endTime: this.event.dateEnd,
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: "",
 		};
 
 		console.log(this._tripInfo);
-		if (this.tripName != "" && this.tripLoc != "" && this._friendsAdded.length != 0) {
+		if (this._tripName != "" && this._tripLoc != "" && this._friendsAdded.length != 0) {
 
 			console.log('success');
 
@@ -111,12 +110,12 @@ export class NewTrip {
 
 	clearTrip() {
 		this._tripInfo = [];
-		this.tripName = "";
-		this.tripLoc = "";
-		this.tripDescription = "";
+		this._tripName = "";
+		this._tripLoc = "";
+		this._tripDescription = "";
 		this._friendsAdded = [];
 		this._itemList = [];
-		this.event = {
+		this._event = {
 			dateStart: '2017-01-01',
 			timeStart: '01:00',
 			dateEnd: '2017-01-02'
@@ -125,14 +124,14 @@ export class NewTrip {
 	}
 
 	addItem() {
-		if (this.title != "") {
+		if (this._title != "") {
 			let newItem = {
-				name: this.title,
-				description: this.descr
+				name: this._title,
+				description: this._descr
 			};
 			this._itemList.push(newItem);
-			this.title = "";
-			this.descr = "";
+			this._title = "";
+			this._descr = "";
 		}
 
 	}

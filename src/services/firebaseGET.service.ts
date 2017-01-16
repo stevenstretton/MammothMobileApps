@@ -25,9 +25,15 @@ export class FirebaseGET {
 					key: snapKey,
 					name: snapVal.name,
 					leadOrganiser: snapVal.leadOrganiser,
+					description: snapVal.description,
 					location: snapVal.location,
-					startTime: snapVal.startTime,
-					endTime: snapVal.endTime,
+					start: {
+						time: snapVal.start.time,
+						date: snapVal.start.date
+					},
+					end: {
+						date: snapVal.end.date
+					},
 					coverPhotoUrl: snapVal.coverPhotoUrl,
 					friends: snapVal.friends,
 					transport: snapVal.transport,
@@ -109,8 +115,14 @@ export class FirebaseGET {
 				name: snapVal.name,
 				leadOrganiser: snapVal.leadOrganiser,
 				location: snapVal.location,
-				startTime: snapVal.startTime,
-				endTime: snapVal.endTime,
+				description: snapVal.description,
+				start: {
+					time: snapVal.start.time,
+					date: snapVal.start.date
+				},
+				end: {
+					date: snapVal.end.date
+				},
 				coverPhotoUrl: snapVal.coverPhotoUrl,
 				friends: snapVal.friends,
 				transport: snapVal.transport,

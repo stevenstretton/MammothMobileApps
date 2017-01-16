@@ -25,17 +25,17 @@
 
     <ion-item>
       <ion-label>Trip Name</ion-label>
-      <ion-input type="text" [(ngModel)]="tripName"></ion-input>
+      <ion-input type="text" [(ngModel)]="_tripName"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Location</ion-label>
-      <ion-input type="text" [(ngModel)]="tripLoc"></ion-input>
+      <ion-input type="text" [(ngModel)]="_tripLoc"></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Description</ion-label>
-      <ion-textarea [(ngModel)]="tripDescription"></ion-textarea>
+      <ion-textarea [(ngModel)]="_tripDescription"></ion-textarea>
     </ion-item>
 
     <ion-item>
@@ -47,17 +47,17 @@
 
     <ion-item>
       <ion-label>Start Date</ion-label>
-      <ion-datetime displayFormat="DD MMM YYYY" min="2017" max="2020" [(ngModel)]="event.dateStart"></ion-datetime>
+      <ion-datetime displayFormat="DD MMM YYYY" min="2017" max="2020" [(ngModel)]="_event.dateStart"></ion-datetime>
     </ion-item>
 
     <ion-item>
       <ion-label>Start Time</ion-label>
-      <ion-datetime displayFormat="h:mm A"  pickerFormat="h mm A" [(ngModel)]="event.timeStart"></ion-datetime>
+      <ion-datetime displayFormat="h:mm A"  pickerFormat="h mm A" [(ngModel)]="_event.timeStart"></ion-datetime>
     </ion-item>
     
     <ion-item>
       <ion-label>Ends</ion-label>
-      <ion-datetime displayFormat="DD MMM YYYY" min="2017" max="2020" [(ngModel)]="event.dateEnd"></ion-datetime>
+      <ion-datetime displayFormat="DD MMM YYYY" min="2017" max="2020" [(ngModel)]="_event.dateEnd"></ion-datetime>
     </ion-item>
   </ion-list>
 
@@ -80,12 +80,12 @@
 
     <ion-item>
       <ion-label>Item</ion-label>
-      <ion-input type="text" [(ngModel)]="title">></ion-input>
+      <ion-input type="text" [(ngModel)]="_title">></ion-input>
     </ion-item>
 
     <ion-item>
       <ion-label>Short Description</ion-label>
-      <ion-input type="text" [(ngModel)]="descr"></ion-input>
+      <ion-input type="text" [(ngModel)]="_descr"></ion-input>
     </ion-item>
 
     <div padding>

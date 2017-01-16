@@ -27,9 +27,7 @@
 
 		<ion-card-content>
 			<p>
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-				Nunc a rhoncus nisi. Nullam consequat eros sem,
-				non venenatis lorem fermentum at.
+				{{ _trip.trip.description }}
 			</p>
 		</ion-card-content>
 
@@ -42,19 +40,20 @@
 		<ion-item>
 			<ion-icon name="calendar" item-left small></ion-icon>
 			<p>Start Date</p>
-			<h2>{{ _trip.trip.startTime | date:'dd/MM/y' }}</h2>
+			<h2>{{ _trip.trip.start.date | date:'dd/MM/y' }}</h2>
 		</ion-item>
 
 		<ion-item>
 			<ion-icon name="clock" item-left small></ion-icon>
 			<p>Start Time</p>
-			<h2>12:00</h2>
+			<!--<h2>{{ _trip.trip.start.time | date:'HH:m' }}</h2>-->
+			<h2>{{ _trip.trip.start.time }}</h2>
 		</ion-item>
 
 		<ion-item>
 			<ion-icon name="calendar" item-left small></ion-icon>
 			<p>End Date</p>
-			<h2>{{ _trip.trip.endTime | date:'dd/MM/y' }}</h2>
+			<h2>{{ _trip.trip.end.date | date:'dd/MM/y' }}</h2>
 		</ion-item>
 
 		<ion-item>
