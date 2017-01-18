@@ -6,9 +6,11 @@ import { Login } from '../login/login';
 import { LocationModal } from "./locationModal/locationModal";
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { FirebaseGET } from "../../services/firebaseGET.service";
-import { FirebasePUSH } from "../../services/firebasePUSH.service";
+import { FirebaseGET } from "../../services/firebase.service/get";
+import { FirebasePOST } from "../../services/firebase.service/post";
+import { FirebasePUT } from "../../services/firebase.service/put";
 import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
+import { transformSrcPathToTmpPath } from "@ionic/app-scripts/dist";
 
 @Component({
 	selector: 'page-account',
@@ -17,6 +19,8 @@ import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 export class Account {
 	private _currentUser: any;
 	private _currentUserTrips: Array<any>;
+	private _usersToSeeLocation: Array<any>;
+	private _allUsers: Array<any>;
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -25,8 +29,11 @@ export class Account {
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
-				public firebasePush: FirebasePUSH) {
+				public firebasePush: FirebasePOST,
+				public firebasePut: FirebasePUT) {
+		this._usersToSeeLocation = [];
 		this._currentUserTrips = [];
+		this._allUsers = [];
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
@@ -52,41 +59,80 @@ export class Account {
 		this.app.getRootNav().setRoot(Login);
 	}
 
-	presentModal(tripID, tripName, friendIDs, leadOrganiserID): void {
-		friendIDs.push(leadOrganiserID);
+	presentModal(trip): void {
+		let tripID = trip.key,
+			tripName = trip.name,
+			currentUsersToSeeLocationOfChosenTrip = [],
+			tripMembers = [];
 
-		let tripMembersID = [],
-			tripMembers = [],
-			allUsers = this.firebaseGet.getAllUsers();
+		let filterAllUsersIntoArray = () => {
+			let allUsers = [];
 
-		friendIDs.forEach((memberID) => {
-			if (memberID !== this._currentUser.key) {
-				tripMembersID.push(memberID);
-			}
-		});
+			allUsers.push(trip.leadOrganiser);
+			trip.friends.forEach((friend) => {
+				allUsers.push(friend);
+			});
+			return allUsers;
+		};
 
-		allUsers.forEach((user) => {
-			tripMembersID.forEach((memberID) => {
-				if (user.$key === memberID) {
-					this.firebaseGet.getUserWithID(user.$key, (firebaseUser) => {
-						tripMembers.push(firebaseUser);
-					});
+		let filterOutCurrentUser = (users) => {
+			let allUsers = [];
+
+			users.forEach((user) => {
+				if (user !== this._currentUser.key) {
+					allUsers.push(user);
 				}
 			});
+			return allUsers;
+		};
+
+		let tripMemberIDs = filterOutCurrentUser(filterAllUsersIntoArray());
+
+		if (typeof this._currentUser.usersToSeeLocation !== "undefined") {
+			this._currentUser.usersToSeeLocation.forEach((userTripPair) => {
+				if (userTripPair.trip === tripID) {
+					currentUsersToSeeLocationOfChosenTrip = userTripPair.users;
+				}
+			});
+		}
+
+		// This is doubling every time for some reason...(this is a very temperamental error)
+		this._allUsers = this.firebaseGet.getAllUsers();
+
+		console.log("this._allUsers:");
+		console.log(this._allUsers);
+
+		this._allUsers.forEach((user) => {
+			if (tripMemberIDs.indexOf(user.key) > -1) {
+				this.firebaseGet.getUserWithID(user.key, (firebaseUser) => {
+					// To combat the fact that this._allUsers is doubling for some reason
+					tripMembers.push({
+						canAlreadySee: (currentUsersToSeeLocationOfChosenTrip.indexOf(user.key) > -1),
+						user: firebaseUser
+					});
+				});
+			}
 		});
 
 		let modal = this.modalCtrl.create(LocationModal, {
 			name: tripName,
 			members: tripMembers
 		});
+		console.log("====================");
 		modal.onDidDismiss((usersToSeeLocation) => {
-			this.firebasePush.addMemberToSeeLocation(this._currentUser.key, tripID, usersToSeeLocation);
+			if (usersToSeeLocation.length > 0) {
+				this.firebasePut.putUserToSeeLocation(this._currentUser.key, tripID, usersToSeeLocation);
+
+				// Refreshing the user
+				this._currentUser = this.authenticationHandler.getCurrentUser();
+			}
+			this._allUsers = [];
 		});
 		modal.present();
 	}
 
 	changeSharingLocation(): void {
-		this.firebasePush.updateShareLocation(this._currentUser.key, this._currentUser.shareLocation);
+		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
 	}
 
 	presentActionSheet(): void {

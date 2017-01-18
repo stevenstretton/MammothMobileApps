@@ -74,6 +74,7 @@ export class FirebaseGET {
 	}
 
 	getAllUsers(): Array<any> {
+		console.log(this._allUsers);
 		return this._allUsers;
 	}
 

@@ -1,21 +1,13 @@
 import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseListObservable } from 'angularfire2';
-import { FirebaseGET } from "./firebaseGET.service"
+import { FirebaseGET } from "./get"
 
 @Injectable()
-export class FirebasePUSH {
+export class FirebasePUT {
 	constructor(private af: AngularFire,
-				public firebaseGet: FirebaseGET) {}
+	            public firebaseGet: FirebaseGET) {}
 
-	pushNewTrip(trip): void {
-		const promise = this.af.database.list('/trips').push(trip);
-
-		promise
-			.then(_ => console.log("success!"))
-			.catch(err => console.log(err));
-	}
-
-	addFriends(userID, friends): void {
+	putUserFriends(userID, friends): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		let currentFriendIDs = [];
@@ -37,35 +29,41 @@ export class FirebasePUSH {
 		});
 	}
 
-	addMemberToSeeLocation(userID, tripID, usersToSeeLocation): void {
+	putUserToSeeLocation(userID, tripID, usersIDsToSeeLoc): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		let usersToSeeLoc = [];
 
-		// Maybe put this in a separate function with a callback
-		this.firebaseGet.getUserWithID(userID, (user) => {
-			// Need to work on deleting unwanted users as well...
-			if (typeof user.usersToSeeLocation !== "undefined") {
-				usersToSeeLoc.push(user.usersToSeeLocation);
-			}
-			//user.usersToSeeLocation.forEach((item) => {
-			//	if (item.trip === tripID) {
-			//
-			//	}
-			//});
+		let pushCurrentToArray = () => {
 			usersToSeeLoc.push({
 				trip: tripID,
-				users: usersToSeeLocation
+				users: usersIDsToSeeLoc
 			});
+		};
+
+		this.firebaseGet.getUserWithID(userID, (user) => {
+			if (typeof user.usersToSeeLocation !== "undefined") {
+				user.usersToSeeLocation.forEach((tripUserPair) => {
+					if (tripID !== tripUserPair.trip) {
+						usersToSeeLoc.push({
+							trip: tripUserPair.trip,
+							users: tripUserPair.users
+						});
+					} else {
+						pushCurrentToArray();
+					}
+				});
+			} else {
+				pushCurrentToArray();
+			}
 		});
 
-		// ...on callback do this
 		userObjectObservable.update({
 			usersToSeeLocation: usersToSeeLoc
 		});
 	}
 
-	updateShareLocation(userID, shareLocation): void {
+	putShareLocation(userID, shareLocation): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		userObjectObservable.update({

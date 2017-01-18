@@ -18,6 +18,12 @@ export class LocationModal {
 
 		this._tripName = params.get('name');
 		this._tripMembers = params.get('members');
+
+		this._tripMembers.forEach((member) => {
+			if (member.canAlreadySee) {
+				this._usersToSeeLocation.push(member.user.key);
+			}
+		});
 	}
 
 	dismiss() {

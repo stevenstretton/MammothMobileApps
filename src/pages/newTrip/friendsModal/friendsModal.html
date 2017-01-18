@@ -20,13 +20,13 @@
 
 
 	<ion-list>
-		<ion-item *ngFor="let friend of _friends">
+		<ion-item *ngFor="let friend of _selectedFriends">
 			<ion-avatar item-left>
-				<img src="{{ friend.friend.photoUrl }}">
+				<img src="{{ friend.user.photoUrl }}">
 			</ion-avatar>
-			<ion-label>{{ friend.friend.firstName }} {{ friend.friend.lastName }}</ion-label>
-			<ion-checkbox checked="{{friend.checked}}" color="positive" [(ngModel)]="friend.checked"
-			              (click)="toggleClicked(friend, friend.checked)"
+			<ion-label>{{ friend.user.firstName }} {{ friend.user.lastName }}</ion-label>
+			<ion-checkbox color="positive" [(ngModel)]="friend.isAdded"
+			              (click)="toggleClicked(friend.user.key, !friend.isAdded)"
 			              item-right></ion-checkbox>
 		</ion-item>
 	</ion-list>

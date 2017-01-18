@@ -1,7 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
 import { AngularFire, FirebaseAuth, FirebaseAuthState, AuthMethods, AuthProviders, FirebaseApp } from 'angularfire2';
 
-import { FirebaseGET } from "./firebaseGET.service";
+import { FirebaseGET } from "./firebase.service/get";
+import { FirebasePOST } from "./firebase.service/post"
 
 
 @Injectable()
@@ -13,6 +14,7 @@ export class AuthenticationHandler {
 
 	constructor(public auth$: FirebaseAuth,
 	            public firebaseGet: FirebaseGET,
+	            public firebasePost: FirebasePOST,
 				public af: AngularFire,
 				@Inject(FirebaseApp) firebaseApp: any) {
 
@@ -57,18 +59,7 @@ export class AuthenticationHandler {
 
 	addNewUserToDatabase(email, firstName, surname, username): void {
 		this._fb.auth().onAuthStateChanged((user) => {
-			const usersTable = this.af.database.object("users/" + user.uid);
-
-			this._fb.storage().ref("default_image/placeholder-user.png").getDownloadURL().then((placeholderPhotoUrl) => {
-				usersTable.set({
-					email: email,
-					firstName: firstName,
-					lastName: surname,
-					username: username,
-					shareLocation: 0,
-					photoUrl: placeholderPhotoUrl
-				});
-			});
+			this.firebasePost.postNewUser(user, email, firstName, surname, username);
 		});
 	}
 

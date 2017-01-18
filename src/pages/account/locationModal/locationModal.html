@@ -22,7 +22,9 @@
 				<img src="{{ member.user.photoUrl }}">
 			</ion-avatar>
 			<ion-label>{{ member.user.firstName }} {{ member.user.lastName }}</ion-label>
-			<ion-checkbox color="positive" [(ngModel)]="member.checked" (click)="toggleClicked(member.userKey, !member.checked)" item-right></ion-checkbox>
+			<ion-checkbox color="positive" [(ngModel)]="member.canAlreadySee"
+			              (click)="toggleClicked(member.user.key, !member.canAlreadySee)"
+			              item-right></ion-checkbox>
 		</ion-item>
 	</ion-list>
 </ion-content>

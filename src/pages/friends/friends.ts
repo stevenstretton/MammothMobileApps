@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController, ModalController } from 'ionic-angular';
-import { FirebaseGET } from '../../services/firebaseGET.service';
-import { FirebasePUSH } from '../../services/firebasePUSH.service';
+import { FirebaseGET } from '../../services/firebase.service/get';
+import { FirebasePOST } from '../../services/firebase.service/post';
+import { FirebasePUT } from "../../services/firebase.service/put";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { AddFriendModal } from "./addFriendModal/addFriendModal";
 import set = Reflect.set;
@@ -18,7 +19,8 @@ export class Friends {
 				public firebaseGet: FirebaseGET,
 				public authenticationHandler: AuthenticationHandler,
 				public modalCtrl: ModalController,
-				public firebasePush: FirebasePUSH) {
+				public firebasePush: FirebasePOST,
+				public firebasePut: FirebasePUT) {
 		this._friends = [];
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
@@ -44,7 +46,7 @@ export class Friends {
 			setOfFriends.forEach((friend) => {
 				this._friends.push(friend);
 			});
-			this.firebasePush.addFriends(this._currentUser.key, setOfFriends);
+			this.firebasePut.putUserFriends(this._currentUser.key, setOfFriends);
 		});
 		modal.present();
 	}

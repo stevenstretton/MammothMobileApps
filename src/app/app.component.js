@@ -7,10 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var core_1 = require('@angular/core');
 var ionic_native_1 = require('ionic-native');
-var tabs_1 = require('../pages/tabs/tabs');
+var login_1 = require('../pages/login/login');
 var MyApp = (function () {
     function MyApp(platform) {
-        this.rootPage = tabs_1.TabsPage;
+        this.rootPage = login_1.Login;
         platform.ready().then(function () {
             // Okay, so the platform is ready and our plugins are available.
             // Here you can do any higher level native things you might need.

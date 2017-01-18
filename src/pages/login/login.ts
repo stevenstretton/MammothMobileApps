@@ -4,7 +4,7 @@ import { NavController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { FirebaseGET } from "../../services/firebaseGET.service"
+import { FirebaseGET } from "../../services/firebase.service/get"
 
 @Component({
 	selector: 'page-login',

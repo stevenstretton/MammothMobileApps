@@ -23,8 +23,10 @@ import { Map } from '../pages/map/map';
 import { TabsPage } from '../pages/tabs/tabs';
 import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
 
-import { FirebaseGET } from '../services/firebaseGET.service';
-import { FirebasePUSH } from '../services/firebasePUSH.service';
+import { FirebaseGET } from '../services/firebase.service/get';
+import { FirebasePOST } from '../services/firebase.service/post';
+import { FirebasePUT } from "../services/firebase.service/put";
+import { FirebaseDELETE } from "../services/firebase.service/delete";
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
 import { LocationHandler } from '../services/locationHandler.service';
 
@@ -88,7 +90,9 @@ const firebaseAuthConfig = {
 	],
 	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
 		FirebaseGET,
-		FirebasePUSH,
+		FirebasePOST,
+		FirebasePUT,
+		FirebaseDELETE,
 		AuthenticationHandler,
 		LocationHandler]
 })

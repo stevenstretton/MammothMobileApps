@@ -1,26 +1,36 @@
 import { Component } from '@angular/core';
-import { FirebaseGET } from '../../services/firebaseGET.service';
-import { FirebasePUSH } from '../../services/firebasePUSH.service';
+import { FirebaseGET } from '../../services/firebase.service/get';
+import { FirebasePOST } from '../../services/firebase.service/post';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { FriendsModal } from './friendsModal/friendsModal';
+import { Camera } from 'ionic-native';
 
 @Component({
 	selector: 'page-newTrip',
 	templateUrl: 'newTrip.html',
 })
 export class NewTrip {
-
-	// These can all be private
 	private _friendsAdded: Array<any>;
+	private _tripCoverPhotoSelected: boolean = false;
 	private _currentUser: any;
 	private _tripInfo: any;
 	private _itemList: Array<any>;
-	private _title;
-	private _descr;
-	private _tripName;
-	private _tripLoc;
-	private _tripDescription;
+	private _itemTitle: string = '';
+	private _itemDescription: string = '';
+	private _tripName: string = '';
+	private _tripLoc: string = '';
+	private _tripDescription: string = '';
+	private _tripTransport: string = '';
+	private _event = {
+		start: {
+			date: '',
+			time: ''
+		},
+		end: {
+			date: ''
+		}
+	};
 
 	constructor(public navCtrl: NavController,
 	            public actionSheetCtrl: ActionSheetController,
@@ -28,28 +38,33 @@ export class NewTrip {
 	            public firebaseGet: FirebaseGET,
 	            public authenticationHandler: AuthenticationHandler,
 	            public modalCtrl: ModalController,
-	            public firebasePush: FirebasePUSH,
+	            public firebasePush: FirebasePOST,
 	            private toastCtrl: ToastController) {
+		this.initialiseDate();
 
-		this._friendsAdded = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
+		this._friendsAdded = [];
 		this._itemList = [];
-
-		// This doesn't need to be here
-		//this._tripInfo;
-
 	}
 
-	private _event = {
-		dateStart: '2017-01-01',
-		//today: Date.now(),
-		//month: Date.now(),
-		//timeStarts: Date.now(),
-		timeStart: '01:00',
-		dateEnd: '2017-01-02'
+	initialiseDate(): void {
+		let today = new Date();
+
+		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
+			nowTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+
+		this._event = {
+			start: {
+				date: todayDate,
+				time: nowTime
+			},
+			end: {
+				date: todayDate
+			}
+		};
 	}
 
-	presentToast() {
+	presentToast(): void {
 		let toast = this.toastCtrl.create({
 			message: 'Trip was added successfully',
 			duration: 3000,
@@ -62,76 +77,81 @@ export class NewTrip {
 		toast.present();
 	}
 
-	presentModal() {
-		console.log(this._friendsAdded);
-		let modal = this.modalCtrl.create(FriendsModal, {
-			currentUser: this._currentUser,
+	presentModal(): void {
+		let friendIDsAdded = this.buildFriendIDsAttending();
+		this._friendsAdded = [];
+
+		this._currentUser.friends.forEach((friendID) => {
+			this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
+				this._friendsAdded.push({
+					isAdded: (friendIDsAdded.indexOf(friendID) > -1),
+					user: firebaseUser
+				});
+			});
+		});
+
+		this.modalCtrl.create(FriendsModal, {
 			selectedFriends: this._friendsAdded
-		});
-
-		modal.onDidDismiss((setOfFriends) => {
-			// setOfFriends.forEach((friend) => {
-			//   console.log(friend);
-			// 	this._friendsAdded.push(friend);
-			// });
-			console.log(this._friendsAdded);
-
-		});
-		modal.present();
+		}).present();
 	}
 
-	pushTrip() {
+	buildFriendIDsAttending(): Array<any> {
+		let friendsAttending = [];
 
+		if (this._friendsAdded.length > 0) {
+			this._friendsAdded.forEach((friend) => {
+				if (friend.isAdded) {
+					friendsAttending.push(friend.user.key);
+				}
+			});
+		}
+		return friendsAttending;
+	}
+
+	pushTrip(): void {
 		this._tripInfo = {
 			name: this._tripName,
 			location: this._tripLoc,
 			description: this._tripDescription,
-			transport: "car",
-			friends: this._friendsAdded,
+			transport: this._tripTransport,
+			friends: this.buildFriendIDsAttending(),
 			items: this._itemList,
-      start: {date: this._event.dateStart, time: this._event.timeStart},
-      end: {date: this._event.dateEnd},
-      // startTime: this.event.dateStart,
-			// endTime: this.event.dateEnd,
+			start: {
+				date: this._event.start.date,
+				time: this._event.start.time
+			},
+			end: {
+				date: this._event.end.date
+			},
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: "",
 		};
-
-		console.log(this._tripInfo);
 		if (this._tripName != "" && this._tripLoc != "" && this._friendsAdded.length != 0) {
-
-			console.log('success');
-
-			this.firebasePush.pushNewTrip(this._tripInfo);
+			this.firebasePush.postNewTrip(this._tripInfo);
 			this.clearTrip();
 			this.presentToast();
 		}
 	}
 
 	clearTrip() {
-		this._tripInfo = [];
+		this._tripInfo = {};
 		this._tripName = "";
 		this._tripLoc = "";
 		this._tripDescription = "";
 		this._friendsAdded = [];
 		this._itemList = [];
-		this._event = {
-			dateStart: '2017-01-01',
-			timeStart: '01:00',
-			dateEnd: '2017-01-02'
-		};
-
+		this.initialiseDate();
 	}
 
 	addItem() {
-		if (this._title != "") {
+		if (this._itemTitle != "") {
 			let newItem = {
-				name: this._title,
-				description: this._descr
+				name: this._itemTitle,
+				description: this._itemDescription
 			};
 			this._itemList.push(newItem);
-			this._title = "";
-			this._descr = "";
+			this._itemTitle = "";
+			this._itemDescription = "";
 		}
 
 	}
@@ -146,6 +166,17 @@ export class NewTrip {
 	}
 
 	presentActionSheet() {
+		let cameraOptions = {
+			quality: 75,
+			destinationType: Camera.DestinationType.DATA_URL,
+			sourceType: Camera.PictureSourceType.CAMERA,
+			allowEdit: true,
+			encodingType: Camera.EncodingType.JPEG,
+			targetWidth: 300,
+			targetHeight: 300,
+			saveToPhotoAlbum: false
+		};
+
 		let actionSheet = this.actionSheetCtrl.create({
 			title: 'Edit Trip Picture',
 			buttons: [
@@ -160,12 +191,20 @@ export class NewTrip {
 					text: 'Take Photo',
 					icon: !this.platform.is('ios') ? 'camera' : null,
 					handler: () => {
+						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
+						Camera.getPicture(cameraOptions).then((image) => {
+							console.log(image);
+						});
 						console.log('Take Photo clicked');
 					}
 				}, {
 					text: 'Choose From Library',
 					icon: !this.platform.is('ios') ? 'folder-open' : null,
 					handler: () => {
+						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+						Camera.getPicture(cameraOptions).then((image) => {
+							console.log(image);
+						});
 						console.log('Library clicked');
 					}
 				}, {

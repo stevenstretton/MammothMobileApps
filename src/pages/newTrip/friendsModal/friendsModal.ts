@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FirebaseGET } from '../../../services/firebaseGET.service';
+import { FirebaseGET } from '../../../services/firebase.service/get';
 import { ViewController, Platform, NavParams } from 'ionic-angular';
 
 @Component({
@@ -7,85 +7,43 @@ import { ViewController, Platform, NavParams } from 'ionic-angular';
 	templateUrl: 'friendsModal.html'
 })
 export class FriendsModal {
-	private _friends: Array<any>;
-	private _currentUser: any;
+	private _friendsAdded: Array<any>;
 	private _selectedFriends: Array<any>;
 
 	constructor(public viewCtrl: ViewController,
 	            public firebaseGet: FirebaseGET,
 	            public params: NavParams,) {
-		this._friends = [];
+		this._friendsAdded = [];
+		this._selectedFriends = [];
+
 		this._selectedFriends = params.get('selectedFriends');
-		
-		console.log("this._selectedFriends");
-		console.log(this._selectedFriends);
-		this._currentUser = params.get('currentUser');
 
-		// Okay so this adds all users to another array but adds a flag as to whether they have been previously added in another model
-		this._currentUser.friends.forEach((friendID) => {
-
-			// Actually, this whole section can be refactored into:
-			//
-				let checked = false;
-			if (this._selectedFriends.indexOf(friendID) > -1) {
-			    checked = true;
-			} else {
-			    checked = false;
+		this._selectedFriends.forEach((friend) => {
+			if (friend.isAdded) {
+				this._friendsAdded.push(friend.user.key);
 			}
-			// this.firebaseGet.getUserWithID(friendID, (friend) => {
-			// 	let checked = false;
-			// 	// Can redo this 'for' into a 'forEach'
-			// 	for (let i = 0; i < this._selectedFriends.length; ++i) {
-			// 		if (friend.key == this._selectedFriends[i]) {
-			// 			checked = true;
-			// 		}
-			// 	}
-
-			this.firebaseGet.getUserWithID(friendID, (friend) => {
-				this._friends.push({friend: friend, checked: checked});
-			});
-			
 		});
-		console.log("this._friends");
-		console.log(this._friends);
 	}
 
 	submit() {
-		this.viewCtrl.dismiss(this._selectedFriends);
+		this.viewCtrl.dismiss();
 	}
 
-	
-	ifInArray(friend): boolean {
-		// let inArray = false
 
-		// this._selectedFriends.forEach(oldFriend => {
-		// 	if (oldFriend == friend.key) {
-		// 		inArray = true;
-
-		// 	}
-		// });
-		// console.log(inArray);
-
-		// //console.log(this._selectedFriends.indexOf(friend));
-		// //console.log(this._selectedFriends);
-		return (this._selectedFriends.indexOf(friend) > -1);
-		//return inArray;
+	ifInArray(friendID): boolean {
+		return (this._friendsAdded.indexOf(friendID) > -1);
 	}
 
-	toggleClicked(friend, check): void {
+	toggleClicked(friendID, check): void {
 		if (check) {
-			if (!this.ifInArray(friend.friend.key)) {
-				this._selectedFriends.push(friend.friend.key);
-				//console.log(this._selectedFriends);
+			if (!this.ifInArray(friendID)) {
+				this._friendsAdded.push(friendID);
 			}
-
 		} else {
-			if (this.ifInArray(friend.friend.key)) {
-				this._selectedFriends.splice(this._selectedFriends.indexOf(friend.friend.key), 1);
-				//console.log(this._selectedFriends);
+			if (this.ifInArray(friendID)) {
+				this._friendsAdded.splice(this._friendsAdded.indexOf(friendID), 1);
 			}
 		}
-		console.log(this._selectedFriends);
 	}
 
 }
