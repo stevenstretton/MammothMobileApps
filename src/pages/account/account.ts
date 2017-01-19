@@ -11,6 +11,7 @@ import { FirebasePOST } from "../../services/firebase.service/post";
 import { FirebasePUT } from "../../services/firebase.service/put";
 import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
 import { transformSrcPathToTmpPath } from "@ionic/app-scripts/dist";
+import _ from 'lodash';
 
 @Component({
 	selector: 'page-account',
@@ -33,9 +34,9 @@ export class Account {
 				public firebasePut: FirebasePUT) {
 		this._usersToSeeLocation = [];
 		this._currentUserTrips = [];
-		this._allUsers = [];
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
+		this._allUsers = this.firebaseGet.getAllUsers();
 
 		let	allTrips = this.firebaseGet.getAllTrips(),
 			tripMembers = [];
@@ -63,7 +64,8 @@ export class Account {
 		let tripID = trip.key,
 			tripName = trip.name,
 			currentUsersToSeeLocationOfChosenTrip = [],
-			tripMembers = [];
+			tripMembers = [],
+			allUsers = this._allUsers;
 
 		let filterAllUsersIntoArray = () => {
 			let allUsers = [];
@@ -96,16 +98,9 @@ export class Account {
 			});
 		}
 
-		// This is doubling every time for some reason...(this is a very temperamental error)
-		this._allUsers = this.firebaseGet.getAllUsers();
-
-		console.log("this._allUsers:");
-		console.log(this._allUsers);
-
-		this._allUsers.forEach((user) => {
+		allUsers.forEach((user) => {
 			if (tripMemberIDs.indexOf(user.key) > -1) {
 				this.firebaseGet.getUserWithID(user.key, (firebaseUser) => {
-					// To combat the fact that this._allUsers is doubling for some reason
 					tripMembers.push({
 						canAlreadySee: (currentUsersToSeeLocationOfChosenTrip.indexOf(user.key) > -1),
 						user: firebaseUser
@@ -118,7 +113,6 @@ export class Account {
 			name: tripName,
 			members: tripMembers
 		});
-		console.log("====================");
 		modal.onDidDismiss((usersToSeeLocation) => {
 			if (usersToSeeLocation.length > 0) {
 				this.firebasePut.putUserToSeeLocation(this._currentUser.key, tripID, usersToSeeLocation);
@@ -126,7 +120,6 @@ export class Account {
 				// Refreshing the user
 				this._currentUser = this.authenticationHandler.getCurrentUser();
 			}
-			this._allUsers = [];
 		});
 		modal.present();
 	}

@@ -34,10 +34,10 @@ export class FirebasePUT {
 
 		let usersToSeeLoc = [];
 
-		let pushCurrentToArray = () => {
+		let pushTripObjToArray = (trip, users) => {
 			usersToSeeLoc.push({
-				trip: tripID,
-				users: usersIDsToSeeLoc
+				trip: trip,
+				users: users
 			});
 		};
 
@@ -45,16 +45,13 @@ export class FirebasePUT {
 			if (typeof user.usersToSeeLocation !== "undefined") {
 				user.usersToSeeLocation.forEach((tripUserPair) => {
 					if (tripID !== tripUserPair.trip) {
-						usersToSeeLoc.push({
-							trip: tripUserPair.trip,
-							users: tripUserPair.users
-						});
+						pushTripObjToArray(tripUserPair.trip, tripUserPair.users);
 					} else {
-						pushCurrentToArray();
+						pushTripObjToArray(tripID, usersIDsToSeeLoc);
 					}
 				});
 			} else {
-				pushCurrentToArray();
+				pushTripObjToArray(tripID, usersIDsToSeeLoc);
 			}
 		});
 

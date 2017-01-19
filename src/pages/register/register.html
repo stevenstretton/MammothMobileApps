@@ -1,46 +1,46 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Register
-    </ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>
+			Register
+		</ion-title>
+	</ion-navbar>
 </ion-header>
+
 <ion-content>
+	<ion-list>
+		<ion-item>
+			<ion-label floating>Firstname</ion-label>
+			<ion-input [(ngModel)]="_firstName" type="text" required></ion-input>
+		</ion-item>
 
-  <ion-list>
-    <ion-item>
-      <ion-label floating>Firstname</ion-label>
-      <ion-input [(ngModel)]="_firstName" type="text" required></ion-input>
-    </ion-item>
+		<ion-item>
+			<ion-label floating>Surname</ion-label>
+			<ion-input [(ngModel)]="_surname" type="text" required></ion-input>
+		</ion-item>
 
-    <ion-item>
-      <ion-label floating>Surname</ion-label>
-      <ion-input [(ngModel)]="_surname" type="text" required></ion-input>
-    </ion-item>
+		<ion-item>
+			<ion-label floating>Username</ion-label>
+			<ion-input [(ngModel)]="_username" type="text" required></ion-input>
+		</ion-item>
 
-    <ion-item>
-      <ion-label floating>Username</ion-label>
-      <ion-input [(ngModel)]="_username" type="text" required></ion-input>
-    </ion-item>
+		<ion-item>
+			<ion-label floating>Email Address</ion-label>
+			<ion-input [(ngModel)]="_email" type="email" required></ion-input>
+		</ion-item>
 
-    <ion-item>
-      <ion-label floating>Email Address</ion-label>
-      <ion-input [(ngModel)]="_email" type="email" required></ion-input>
-    </ion-item>
+		<ion-item>
+			<ion-label floating>Password</ion-label>
+			<ion-input [(ngModel)]="_password" type="password" required></ion-input>
+		</ion-item>
 
-    <ion-item>
-      <ion-label floating>Password</ion-label>
-      <ion-input [(ngModel)]="_password" type="password" required></ion-input>
-    </ion-item>
+		<ion-item>
+			<ion-label floating>Confirm Password</ion-label>
+			<ion-input [(ngModel)]="_confirmPassword" type="password" required></ion-input>
+		</ion-item>
 
-    <ion-item>
-      <ion-label floating>Confirm Password</ion-label>
-      <ion-input [(ngModel)]="_confirmPassword" type="password" required></ion-input>
-    </ion-item>
-
-     <div padding>
-      <button ion-button color="primary" (click)="register()" block>Create Account</button>
-    </div>
-  </ion-list>
+		<div padding>
+			<button ion-button color="primary" (click)="register()" block>Create Account</button>
+		</div>
+	</ion-list>
 
 </ion-content>

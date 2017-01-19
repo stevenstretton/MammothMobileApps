@@ -1,5 +1,6 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from "@angular/forms";
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
@@ -65,6 +66,7 @@ const firebaseAuthConfig = {
 	],
 	imports: [
 		BrowserModule,
+		FormsModule,
 		IonicModule.forRoot(MyApp),
 		AgmCoreModule.forRoot({
 			apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"
@@ -96,5 +98,4 @@ const firebaseAuthConfig = {
 		AuthenticationHandler,
 		LocationHandler]
 })
-export class AppModule {
-}
+export class AppModule {}

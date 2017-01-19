@@ -6,10 +6,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var core_1 = require('@angular/core');
+var forms_1 = require("@angular/forms");
 var friendsModal_1 = require('./friendsModal/friendsModal');
 var ionic_native_1 = require('ionic-native');
 var NewTrip = (function () {
-    function NewTrip(navCtrl, actionSheetCtrl, platform, firebaseGet, authenticationHandler, modalCtrl, firebasePush, toastCtrl) {
+    function NewTrip(navCtrl, actionSheetCtrl, platform, firebaseGet, authenticationHandler, modalCtrl, firebasePush, toastCtrl, formBuilder) {
         this.navCtrl = navCtrl;
         this.actionSheetCtrl = actionSheetCtrl;
         this.platform = platform;
@@ -18,39 +19,42 @@ var NewTrip = (function () {
         this.modalCtrl = modalCtrl;
         this.firebasePush = firebasePush;
         this.toastCtrl = toastCtrl;
+        this.formBuilder = formBuilder;
         this._tripCoverPhotoSelected = false;
         this._itemTitle = '';
         this._itemDescription = '';
-        this._tripName = '';
-        this._tripLoc = '';
-        this._tripDescription = '';
-        this._tripTransport = '';
-        this._event = {
-            start: {
-                date: '',
-                time: ''
-            },
-            end: {
-                date: ''
-            }
-        };
+        var today = new Date();
+        var todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2), nowTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        this._newTripForm = this.formBuilder.group({
+            name: ['', forms_1.Validators.required],
+            loc: ['', forms_1.Validators.required],
+            description: '',
+            startDate: [todayDate, forms_1.Validators.required],
+            startTime: [nowTime, forms_1.Validators.required],
+            endDate: [todayDate, forms_1.Validators.required],
+            transport: ['', forms_1.Validators.required]
+        });
         this.initialiseDate();
         this._currentUser = this.authenticationHandler.getCurrentUser();
         this._friendsAdded = [];
         this._itemList = [];
     }
+    NewTrip.prototype.onFormSubmit = function (formData) {
+        console.log(formData);
+    };
     NewTrip.prototype.initialiseDate = function () {
         var today = new Date();
-        var todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2), nowTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-        this._event = {
-            start: {
-                date: todayDate,
-                time: nowTime
-            },
-            end: {
-                date: todayDate
-            }
-        };
+        //let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
+        //	nowTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        //
+        //this._newTripForm.controls['start'] = {
+        //	date: todayDate,
+        //	time: nowTime
+        //};
+        //
+        //this._newTripForm.controls['end'] = {
+        //	date: todayDate
+        //};
     };
     NewTrip.prototype.presentToast = function () {
         var toast = this.toastCtrl.create({
@@ -92,36 +96,36 @@ var NewTrip = (function () {
     };
     NewTrip.prototype.pushTrip = function () {
         this._tripInfo = {
-            name: this._tripName,
-            location: this._tripLoc,
-            description: this._tripDescription,
-            transport: this._tripTransport,
+            name: this._newTripForm.controls['name'],
+            location: this._newTripForm.controls['loc'],
+            description: this._newTripForm.controls['description'],
+            transport: this._newTripForm.controls['transport'],
             friends: this.buildFriendIDsAttending(),
             items: this._itemList,
             start: {
-                date: this._event.start.date,
-                time: this._event.start.time
+                date: this._newTripForm.controls['startDate'],
+                time: this._newTripForm.controls['startTime']
             },
             end: {
-                date: this._event.end.date
+                date: this._newTripForm.controls['endDate']
             },
             leadOrganiser: this._currentUser.key,
             coverPhotoUrl: "",
         };
-        if (this._tripName != "" && this._tripLoc != "" && this._friendsAdded.length != 0) {
-            this.firebasePush.postNewTrip(this._tripInfo);
-            this.clearTrip();
-            this.presentToast();
-        }
+        // if ((this._newTripForm.controls['name'] !== "") && (this._newTripForm.controls['loc'] !== "")) {
+        this.firebasePush.postNewTrip(this._tripInfo);
+        this.clearTrip();
+        this.presentToast();
+        // }
     };
     NewTrip.prototype.clearTrip = function () {
-        this._tripInfo = {};
-        this._tripName = "";
-        this._tripLoc = "";
-        this._tripDescription = "";
-        this._friendsAdded = [];
-        this._itemList = [];
-        this.initialiseDate();
+        //this._tripInfo = {};
+        //this._tripName = "";
+        //this._tripLoc = "";
+        //this._tripDescription = "";
+        //this._friendsAdded = [];
+        //this._itemList = [];
+        // this.initialiseDate();
     };
     NewTrip.prototype.addItem = function () {
         if (this._itemTitle != "") {

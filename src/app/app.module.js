@@ -7,6 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 var core_1 = require('@angular/core');
 var platform_browser_1 = require('@angular/platform-browser');
+var forms_1 = require("@angular/forms");
 var ionic_angular_1 = require('ionic-angular');
 var app_component_1 = require('./app.component');
 var login_1 = require('../pages/login/login');
@@ -65,6 +66,7 @@ var AppModule = (function () {
             ],
             imports: [
                 platform_browser_1.BrowserModule,
+                forms_1.FormsModule,
                 ionic_angular_1.IonicModule.forRoot(app_component_1.MyApp),
                 core_2.AgmCoreModule.forRoot({
                     apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FirebaseGET } from '../../services/firebase.service/get';
 import { FirebasePOST } from '../../services/firebase.service/post';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
@@ -13,24 +14,13 @@ import { Camera } from 'ionic-native';
 export class NewTrip {
 	private _friendsAdded: Array<any>;
 	private _tripCoverPhotoSelected: boolean = false;
+	private _todaysDate: string;
 	private _currentUser: any;
+	private _newTripForm: FormGroup;
 	private _tripInfo: any;
 	private _itemList: Array<any>;
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
-	private _tripName: string = '';
-	private _tripLoc: string = '';
-	private _tripDescription: string = '';
-	private _tripTransport: string = '';
-	private _event = {
-		start: {
-			date: '',
-			time: ''
-		},
-		end: {
-			date: ''
-		}
-	};
 
 	constructor(public navCtrl: NavController,
 	            public actionSheetCtrl: ActionSheetController,
@@ -38,8 +28,25 @@ export class NewTrip {
 	            public firebaseGet: FirebaseGET,
 	            public authenticationHandler: AuthenticationHandler,
 	            public modalCtrl: ModalController,
-	            public firebasePush: FirebasePOST,
-	            private toastCtrl: ToastController) {
+	            public firebasePost: FirebasePOST,
+	            private toastCtrl: ToastController,
+				private formBuilder: FormBuilder) {
+		let today = new Date();
+
+		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
+			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
+
+		this._todaysDate = todayDate;
+
+		this._newTripForm = this.formBuilder.group({
+			name: ['', Validators.required],
+			loc: ['', Validators.required],
+			description: '',
+			startDate: [todayDate, Validators.required],
+			startTime: [nowTime, Validators.required],
+			endDate: [todayDate, Validators.required],
+			transport: ['', Validators.required]
+		});
 		this.initialiseDate();
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
@@ -53,15 +60,9 @@ export class NewTrip {
 		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
 			nowTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
 
-		this._event = {
-			start: {
-				date: todayDate,
-				time: nowTime
-			},
-			end: {
-				date: todayDate
-			}
-		};
+		//this._newTripForm.controls['startDate'] = todayDate;
+		//this._newTripForm.controls['startTime'] = nowTime;
+		//this._newTripForm.controls['endDate'] = todayDate;
 	}
 
 	presentToast(): void {
@@ -108,61 +109,54 @@ export class NewTrip {
 		return friendsAttending;
 	}
 
-	pushTrip(): void {
+	pushTrip(formData): void {
+		console.log(formData);
 		this._tripInfo = {
-			name: this._tripName,
-			location: this._tripLoc,
-			description: this._tripDescription,
-			transport: this._tripTransport,
+			name: formData.name,
+			location: formData.loc,
+			description: formData.description,
+			transport: formData.transport,
 			friends: this.buildFriendIDsAttending(),
 			items: this._itemList,
 			start: {
-				date: this._event.start.date,
-				time: this._event.start.time
+				date: formData.startDate,
+				time: formData.startTime
 			},
 			end: {
-				date: this._event.end.date
+				date: formData.endDate
 			},
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: "",
 		};
-		if (this._tripName != "" && this._tripLoc != "" && this._friendsAdded.length != 0) {
-			this.firebasePush.postNewTrip(this._tripInfo);
-			this.clearTrip();
-			this.presentToast();
-		}
+		this.firebasePost.postNewTrip(this._tripInfo);
+		this.clearTrip();
+		this.presentToast();
 	}
 
 	clearTrip() {
-		this._tripInfo = {};
-		this._tripName = "";
-		this._tripLoc = "";
-		this._tripDescription = "";
-		this._friendsAdded = [];
-		this._itemList = [];
-		this.initialiseDate();
+		//this._tripInfo = {};
+		//this._tripName = "";
+		//this._tripLoc = "";
+		//this._tripDescription = "";
+		//this._friendsAdded = [];
+		//this._itemList = [];
+		// this.initialiseDate();
 	}
 
 	addItem() {
 		if (this._itemTitle != "") {
-			let newItem = {
+			this._itemList.push({
 				name: this._itemTitle,
 				description: this._itemDescription
-			};
-			this._itemList.push(newItem);
+			});
 			this._itemTitle = "";
 			this._itemDescription = "";
 		}
-
 	}
 
 	deleteItem(item): void {
-		console.log(this._itemList);
 		let index = this._itemList.indexOf(item);
-		console.log(index);
 		this._itemList.splice(index, 1);
-		console.log(this._itemList);
-
 	}
 
 	presentActionSheet() {

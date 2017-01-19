@@ -22,8 +22,8 @@ var Account = (function () {
         this.firebasePut = firebasePut;
         this._usersToSeeLocation = [];
         this._currentUserTrips = [];
-        this._allUsers = this.firebaseGet.getAllUsers();
         this._currentUser = this.authenticationHandler.getCurrentUser();
+        this._allUsers = this.firebaseGet.getAllUsers();
         var allTrips = this.firebaseGet.getAllTrips(), tripMembers = [];
         allTrips.forEach(function (trip) {
             tripMembers.push(trip.leadOrganiser);
@@ -42,7 +42,7 @@ var Account = (function () {
     };
     Account.prototype.presentModal = function (trip) {
         var _this = this;
-        var tripID = trip.key, tripName = trip.name, currentUsersToSeeLocationOfChosenTrip = [], tripMembers = [];
+        var tripID = trip.key, tripName = trip.name, currentUsersToSeeLocationOfChosenTrip = [], tripMembers = [], allUsers = this._allUsers;
         var filterAllUsersIntoArray = function () {
             var allUsers = [];
             allUsers.push(trip.leadOrganiser);
@@ -68,20 +68,13 @@ var Account = (function () {
                 }
             });
         }
-        // This is doubling every time for some reason...(this is a very temperamental error)
-        console.log("this._allUsers:");
-        console.log(this._allUsers);
-        this._allUsers.forEach(function (user) {
+        allUsers.forEach(function (user) {
             if (tripMemberIDs.indexOf(user.key) > -1) {
                 _this.firebaseGet.getUserWithID(user.key, function (firebaseUser) {
-                    // To combat the fact that this._allUsers is doubling for some reason
-                    var tmp = {
+                    tripMembers.push({
                         canAlreadySee: (currentUsersToSeeLocationOfChosenTrip.indexOf(user.key) > -1),
                         user: firebaseUser
-                    };
-                    if (tripMembers.indexOf(tmp) <= -1) {
-                        tripMembers.push(tmp);
-                    }
+                    });
                 });
             }
         });
@@ -89,12 +82,12 @@ var Account = (function () {
             name: tripName,
             members: tripMembers
         });
-        console.log("====================");
         modal.onDidDismiss(function (usersToSeeLocation) {
-            _this.firebasePut.putUserToSeeLocation(_this._currentUser.key, tripID, usersToSeeLocation);
-            // Refreshing the user
-            _this._currentUser = _this.authenticationHandler.getCurrentUser();
-            _this._allUsers = [];
+            if (usersToSeeLocation.length > 0) {
+                _this.firebasePut.putUserToSeeLocation(_this._currentUser.key, tripID, usersToSeeLocation);
+                // Refreshing the user
+                _this._currentUser = _this.authenticationHandler.getCurrentUser();
+            }
         });
         modal.present();
     };

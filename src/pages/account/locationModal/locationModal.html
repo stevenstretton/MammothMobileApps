@@ -16,8 +16,8 @@
 	<ion-list-header>
 		Select who to share your location with...
 	</ion-list-header>
-	<ion-list *ngFor="let member of _tripMembers">
-		<ion-item>
+	<ion-list>
+		<ion-item *ngFor="let member of _tripMembers">
 			<ion-avatar item-left>
 				<img src="{{ member.user.photoUrl }}">
 			</ion-avatar>
