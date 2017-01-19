@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 import { NavController } from 'ionic-angular';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
@@ -9,23 +10,30 @@ import { Login } from "../login/login"
 	templateUrl: 'register.html'
 })
 export class Register {
-	private _firstName: string;
-	private _surname: string;
-	private _username: string;
-	private _email: string;
-	private _password: string;
-	private _confirmPassword: string;
+	private _registrationForm: FormGroup;
 
 	constructor(public navCtrl: NavController,
-				public authenticationHandler: AuthenticationHandler) {}
+				public authenticationHandler: AuthenticationHandler,
+				public formBuilder: FormBuilder) {
+		this._registrationForm = this.formBuilder.group({
+			firstName: ['', Validators.required],
+			surname: ['', Validators.required],
+			username: ['', Validators.required],
+			email: ['', Validators.required],
+			password: ['', Validators.required],
+			confirmPassword: ['', Validators.required]
+		})
+	}
 
-	register(): void {
-		if (this._password === this._confirmPassword) {
-			let registerPromise = this.authenticationHandler.createFirebaseUser(this._email, this._password);
+	register(formData): void {
+		if (formData.password === formData.confirmPassword) {
+			let registerPromise = this.authenticationHandler.createFirebaseUser(formData);
 
 			registerPromise.then((successResponse) => {
-				this.authenticationHandler.addNewUserToDatabase(this._email, this._firstName, this._surname, this._username);
-				this.navCtrl.setRoot(Login);
+				this.authenticationHandler.addNewUserToDatabase(formData);
+				this.navCtrl.setRoot(Login, {
+					justRegistered: true
+				});
 			}).catch((errorRepsonse) => {
 				console.log(errorRepsonse);
 			});

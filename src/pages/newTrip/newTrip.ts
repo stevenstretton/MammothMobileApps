@@ -66,16 +66,11 @@ export class NewTrip {
 	}
 
 	presentToast(): void {
-		let toast = this.toastCtrl.create({
+		this.toastCtrl.create({
 			message: 'Trip was added successfully',
 			duration: 3000,
 			position: 'top'
-		});
-
-		toast.onDidDismiss(() => {
-			console.log('Dismissed toast');
-		});
-		toast.present();
+		}).present();
 	}
 
 	presentModal(): void {

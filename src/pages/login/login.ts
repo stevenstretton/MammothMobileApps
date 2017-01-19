@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { NavController } from 'ionic-angular';
+import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
@@ -18,10 +18,25 @@ export class Login {
 
 	constructor(public navCtrl: NavController,
 	            public authenticationHandler: AuthenticationHandler,
-				public firebaseGet: FirebaseGET) {
+				public firebaseGet: FirebaseGET,
+				public navParams: NavParams,
+				public toastCtrl: ToastController) {
 		this.firebaseGet.setAllTrips();
 		this.firebaseGet.setAllUsers();
 		this._isError = false;
+
+		let justRegistered = this.navParams.get('justRegistered');
+		if (justRegistered) {
+			this.showRegistrationToast();
+		}
+	}
+
+	showRegistrationToast(): void {
+		this.toastCtrl.create({
+			message: 'Registration successful',
+			duration: 3000,
+			position: 'top'
+		}).present();
 	}
 
 	login(): void {

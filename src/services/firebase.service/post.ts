@@ -20,15 +20,15 @@ export class FirebasePOST {
 			.catch(err => console.log(err));
 	}
 
-	postNewUser(user, email, firstName, surname, username): void {
+	postNewUser(user, credentials): void {
 		const usersTable = this.af.database.object("users/" + user.uid);
 
 		this._fb.storage().ref("default_image/placeholder-user.png").getDownloadURL().then((placeholderPhotoUrl) => {
 			usersTable.set({
-				email: email,
-				firstName: firstName,
-				lastName: surname,
-				username: username,
+				email: credentials.email,
+				firstName: credentials.firstName,
+				lastName: credentials.surname,
+				username: credentials.username,
 				shareLocation: 0,
 				photoUrl: placeholderPhotoUrl
 			});

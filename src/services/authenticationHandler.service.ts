@@ -52,11 +52,11 @@ export class AuthenticationHandler {
 		});
 	}
 
-	createFirebaseUser(email, password): any {
+	createFirebaseUser(emailPassCombo): any {
 		return new Promise((resolve, reject) => {
 			this.auth$.createUser({
-				email: email,
-				password: password
+				email: emailPassCombo.email,
+				password: emailPassCombo.password
 			}).then((successResponse) => {
 				resolve(successResponse);
 			}).catch((errorResponse) => {
@@ -65,9 +65,9 @@ export class AuthenticationHandler {
 		});
 	}
 
-	addNewUserToDatabase(email, firstName, surname, username): void {
+	addNewUserToDatabase(credentials): void {
 		this._fb.auth().onAuthStateChanged((user) => {
-			this.firebasePost.postNewUser(user, email, firstName, surname, username);
+			this.firebasePost.postNewUser(user, credentials);
 		});
 	}
 
