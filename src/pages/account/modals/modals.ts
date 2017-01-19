@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 
 import { ViewController, Platform, NavParams } from 'ionic-angular';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'page-locationModal',
-	templateUrl: 'locationModal.html'
+	templateUrl: './templates/locationModal.html'
 })
 export class LocationModal {
 	private _tripName: string;
@@ -13,7 +14,7 @@ export class LocationModal {
 	private _usersToSeeLocation: Array<any>;
 
 	constructor(public viewCtrl: ViewController,
-				public params: NavParams) {
+	            public params: NavParams) {
 		this._usersToSeeLocation = [];
 
 		this._tripName = params.get('name');
@@ -46,3 +47,35 @@ export class LocationModal {
 		}
 	}
 }
+
+@Component({
+	selector: 'page-changePasswordModal',
+	templateUrl: './templates/changePasswordModal.html'
+})
+export class ChangePasswordModal {
+	private _changePasswordForm: FormGroup;
+	private _error: string;
+
+	constructor(public viewCtrl: ViewController,
+	            public params: NavParams,
+	            public formBuilder: FormBuilder) {
+		this._changePasswordForm = this.formBuilder.group({
+			oldPassword: ['', Validators.required],
+			newPassword: ['', Validators.required],
+			confirmPassword: ['', Validators.required]
+		})
+	}
+
+	dismiss() {
+		this.viewCtrl.dismiss();
+	}
+
+	onFormSubmit(formData): void {
+		if (formData.newPassword === formData.confirmPassword) {
+			this.viewCtrl.dismiss(formData);
+		} else {
+			this._error = "Passwords must match!"
+		}
+	}
+}
+

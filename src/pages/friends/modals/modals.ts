@@ -5,7 +5,7 @@ import { FirebaseGET } from "../../../services/firebase.service/get";
 
 @Component({
 	selector: 'page-addfriendmodal',
-	templateUrl: 'addFriendModal.html'
+	templateUrl: './templates/addFriendModal.html'
 })
 export class AddFriendModal {
 	private _currentUser: any;
@@ -14,8 +14,8 @@ export class AddFriendModal {
 	private _selectedPeople: Array<any>;
 
 	constructor(public viewCtrl: ViewController,
-				public params: NavParams,
-				public firebaseGet: FirebaseGET) {
+	            public params: NavParams,
+	            public firebaseGet: FirebaseGET) {
 		this._selectedPeople = [];
 		this._usersThatNotFriends = [];
 

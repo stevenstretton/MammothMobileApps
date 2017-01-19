@@ -52,9 +52,16 @@ export class Login {
 	}
 
 	goToRegister(): void {
-		//push another page onto the history stack
-		//causing the nav controller to animate the new page in
-		this.navCtrl.push(Register)
+		this.navCtrl.push(Register, {
+			callback: (_params) => {
+				return new Promise((resolve, reject) => {
+					if (_params.justRegistered) {
+						this.showRegistrationToast();
+					}
+					resolve();
+				});
+			}
+		});
 	}
 
 }

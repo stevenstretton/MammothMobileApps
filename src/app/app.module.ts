@@ -11,15 +11,15 @@ import { MyTrips } from '../pages/myTrips/myTrips';
 import { Notifications } from '../pages/notifications/notifications';
 
 import { NewTrip } from '../pages/newTrip/newTrip';
-import { FriendsModal } from '../pages/newTrip/friendsModal/friendsModal';
-import { AddFriendModal } from '../pages/friends/addFriendModal/addFriendModal';
+import { FriendsModal } from '../pages/newTrip/modals/modals';
+
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
 
 import { Friends } from '../pages/friends/friends';
+import { AddFriendModal } from '../pages/friends/modals/modals';
 
 import { Account } from '../pages/account/account';
-import { LocationModal } from '../pages/account/locationModal/locationModal';
-import { ChangePasswordModal } from "../pages/account/changePasswordModal/changePasswordModal";
+import { LocationModal, ChangePasswordModal } from '../pages/account/modals/modals';
 
 import { Map } from '../pages/map/map';
 import { TabsPage } from '../pages/tabs/tabs';

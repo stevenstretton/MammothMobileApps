@@ -4,9 +4,9 @@ import { ViewController, Platform, NavParams } from 'ionic-angular';
 
 @Component({
 	selector: 'page-friendsModal',
-	templateUrl: 'friendsModal.html'
+	templateUrl: './templates/editDateModal.html'
 })
-export class FriendsModal {
+export class EditDateModal {
 	private _friendsAdded: Array<any>;
 	private _selectedFriends: Array<any>;
 

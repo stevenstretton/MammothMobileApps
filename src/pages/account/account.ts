@@ -3,8 +3,7 @@ import { App } from 'ionic-angular';
 
 import { NavController, ActionSheetController, Platform, ModalController } from 'ionic-angular';
 import { Login } from '../login/login';
-import { LocationModal } from "./locationModal/locationModal";
-import { ChangePasswordModal } from "./changePasswordModal/changePasswordModal";
+import { LocationModal, ChangePasswordModal } from "./modals/modals";
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase.service/get";

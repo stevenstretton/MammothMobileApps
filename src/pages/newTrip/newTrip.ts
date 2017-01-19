@@ -4,8 +4,9 @@ import { FirebaseGET } from '../../services/firebase.service/get';
 import { FirebasePOST } from '../../services/firebase.service/post';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
-import { FriendsModal } from './friendsModal/friendsModal';
+import { FriendsModal } from './modals/modals';
 import { Camera } from 'ionic-native';
+import { MyTrips } from '../myTrips/myTrips';
 
 @Component({
 	selector: 'page-newTrip',
@@ -47,30 +48,10 @@ export class NewTrip {
 			endDate: [todayDate, Validators.required],
 			transport: ['', Validators.required]
 		});
-		this.initialiseDate();
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friendsAdded = [];
 		this._itemList = [];
-	}
-
-	initialiseDate(): void {
-		let today = new Date();
-
-		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
-			nowTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-
-		//this._newTripForm.controls['startDate'] = todayDate;
-		//this._newTripForm.controls['startTime'] = nowTime;
-		//this._newTripForm.controls['endDate'] = todayDate;
-	}
-
-	presentToast(): void {
-		this.toastCtrl.create({
-			message: 'Trip was added successfully',
-			duration: 3000,
-			position: 'top'
-		}).present();
 	}
 
 	presentModal(): void {
@@ -105,7 +86,6 @@ export class NewTrip {
 	}
 
 	pushTrip(formData): void {
-		console.log(formData);
 		this._tripInfo = {
 			name: formData.name,
 			location: formData.loc,
@@ -124,18 +104,10 @@ export class NewTrip {
 			coverPhotoUrl: "",
 		};
 		this.firebasePost.postNewTrip(this._tripInfo);
-		this.clearTrip();
-		this.presentToast();
-	}
-
-	clearTrip() {
-		//this._tripInfo = {};
-		//this._tripName = "";
-		//this._tripLoc = "";
-		//this._tripDescription = "";
-		//this._friendsAdded = [];
-		//this._itemList = [];
-		// this.initialiseDate();
+		this.firebaseGet.setAllTrips();
+		this.navCtrl.push(MyTrips, {
+			justCreatedTrip: true
+		});
 	}
 
 	addItem() {

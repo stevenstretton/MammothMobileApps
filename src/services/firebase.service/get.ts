@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AngularFire, FirebaseObjectObservable, FirebaseListObservable } from 'angularfire2';
+import _ from 'lodash';
 
 @Injectable()
 export class FirebaseGET {
@@ -12,6 +13,8 @@ export class FirebaseGET {
 	}
 
 	setAllTrips(): void {
+		this._allTrips = [];
+
 		let tripListObservable = this.af.database.list('/trips', {
 			preserveSnapshot: true
 		});
@@ -41,13 +44,17 @@ export class FirebaseGET {
 				});
 			});
 		});
+		console.log(this._allTrips);
 	}
 
 	getAllTrips(): Array<any> {
-		return this._allTrips;
+		console.log(_.uniqBy(this._allTrips, 'key'));
+		return _.uniqBy(this._allTrips, 'key');
 	}
 
 	setAllUsers(): void {
+		this._allUsers = [];
+
 		let userListObservable = this.af.database.list('/users', {
 			preserveSnapshot: true
 		});
@@ -74,10 +81,6 @@ export class FirebaseGET {
 	}
 
 	getAllUsers(): Array<any> {
-		console.log("\n\n====================");
-		console.log("this._allUsers:");
-		console.log(this._allUsers);
-		console.log("====================");
 		return this._allUsers;
 	}
 

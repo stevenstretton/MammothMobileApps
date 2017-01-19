@@ -4,7 +4,7 @@ import { FirebaseGET } from '../../services/firebase.service/get';
 import { FirebasePOST } from '../../services/firebase.service/post';
 import { FirebasePUT } from "../../services/firebase.service/put";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { AddFriendModal } from "./addFriendModal/addFriendModal";
+import { AddFriendModal } from "./modals/modals";
 import set = Reflect.set;
 
 @Component({
