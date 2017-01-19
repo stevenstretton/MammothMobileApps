@@ -7,8 +7,8 @@ import { FirebasePOST } from "./firebase.service/post"
 
 @Injectable()
 export class AuthenticationHandler {
-	private _authState: FirebaseAuthState;
-	private _currentUser: FirebaseAuthState;
+	private _authState: any;
+	private _currentUser: any;
 
 	private _fb: any;
 
@@ -42,6 +42,14 @@ export class AuthenticationHandler {
 
 	logoutFirebase(): void {
 		this.auth$.logout();
+	}
+
+	changeUserPassword(newPassword): void {
+		this._fb.auth().currentUser.updatePassword(newPassword).then(() => {
+			console.log("Password changed")
+		}, (err) => {
+			console.log(err);
+		});
 	}
 
 	createFirebaseUser(email, password): any {

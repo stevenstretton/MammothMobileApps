@@ -19,6 +19,7 @@ import { Friends } from '../pages/friends/friends';
 
 import { Account } from '../pages/account/account';
 import { LocationModal } from '../pages/account/locationModal/locationModal';
+import { ChangePasswordModal } from "../pages/account/changePasswordModal/changePasswordModal";
 
 import { Map } from '../pages/map/map';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -60,6 +61,7 @@ const firebaseAuthConfig = {
 		Friends,
 		Account,
 		LocationModal,
+		ChangePasswordModal,
 		AddFriendModal,
 		Map,
 		TabsPage
@@ -84,6 +86,7 @@ const firebaseAuthConfig = {
 		NewTrip,
 		FriendsModal,
 		LocationModal,
+		ChangePasswordModal,
 		AddFriendModal,
 		Friends,
 		Account,

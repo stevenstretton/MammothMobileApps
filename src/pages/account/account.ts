@@ -4,6 +4,7 @@ import { App } from 'ionic-angular';
 import { NavController, ActionSheetController, Platform, ModalController } from 'ionic-angular';
 import { Login } from '../login/login';
 import { LocationModal } from "./locationModal/locationModal";
+import { ChangePasswordModal } from "./changePasswordModal/changePasswordModal";
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase.service/get";
@@ -38,19 +39,13 @@ export class Account {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
 
-		let	allTrips = this.firebaseGet.getAllTrips(),
-			tripMembers = [];
+		let	allTrips = this.firebaseGet.getAllTrips();
 
 		allTrips.forEach((trip) => {
-			tripMembers.push(trip.leadOrganiser);
-			trip.friends.forEach((friend) => {
-				tripMembers.push(friend);
-			});
-
-			if (tripMembers.indexOf(this._currentUser.key) > -1) {
+			console.log(trip.friends);
+			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
 				this._currentUserTrips.push(trip);
 			}
-			tripMembers = [];
 		});
 	}
 
@@ -60,7 +55,15 @@ export class Account {
 		this.app.getRootNav().setRoot(Login);
 	}
 
-	presentModal(trip): void {
+	showChangePasswordModal(): void {
+		let modal = this.modalCtrl.create(ChangePasswordModal);
+		modal.onDidDismiss((passwordData) => {
+			this.authenticationHandler.changeUserPassword(passwordData.newPassword);
+		});
+		modal.present();
+	}
+
+	showLocationModal(trip): void {
 		let tripID = trip.key,
 			tripName = trip.name,
 			currentUsersToSeeLocationOfChosenTrip = [],
