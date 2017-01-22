@@ -4,15 +4,15 @@ import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { FirebaseGET } from "../../services/firebase.service/get"
+import { FirebaseGET } from "../../services/firebase.service/get";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
 	selector: 'page-login',
 	templateUrl: 'login.html'
 })
 export class Login {
-	private _username: string;
-	private _password: string;
+	private _loginForm: FormGroup;
 	private _isError: boolean;
 	private _error: string;
 
@@ -20,7 +20,8 @@ export class Login {
 	            public authenticationHandler: AuthenticationHandler,
 				public firebaseGet: FirebaseGET,
 				public navParams: NavParams,
-				public toastCtrl: ToastController) {
+				public toastCtrl: ToastController,
+				public formBuilder: FormBuilder) {
 		this.firebaseGet.setAllTrips();
 		this.firebaseGet.setAllUsers();
 		this._isError = false;
@@ -29,6 +30,11 @@ export class Login {
 		if (justRegistered) {
 			this.showRegistrationToast();
 		}
+
+		this._loginForm = this.formBuilder.group({
+			username: ['', Validators.required],
+			password: ['', Validators.required]
+		});
 	}
 
 	showRegistrationToast(): void {
@@ -39,8 +45,8 @@ export class Login {
 		}).present();
 	}
 
-	login(): void {
-		let loginPromise = this.authenticationHandler.loginFirebase(this._username, this._password);
+	onFormSubmit(formData): void {
+		let loginPromise = this.authenticationHandler.loginFirebase(formData.username, formData.password);
 
 		loginPromise.then((successResponse) => {
 			this.authenticationHandler.setCurrentUser();

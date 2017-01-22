@@ -29,6 +29,24 @@ export class FirebasePUT {
 		});
 	}
 
+	putTripData(tripID, itemToUpdate, newValue): void {
+		let path = itemToUpdate.toLowerCase();
+
+		if (itemToUpdate.indexOf("Cover") > -1) {
+			path = "coverPhotoUrl";
+		} else if ((itemToUpdate.indexOf('Date') > -1) || (itemToUpdate.indexOf('Time') > -1)) {
+			let object = itemToUpdate.substr(0, itemToUpdate.indexOf(" ")),
+				attribute = itemToUpdate.substr(itemToUpdate.indexOf(" "), itemToUpdate.length);
+
+			// Remove the space
+			attribute = attribute.slice(1, attribute.length);
+			path = object.toLowerCase() + "/" + attribute.toLowerCase();
+		}
+		let tripObjectObservable = this.af.database.object("trips/" + tripID + "/" + path);
+
+		tripObjectObservable.set(newValue);
+	}
+
 	putUserToSeeLocation(userID, tripID, usersIDsToSeeLoc): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 

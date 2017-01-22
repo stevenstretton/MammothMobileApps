@@ -1,49 +1,82 @@
 import { Component } from '@angular/core';
-import { FirebaseGET } from '../../../services/firebase.service/get';
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ViewController, Platform, NavParams } from 'ionic-angular';
 
-@Component({
-	selector: 'page-friendsModal',
-	templateUrl: './templates/editDateModal.html'
-})
-export class EditDateModal {
-	private _friendsAdded: Array<any>;
-	private _selectedFriends: Array<any>;
+export class editModal {
+	protected _title: string;
+	protected _editForm: FormGroup;
 
 	constructor(public viewCtrl: ViewController,
-	            public firebaseGet: FirebaseGET,
-	            public params: NavParams,) {
-		this._friendsAdded = [];
-		this._selectedFriends = [];
+	            public navParams: NavParams,
+	            public formBuilder: FormBuilder) {
+		this._title = this.navParams.get('title');
 
-		this._selectedFriends = params.get('selectedFriends');
-
-		this._selectedFriends.forEach((friend) => {
-			if (friend.isAdded) {
-				this._friendsAdded.push(friend.user.key);
-			}
+		this._editForm = this.formBuilder.group({
+			oldValue: [{
+				value: this.navParams.get('oldValue'),
+				disabled: true
+			},
+				Validators.required],
+			newValue: ['', Validators.required]
 		});
 	}
 
-	submit() {
+	protected dismiss(): void {
 		this.viewCtrl.dismiss();
 	}
 
-
-	ifInArray(friendID): boolean {
-		return (this._friendsAdded.indexOf(friendID) > -1);
+	protected onFormSubmit(formData): void {
+		this.viewCtrl.dismiss(formData);
 	}
+}
 
-	toggleClicked(friendID, check): void {
-		if (check) {
-			if (!this.ifInArray(friendID)) {
-				this._friendsAdded.push(friendID);
-			}
-		} else {
-			if (this.ifInArray(friendID)) {
-				this._friendsAdded.splice(this._friendsAdded.indexOf(friendID), 1);
-			}
-		}
+@Component({
+	selector: 'modal-editDateModal',
+	templateUrl: './templates/editDateModal.html'
+})
+export class EditDateModal extends editModal {
+	constructor(public viewCtrl: ViewController,
+	            public navParams: NavParams,
+	            public formBuilder: FormBuilder) {
+		super(viewCtrl, navParams, formBuilder);
 	}
+}
 
+@Component({
+	selector: 'modal-editInputModal',
+	templateUrl: './templates/editInputModal.html'
+})
+export class EditInputModal extends editModal {
+
+	constructor(public viewCtrl: ViewController,
+	            public navParams: NavParams,
+	            public formBuilder: FormBuilder) {
+		super(viewCtrl, navParams, formBuilder);
+	}
+}
+
+@Component({
+	selector: 'modal-editTextareaModal',
+	templateUrl: './templates/editTextareaModal.html'
+})
+export class EditTextareaModal extends editModal {
+
+	constructor(public viewCtrl: ViewController,
+	            public navParams: NavParams,
+	            public formBuilder: FormBuilder) {
+		super(viewCtrl, navParams, formBuilder);
+	}
+}
+
+@Component({
+	selector: 'modal-editTimeModal',
+	templateUrl: './templates/editTimeModal.html'
+})
+export class EditTimeModal extends editModal {
+
+	constructor(public viewCtrl: ViewController,
+	            public navParams: NavParams,
+	            public formBuilder: FormBuilder) {
+		super(viewCtrl, navParams, formBuilder);
+	}
 }

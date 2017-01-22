@@ -1,27 +1,27 @@
 <ion-content>
-
 	<h1 class="app-title">Mammoth</h1>
+	<form [formGroup]="_loginForm" (ngSubmit)="onFormSubmit(_loginForm.value)">
+		<ion-list>
+			<ion-item>
+				<ion-label floating>Email</ion-label>
+				<ion-input formControlName="username" [formControl]="_loginForm.controls['username']"
+				           type="email" ngDefaultControl></ion-input>
+			</ion-item>
 
-	<ion-list>
-		<ion-item>
-			<ion-label floating>Email</ion-label>
-			<ion-input [(ngModel)]="_username" type="email"></ion-input>
-		</ion-item>
+			<ion-item>
+				<ion-label floating>Password</ion-label>
+				<ion-input formControlName="password" [formControl]="_loginForm.controls['password']"
+				           type="password" ngDefaultControl></ion-input>
+			</ion-item>
 
-		<ion-item>
-			<ion-label floating>Password</ion-label>
-			<ion-input [(ngModel)]="_password" type="password"></ion-input>
-		</ion-item>
-	</ion-list>
-
-	<div padding>
-		<button ion-button color="primary" block (click)="login()">Sign In</button>
-	</div>
-
+			<ion-item>
+				<button ion-button block type="submit" [disabled]="!_loginForm.valid">Sign in</button>
+			</ion-item>
+		</ion-list>
+	</form>
 	<div *ngIf="_isError">{{ _error }}</div>
 
 	<div padding>
 		<button ion-button outline color="primary" block (click)="goToRegister()">Create An Account</button>
 	</div>
-
 </ion-content>
