@@ -6,7 +6,7 @@ import { FirebaseGET } from "../../services/firebase.service/get";
 import { FirebaseDELETE } from "../../services/firebase.service/delete";
 import { FirebasePUT } from "../../services/firebase.service/put";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { EditDateModal, EditInputModal, EditTimeModal, EditTextareaModal } from "./modals/modals";
+import { EditDateModal, EditInputModal, EditTimeModal, EditTextareaModal, AddMembersModal, AddItemsModal } from "./modals/modals";
 
 @Component({
 	selector: 'page-viewTrip',
@@ -59,8 +59,20 @@ export class ViewTrip {
 			});
 			editModal.onDidDismiss((formData) => {
 				if (typeof formData !== "undefined") {
-					this.firebasePut.putTripData(this._trip.trip.key, title, formData.newValue);
-					callback(formData.newValue);
+					let newValue;
+					if (title === "Friends") {
+						let peopleIDs = [];
+
+						formData.forEach((person) => {
+							peopleIDs.push(person.key);
+						});
+						console.log(peopleIDs);
+						newValue = peopleIDs;
+					} else {
+						newValue = formData.newValue;
+					}
+					this.firebasePut.putTripData(this._trip.trip.key, title, newValue);
+					callback(formData);
 				}
 			});
 			editModal.present();
@@ -68,44 +80,52 @@ export class ViewTrip {
 
 		switch (index) {
 			case 1:
-				createModal(EditTextareaModal, 'Description', this._trip.trip.description, (newValue) => {
-					this._trip.trip.description = newValue;
+				createModal(EditTextareaModal, 'Description', this._trip.trip.description, (formData) => {
+					this._trip.trip.description = formData.newValue;
 					this.showEditToast('Description');
 				});
 				break;
 			case 2:
-				createModal(EditInputModal, 'Location', this._trip.trip.location, (newValue) => {
-					this._trip.trip.location = newValue;
+				createModal(EditInputModal, 'Location', this._trip.trip.location, (formData) => {
+					this._trip.trip.location = formData.newValue;
 					this.showEditToast('Location');
 				});
 				break;
 			case 3:
-				createModal(EditDateModal, 'Start Date', this._trip.trip.start.date, (newValue) => {
-					this._trip.trip.start.date = newValue;
+				createModal(EditDateModal, 'Start Date', this._trip.trip.start.date, (formData) => {
+					this._trip.trip.start.date = formData.newValue;
 					this.showEditToast('Start date');
 				});
 				break;
 			case 4:
-				createModal(EditTimeModal, 'Start Time', this._trip.trip.start.time, (newValue) => {
-					this._trip.trip.start.time = newValue;
+				createModal(EditTimeModal, 'Start Time', this._trip.trip.start.time, (formData) => {
+					this._trip.trip.start.time = formData.newValue;
 					this.showEditToast('Start time');
 				});
 				break;
 			case 5:
-				createModal(EditDateModal, 'End Date', this._trip.trip.end.date, (newValue) => {
-					this._trip.trip.end.date = newValue;
+				createModal(EditDateModal, 'End Date', this._trip.trip.end.date, (formData) => {
+					this._trip.trip.end.date = formData.newValue;
 					this.showEditToast('End date');
 				});
 				break;
 			case 6:
-				createModal(EditInputModal, 'Transport', this._trip.trip.transport, (newValue) => {
-					this._trip.trip.transport = newValue;
+				createModal(EditInputModal, 'Transport', this._trip.trip.transport, (formData) => {
+					this._trip.trip.transport = formData.newValue;
 					this.showEditToast('Transport');
 				});
 				break;
 			case 7:
+				createModal(AddMembersModal, 'Friends', this._tripMembers, (formData) => {
+					this._tripMembers = formData;
+					this.showEditToast('Friends');
+				});
 				break;
 			case 8:
+				createModal(AddItemsModal, 'Items', this._trip.trip.items, (formData) => {
+					this._trip.trip.items = formData;
+					this.showEditToast('Items');
+				});
 				break;
 		}
 	}
@@ -138,6 +158,45 @@ export class ViewTrip {
 						}).then(() => {
 							this.navCtrl.pop();
 						});
+					}
+				}, {
+					text: 'No',
+					role: 'cancel'
+				}
+			]
+		}).present();
+	}
+
+	removeMemberFromTrip(member): void {
+		this.alertCtrl.create({
+			title: 'Delete Member',
+			message: 'Are you sure you want to delete ' + member.firstName + ' ' + member.lastName + ' from this trip?',
+			buttons: [
+				{
+					text: 'Yes',
+					handler: () => {
+						this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
+						this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
+						this.showEditToast('Friends');
+					}
+				}, {
+					text: 'No',
+					role: 'cancel'
+				}
+			]
+		}).present();
+	}
+
+	removeItemFromTrip(item): void {
+		this.alertCtrl.create({
+			title: 'Delete Item',
+			message: 'Are you sure you want to delete this item from the trip?',
+			buttons: [
+				{
+					text: 'Yes',
+					handler: () => {
+						//this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
+						//this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
 					}
 				}, {
 					text: 'No',

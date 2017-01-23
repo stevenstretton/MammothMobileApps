@@ -39,6 +39,7 @@ export class AddFriendModal {
 		this.viewCtrl.dismiss(this._selectedPeople);
 	}
 
+	// TODO: There is a much simpler way to do this
 	updateSearchResults(event): void {
 		this.initPeople();
 

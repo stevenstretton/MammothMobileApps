@@ -3,11 +3,6 @@
 		<ion-title>
 			{{ _trip.trip.name }}
 		</ion-title>
-		<ion-buttons end>
-			<button ion-button icon-only (click)="deleteTrip()">
-				<ion-icon name="trash"></ion-icon>
-			</button>
-		</ion-buttons>
 	</ion-navbar>
 </ion-header>
 
@@ -77,12 +72,19 @@
 				Friends on Trip:
 				<button *ngIf="_trip.lead.key === _currentUser.key" ion-button clear item-right (click)="showEditModal(7)">Edit</button>
 			</ion-item-divider>
-			<ion-item *ngFor="let member of _tripMembers">
-				<ion-avatar item-left>
-					<img src="{{ member.photoUrl }}">
-				</ion-avatar>
-				<h2>{{ member.firstName }} {{ member.lastName }}</h2>
-			</ion-item>
+			<ion-item-sliding *ngFor="let member of _tripMembers">
+				<ion-item>
+					<ion-avatar item-left>
+						<img src="{{ member.photoUrl }}">
+					</ion-avatar>
+					<h2>{{ member.firstName }} {{ member.lastName }}</h2>
+				</ion-item>
+				<ion-item-options *ngIf="_trip.lead.key === _currentUser.key" side="right">
+					<button ion-button icon-only color="danger" (click)="removeMemberFromTrip(member)">
+						<ion-icon name="trash"></ion-icon>
+					</button>
+				</ion-item-options>
+			</ion-item-sliding>
 		</ion-list>
 
 		<ion-list>
@@ -90,21 +92,27 @@
 				Trip list:
 				<button *ngIf="_trip.lead.key === _currentUser.key" ion-button clear item-right (click)="showEditModal(8)">Add</button>
 			</ion-item-divider>
-			<ion-item *ngFor="let item of _trip.trip.items">
-				<ion-label>{{ item.name }}</ion-label>
-				<ion-note item-right>
-					{{ item.description }}
-				</ion-note>
-			</ion-item>
-			<ion-item-options side="right">
-				<button ion-button icon-only>
-					<ion-icon name="create"></ion-icon>
-				</button>
-				<button ion-button icon-only color="danger">
-					<ion-icon name="trash"></ion-icon>
-				</button>
-			</ion-item-options>
+			<ion-item-sliding *ngFor="let item of _trip.trip.items">
+				<ion-item>
+					<ion-label>{{ item.name }}</ion-label>
+					<ion-note item-right>
+						{{ item.description }}
+					</ion-note>
+				</ion-item>
+				<ion-item-options *ngIf="_trip.lead.key === _currentUser.key" side="right">
+					<button ion-button icon-only>
+						<ion-icon name="create"></ion-icon>
+					</button>
+					<button ion-button icon-only color="danger" (click)="removeItemFromTrip(item)">
+						<ion-icon name="trash"></ion-icon>
+					</button>
+				</ion-item-options>
+			</ion-item-sliding>
 		</ion-list>
 
+		<ion-item>
+			<button ion-button color="danger" block *ngIf="_trip.lead.key === _currentUser.key"
+			        (click)="deleteTrip()">Delete</button>
+		</ion-item>
 	</ion-card>
 </ion-content>

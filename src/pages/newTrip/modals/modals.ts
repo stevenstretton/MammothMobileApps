@@ -29,7 +29,6 @@ export class FriendsModal {
 		this.viewCtrl.dismiss();
 	}
 
-
 	ifInArray(friendID): boolean {
 		return (this._friendsAdded.indexOf(friendID) > -1);
 	}
