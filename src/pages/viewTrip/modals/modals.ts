@@ -104,9 +104,7 @@ export class AddMembersModal {
 		this._friendsToBeOnTrip = [];
 
 		allUsers.forEach((user) => {
-			// TODO: I am really not sure as to why this is not working...
-			// Instead of returning all friends that are not in the trip, it just returns all friends
-			if ((friendsOnTrip.indexOf(user) <= -1) && (this._currentUser.friends.indexOf(user.key) > -1)) {
+			if ((friendsOnTrip.map(u => u.key).indexOf(user.key) <= -1) && (this._currentUser.friends.indexOf(user.key) > -1)) {
 				this._friendsNotOnTrip.push(user);
 			}
 		});

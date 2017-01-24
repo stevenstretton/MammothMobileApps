@@ -44,11 +44,13 @@ export class FirebaseGET {
 				});
 			});
 		});
-		console.log(this._allTrips);
 	}
 
 	getAllTrips(): Array<any> {
-		console.log(_.uniqBy(this._allTrips, 'key'));
+		// When you add a newTrip, I call to `setTrips()` again which should reset the array back to empty
+		// which does happen, however, when returning it I've realised that there are duplicates in the array
+		// I have not fixed the issue but just avoided it with lodash
+
 		return _.uniqBy(this._allTrips, 'key');
 	}
 
