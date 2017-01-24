@@ -14,7 +14,7 @@ import { NewTrip } from '../pages/newTrip/newTrip';
 import { FriendsModal } from '../pages/newTrip/modals/modals';
 
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
-import { EditInputModal, EditDateModal, EditTimeModal, EditTextareaModal, AddMembersModal } from '../pages/viewTrip/modals/modals';
+import { EditInputModal, EditDateModal, EditTimeModal, EditTextareaModal, AddMembersModal, AddItemsModal } from '../pages/viewTrip/modals/modals';
 
 import { Friends } from '../pages/friends/friends';
 import { AddFriendModal } from '../pages/friends/modals/modals';
@@ -67,6 +67,7 @@ const firebaseAuthConfig = {
 		EditInputModal,
 		EditTextareaModal,
 		AddMembersModal,
+		AddItemsModal,
 		ChangePasswordModal,
 		AddFriendModal,
 		Map,
@@ -98,6 +99,7 @@ const firebaseAuthConfig = {
 		EditInputModal,
 		EditTextareaModal,
 		AddMembersModal,
+		AddItemsModal,
 		AddFriendModal,
 		Friends,
 		Account,

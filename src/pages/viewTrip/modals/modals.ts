@@ -165,7 +165,7 @@ export class AddItemsModal {
 	}
 
 	addItemFormSubmit(formData): void {
-
+		this._itemsForTrip.push(formData);
 	}
 
 	dismiss(): void {

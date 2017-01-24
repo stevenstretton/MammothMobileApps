@@ -68,6 +68,8 @@ export class ViewTrip {
 						});
 						console.log(peopleIDs);
 						newValue = peopleIDs;
+					} else if (title === "Items") {
+						newValue = formData;
 					} else {
 						newValue = formData.newValue;
 					}

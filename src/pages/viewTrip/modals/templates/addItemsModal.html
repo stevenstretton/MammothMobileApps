@@ -35,8 +35,12 @@
 	</form>
 
 	<ion-list>
-		<ion-item>
-
+		<ion-item-divider color="light">
+			Current items:
+		</ion-item-divider>
+		<ion-item *ngFor="let item of _itemsForTrip">
+			<ion-label>{{ item.name }}</ion-label>
+			<ion-note item-right>{{ item.description }}</ion-note>
 		</ion-item>
 	</ion-list>
 </ion-content>
