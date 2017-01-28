@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import { ViewController, Platform, NavParams } from 'ionic-angular';
-import { FirebaseGET } from "../../../services/firebase.service/get";
+import { FirebaseGET } from "../../../services/firebase/get.service";
 
 @Component({
 	selector: 'page-addfriendmodal',

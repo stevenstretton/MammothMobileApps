@@ -6,12 +6,8 @@ import { Login } from '../login/login';
 import { LocationModal, ChangePasswordModal } from "./modals/modals";
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { FirebaseGET } from "../../services/firebase.service/get";
-import { FirebasePOST } from "../../services/firebase.service/post";
-import { FirebasePUT } from "../../services/firebase.service/put";
-import { FirebaseListObservable, FirebaseObjectObservable } from 'angularfire2';
-import { transformSrcPathToTmpPath } from "@ionic/app-scripts/dist";
-import _ from 'lodash';
+import { FirebaseGET } from "../../services/firebase/get.service";
+import { FirebasePUT } from "../../services/firebase/put.service";
 
 @Component({
 	selector: 'page-account',
@@ -30,7 +26,6 @@ export class Account {
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
-				public firebasePush: FirebasePOST,
 				public firebasePut: FirebasePUT) {
 		this._usersToSeeLocation = [];
 		this._currentUserTrips = [];

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { FirebaseGET } from '../../services/firebase.service/get';
-import { FirebasePOST } from '../../services/firebase.service/post';
+import { FirebaseGET } from '../../services/firebase/get.service';
+import { FirebasePOST } from '../../services/firebase/post.service';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { FriendsModal } from './modals/modals';

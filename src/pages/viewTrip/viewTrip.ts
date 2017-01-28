@@ -2,9 +2,9 @@ import { Component } from '@angular/core';
 
 import { NavController, NavParams, AlertController, ModalController, ToastController } from 'ionic-angular';
 import { Map } from '../map/map';
-import { FirebaseGET } from "../../services/firebase.service/get";
-import { FirebaseDELETE } from "../../services/firebase.service/delete";
-import { FirebasePUT } from "../../services/firebase.service/put";
+import { FirebaseGET } from "../../services/firebase/get.service";
+import { FirebaseDELETE } from "../../services/firebase/delete.service";
+import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { EditDateModal, EditInputModal, EditTimeModal, EditTextareaModal, AddMembersModal, AddItemsModal } from "./modals/modals";
 

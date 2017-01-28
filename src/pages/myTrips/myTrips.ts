@@ -2,9 +2,8 @@ import { Component } from '@angular/core';
 
 import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { ViewTrip } from '../viewTrip/viewTrip';
-import { FirebaseGET } from '../../services/firebase.service/get';
+import { FirebaseGET } from '../../services/firebase/get.service';
 
-import { FirebaseAuthState } from 'angularfire2';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 
 @Component({

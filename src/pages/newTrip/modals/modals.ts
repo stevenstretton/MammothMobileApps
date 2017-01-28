@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FirebaseGET } from '../../../services/firebase.service/get';
+import { FirebaseGET } from '../../../services/firebase/get.service';
 import { ViewController, Platform, NavParams } from 'ionic-angular';
 
 @Component({

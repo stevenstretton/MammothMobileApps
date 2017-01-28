@@ -26,10 +26,10 @@ import { Map } from '../pages/map/map';
 import { TabsPage } from '../pages/tabs/tabs';
 import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
 
-import { FirebaseGET } from '../services/firebase.service/get';
-import { FirebasePOST } from '../services/firebase.service/post';
-import { FirebasePUT } from "../services/firebase.service/put";
-import { FirebaseDELETE } from "../services/firebase.service/delete";
+import { FirebaseGET } from '../services/firebase/get.service';
+import { FirebasePOST } from '../services/firebase/post.service';
+import { FirebasePUT } from "../services/firebase/put.service";
+import { FirebaseDELETE } from "../services/firebase/delete.service";
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
 import { LocationHandler } from '../services/locationHandler.service';
 

@@ -1,8 +1,8 @@
 import { Injectable, Inject } from '@angular/core';
-import { AngularFire, FirebaseAuth, FirebaseAuthState, AuthMethods, AuthProviders, FirebaseApp } from 'angularfire2';
+import { AngularFire, FirebaseAuthState, AuthMethods, AuthProviders, FirebaseApp } from 'angularfire2';
 
-import { FirebaseGET } from "./firebase.service/get";
-import { FirebasePOST } from "./firebase.service/post"
+import { FirebaseGET } from "./firebase/get.service";
+import { FirebasePOST } from "./firebase/post.service"
 
 
 @Injectable()
@@ -12,8 +12,7 @@ export class AuthenticationHandler {
 
 	private _fb: any;
 
-	constructor(public auth$: FirebaseAuth,
-	            public firebaseGet: FirebaseGET,
+	constructor(public firebaseGet: FirebaseGET,
 	            public firebasePost: FirebasePOST,
 				public af: AngularFire,
 				@Inject(FirebaseApp) firebaseApp: any) {
@@ -21,15 +20,15 @@ export class AuthenticationHandler {
 		this._fb = firebaseApp;
 
 		// Find out what this does
-		this._authState = auth$.getAuth();
-		auth$.subscribe((state: FirebaseAuthState) => {
-			this._authState = state;
-		});
+		//this._authState = auth$.getAuth();
+		//auth$.subscribe((state: FirebaseAuthState) => {
+		//	this._authState = state;
+		//});
 	}
 
 	loginFirebase(email, password): any {
 		return new Promise((resolve, reject) => {
-			this.auth$.login({
+			this.af.auth.login({
 				email: email,
 				password: password
 			}).then((successResponse) => {
@@ -41,7 +40,7 @@ export class AuthenticationHandler {
 	}
 
 	logoutFirebase(): void {
-		this.auth$.logout();
+		this.af.auth.logout();
 	}
 
 	changeUserPassword(newPassword): void {
@@ -54,7 +53,7 @@ export class AuthenticationHandler {
 
 	createFirebaseUser(emailPassCombo): any {
 		return new Promise((resolve, reject) => {
-			this.auth$.createUser({
+			this.af.auth.createUser({
 				email: emailPassCombo.email,
 				password: emailPassCombo.password
 			}).then((successResponse) => {
@@ -76,7 +75,7 @@ export class AuthenticationHandler {
 	}
 
 	setCurrentUser(): void {
-		this.auth$.subscribe((user) => {
+		this.af.auth.subscribe((user) => {
 
 			this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
 				this._currentUser = currentUser;
@@ -87,13 +86,13 @@ export class AuthenticationHandler {
 	// This may need to change
 	// Visit: https://github.com/angular/angularfire2/blob/master/docs/5-user-authentication.md for more information
 	loginFacebook(): void {
-		this.auth$.login({
+		this.af.auth.login({
 			provider: AuthProviders.Facebook,
 			method: AuthMethods.Popup
 		})
 	}
 
 	logoutFacebook(): void {
-		this.auth$.logout();
+		this.af.auth.logout();
 	}
 }

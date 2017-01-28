@@ -3,7 +3,6 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 import { NavController, NavParams } from 'ionic-angular';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { Login } from "../login/login"
 
 @Component({
 	selector: 'page-register',

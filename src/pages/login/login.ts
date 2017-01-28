@@ -4,7 +4,7 @@ import { NavController, NavParams, ToastController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { FirebaseGET } from "../../services/firebase.service/get";
+import { FirebaseGET } from "../../services/firebase/get.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({

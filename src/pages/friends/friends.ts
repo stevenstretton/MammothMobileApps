@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
 import { NavController, ModalController } from 'ionic-angular';
-import { FirebaseGET } from '../../services/firebase.service/get';
-import { FirebasePOST } from '../../services/firebase.service/post';
-import { FirebasePUT } from "../../services/firebase.service/put";
+import { FirebaseGET } from '../../services/firebase/get.service';
+import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { AddFriendModal } from "./modals/modals";
-import set = Reflect.set;
+// import set = Reflect.set;
 
 @Component({
 	selector: 'page-friends',
@@ -19,7 +18,6 @@ export class Friends {
 				public firebaseGet: FirebaseGET,
 				public authenticationHandler: AuthenticationHandler,
 				public modalCtrl: ModalController,
-				public firebasePush: FirebasePOST,
 				public firebasePut: FirebasePUT) {
 		this._friends = [];
 
