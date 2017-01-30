@@ -1,46 +1,54 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Register
-    </ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>
+			Register
+		</ion-title>
+	</ion-navbar>
 </ion-header>
+
 <ion-content>
+	<form [formGroup]="_registrationForm" (ngSubmit)="register(_registrationForm.value)">
+		<ion-list>
+			<ion-item>
+				<ion-label floating>Firstname</ion-label>
+				<ion-input formControlName="firstName" [formControl]="_registrationForm.controls['firstName']"
+				           type="text" ngDefaultControl></ion-input>
+			</ion-item>
 
-  <ion-list>
-    <ion-item>
-      <ion-label floating>Firstname</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
+			<ion-item>
+				<ion-label floating>Surname</ion-label>
+				<ion-input formControlName="surname" [formControl]="_registrationForm.controls['surname']"
+				           type="text" ngDefaultControl></ion-input>
+			</ion-item>
 
-    <ion-item>
-      <ion-label floating>Surname</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
+			<ion-item>
+				<ion-label floating>Username</ion-label>
+				<ion-input formControlName="username" [formControl]="_registrationForm.controls['username']"
+				           type="text" ngDefaultControl></ion-input>
+			</ion-item>
 
-    <ion-item>
-      <ion-label floating>Username</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
+			<ion-item>
+				<ion-label floating>Email Address</ion-label>
+				<ion-input formControlName="email" [formControl]="_registrationForm.controls['email']"
+				           type="email" ngDefaultControl></ion-input>
+			</ion-item>
 
-    <ion-item>
-      <ion-label floating>Email Address</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
+			<ion-item>
+				<ion-label floating>Password</ion-label>
+				<ion-input formControlName="password" [formControl]="_registrationForm.controls['password']"
+				           type="password" ngDefaultControl></ion-input>
+			</ion-item>
 
-    <ion-item>
-      <ion-label floating>Password</ion-label>
-      <ion-input type="password"></ion-input>
-    </ion-item>
+			<ion-item>
+				<ion-label floating>Confirm Password</ion-label>
+				<ion-input formControlName="confirmPassword" [formControl]="_registrationForm.controls['confirmPassword']"
+				           type="password" ngDefaultControl></ion-input>
+			</ion-item>
 
-    <ion-item>
-      <ion-label floating>Confirm Password</ion-label>
-      <ion-input type="password"></ion-input>
-    </ion-item>
-
-     <div padding>
-      <button ion-button color="primary" block>Create Account</button>
-    </div>
-  </ion-list>
+			<div padding>
+				<button type="submit" ion-button block [disabled]="!_registrationForm.valid">Create Account</button>
+			</div>
+		</ion-list>
+	</form>
 
 </ion-content>

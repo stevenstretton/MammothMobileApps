@@ -4,72 +4,43 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content class="cards-bg">  
+<ion-content class="cards-bg">
+	<ion-refresher (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content
+      pullingIcon="arrow-dropdown"
+      pullingText="Pull to refresh"
+      refreshingSpinner="circles"
+      refreshingText="Loading Trips...">
+    </ion-refresher-content>
+  </ion-refresher>
 
-    <!-- a single card -->
-    <ion-card>  
+	<ion-list *ngFor="let trip of _trips">
+		<ion-card>
+			<ion-item>
+				<ion-avatar item-left>
+					<img src="{{ trip.lead.photoUrl }}">
+				</ion-avatar>
+				<h2>Trip Lead</h2>
+				<p>{{ trip.lead.firstName }} {{ trip.lead.lastName }}</p>
+			</ion-item>
 
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/hall.jpg">
-      </ion-avatar>
-      <h2>Trip Lead</h2>
-      <p>Darryl Hall</p>
-    </ion-item>  
+			<img src="{{ trip.trip.coverPhotoUrl }}"/>
+			<ion-card-content>
+				<ion-card-title>
+					{{ trip.trip.name }}
+				</ion-card-title>
+				<p>
+					{{ trip.trip.description }}
+				</p>
+			</ion-card-content>
 
-    <img src="assets/img/nin-live.png"/>
-    <ion-card-content>
-      <ion-card-title>
-        O2 Academy
-      </ion-card-title>
-      <p>        
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-        Nunc a rhoncus nisi. Nullam consequat eros sem, 
-        non venenatis lorem fermentum at.
-      </p>
-    </ion-card-content>
-
-    <ion-row no-padding>
-      <ion-col>
-        <button ion-button clear small color="positive" (click)="goToTrip()">          
-          View More Trip Information
-        </button>
-      </ion-col>      
-    </ion-row>
-  </ion-card>
-  <!-- card end -->
-
-  <!-- a single card -->
-  <ion-card>    
-
-    <ion-item>
-      <ion-avatar item-left>
-        <img src="assets/img/ashworth.jpg">
-      </ion-avatar>
-      <h2>Trip Lead</h2>
-      <p>Will Ashworth</p>
-    </ion-item>
-
-    <img src="assets/img/badu-live.png"/>
-    <ion-card-content>
-      <ion-card-title>
-        London
-      </ion-card-title>
-      <p>        
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-        Nunc a rhoncus nisi. Nullam consequat eros sem, 
-        non venenatis lorem fermentum at.
-      </p>
-    </ion-card-content>
-
-    <ion-row no-padding>
-      <ion-col>
-        <button ion-button clear small color="positive">          
-          View More Trip Information
-        </button>
-      </ion-col>      
-    </ion-row>
-  </ion-card>
-  <!-- card end -->
-  
+			<ion-row no-padding>
+				<ion-col>
+					<button ion-button clear small color="positive" (click)="goToTrip(trip)">
+						View More Trip Information
+					</button>
+				</ion-col>
+			</ion-row>
+		</ion-card>
+	</ion-list>
 </ion-content>

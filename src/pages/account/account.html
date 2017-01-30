@@ -1,89 +1,86 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Account</ion-title>
-    <ion-buttons end>
-      <button ion-button icon-right icon-only (click)="logout()">        
-        <ion-icon name="exit"></ion-icon>
-      </button>
-    </ion-buttons>  
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>Account</ion-title>
+		<ion-buttons end>
+			<button ion-button icon-right icon-only (click)="logout()">
+				<ion-icon name="exit"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
 </ion-header>
 
 <ion-content>
 
-  <ion-list>
-    <ion-list-header>
-      Your Account...
-    </ion-list-header>
-  </ion-list>
-    
-  <ion-card>
-    <ion-list>
+	<ion-list>
+		<ion-list-header>
+			Your Account...
+		</ion-list-header>
+	</ion-list>
 
-      <ion-item>
-        <ion-avatar item-left (click)="presentActionSheet()">
-          <img src="/assets/img/hall.jpg">
-          <ion-icon name="camera" class="edit-image"></ion-icon>
-        </ion-avatar>
-        <h2>Darryl Hall</h2>
-        <p>Some description</p>
-      </ion-item>
+	<ion-card>
+		<ion-list>
 
-      <ion-item>
-        Username
-        <ion-note item-right>
-          darrylhall
-        </ion-note>  
-      </ion-item>
+			<ion-item padding-bottom>
+				<ion-avatar item-left (click)="presentActionSheet()">
+					<img src="{{ _currentUser.photoUrl }}">
+					<ion-icon name="camera" class="edit-image"></ion-icon>
+				</ion-avatar>
+				<h2>{{ _currentUser.firstName }} {{ _currentUser.lastName }}</h2>
+				<!--<p>Some description</p>-->
+			</ion-item>
 
-      <ion-item>
-        Email  
-        <ion-note item-right>
-          darrylhall93@gmail.com
-        </ion-note>
-      </ion-item>
+			<ion-item>
+				Username
+				<ion-note item-right>
+					{{ _currentUser.username }}
+				</ion-note>
+			</ion-item>
 
-      <ion-item-sliding>
-        <ion-item>
-          Password  
-          <ion-note item-right>
-            ********
-          </ion-note>
-        </ion-item>
-        <ion-item-options side="right">
-          <button ion-button icon-only color="positive">
-            <ion-icon name="create"></ion-icon>            
-          </button>      
-        </ion-item-options>
-      </ion-item-sliding>
+			<ion-item>
+				Email
+				<ion-note item-right>
+					{{ _currentUser.email }}
+				</ion-note>
+			</ion-item>
 
-    </ion-list>    
-  </ion-card>
+			<ion-item-sliding>
+				<ion-item>
+					Password
+					<ion-note item-right>
+						**********
+					</ion-note>
+				</ion-item>
+				<ion-item-options side="right">
+					<button ion-button icon-only color="positive" (click)="showChangePasswordModal()">
+						<ion-icon name="create"></ion-icon>
+					</button>
+				</ion-item-options>
+			</ion-item-sliding>
 
-  <ion-list>
-    <ion-list-header no-lines>
-      Manage your location settings:
-    </ion-list-header>
+		</ion-list>
+	</ion-card>
 
-    <ion-item>
-      <ion-label>Share Your Location</ion-label>
-      <ion-toggle checked="false"></ion-toggle>
-    </ion-item>
-  </ion-list>
+	<ion-list>
+		<ion-list-header no-lines>
+			Manage your location settings:
+		</ion-list-header>
 
-  <ion-list>
-    <ion-item-divider color="light">Location sharing for each event:</ion-item-divider>
-    <ion-item>
-      <h2>O2 Academy</h2>
-      <p>10th December 2016</p>
-      <button ion-button clear item-right (click)="presentModal()">View</button>
-    </ion-item>
+		<ion-item>
+			<ion-label>Share Your Location</ion-label>
+			<ion-toggle [(ngModel)]="_currentUser.shareLocation" (click)="changeSharingLocation()"></ion-toggle>
+		</ion-item>
+	</ion-list>
 
-    <ion-item>
-      <h2>London</h2>
-      <p>12th June 2017</p>
-      <button ion-button clear item-right (click)="presentModal()">View</button>
-    </ion-item>
-  </ion-list>
+	<ion-list *ngIf="_currentUser.shareLocation">
+		<ion-item-divider color="light">Location sharing for each event:</ion-item-divider>
+		<ion-list>
+			<ion-item *ngFor="let trip of _currentUserTrips">
+				<h2>{{ trip.name }}</h2>
+				<p>{{ trip.start.date }}</p>
+				<p *ngIf="trip.leadOrganiser === _currentUser.uid">Lead</p>
+				<button *ngIf="trip.friends" ion-button clear item-right (click)="showLocationModal(trip)">View</button>
+			</ion-item>
+		</ion-list>
+	</ion-list>
 
 </ion-content>
