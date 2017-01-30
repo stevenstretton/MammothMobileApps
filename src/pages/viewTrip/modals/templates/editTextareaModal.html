@@ -1,0 +1,35 @@
+<ion-header>
+	<ion-navbar>
+		<ion-title>
+			{{ _title }}
+		</ion-title>
+		<ion-buttons start>
+			<button ion-button (click)="dismiss()">
+				<span>Clear</span>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content class="outer-content">
+	<form [formGroup]="_editForm" (ngSubmit)="onFormSubmit(_editForm.value)">
+		<ion-list>
+			<ion-item>
+				<ion-label>Old {{ _title | lowercase }}</ion-label>
+				<ion-textarea formControlName="oldValue" [formControl]="_editForm.controls['oldValue']"
+				          disabled ngDefaultControl></ion-textarea>
+			</ion-item>
+
+			<ion-item>
+				<ion-label>New {{ _title | lowercase }}</ion-label>
+				<ion-textarea formControlName="newValue" [formControl]="_editForm.controls['newValue']"
+				              ngDefaultControl></ion-textarea>
+			</ion-item>
+
+			<ion-item>
+				<button ion-button color="primary" block type="submit"
+				        [disabled]="!_editForm.valid">Save</button>
+			</ion-item>
+		</ion-list>
+	</form>
+</ion-content>

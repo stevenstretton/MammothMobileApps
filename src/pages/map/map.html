@@ -1,0 +1,21 @@
+<ion-header>
+	<ion-navbar>
+		<ion-title>
+			Trip Map
+		</ion-title>
+		<ion-buttons end>
+			<button ion-button icon-only>
+				<ion-icon name="settings"></ion-icon>
+			</button>
+		</ion-buttons>
+	</ion-navbar>
+</ion-header>
+
+<ion-content>
+	<sebm-google-map [latitude]="_currentUserLat" [longitude]="_currentUserLng" [zoom]="4">
+		<sebm-google-map-marker [latitude]="_currentUserLat" [longitude]="_currentUserLng"></sebm-google-map-marker>
+		<div *ngFor="let member of _membersAllowingToSeeLocation">
+			<sebm-google-map-marker [latitude]="member.location.lat" [longitude]="member.location.lng"></sebm-google-map-marker>
+		</div>
+	</sebm-google-map>
+</ion-content>
