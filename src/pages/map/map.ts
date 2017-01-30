@@ -25,7 +25,8 @@ export class Map {
 
 		this._tripMembers.forEach((tripMember) => {
 			// determining they have a location and that the current user is allowed to see it
-			if ((tripMember.location) && (tripMember.usersToSeeLocation.indexOf(this._currentUser.key) > -1)) {
+			if ((tripMember.location) && (tripMember.usersToSeeLocation) &&
+				(tripMember.usersToSeeLocation.indexOf(this._currentUser.key) > -1)) {
 				this._membersAllowingToSeeLocation.push(tripMember);
 			}
 		});
