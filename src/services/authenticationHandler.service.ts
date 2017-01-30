@@ -20,10 +20,10 @@ export class AuthenticationHandler {
 		this._fb = firebaseApp;
 
 		// Find out what this does
-		//this._authState = auth$.getAuth();
-		//auth$.subscribe((state: FirebaseAuthState) => {
-		//	this._authState = state;
-		//});
+		this._authState = af.auth.getAuth();
+		af.auth.subscribe((state: FirebaseAuthState) => {
+			this._authState = state;
+		});
 	}
 
 	loginFirebase(email, password): any {

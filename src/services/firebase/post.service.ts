@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@angular/core';
-import { AngularFire, FirebaseListObservable, FirebaseApp } from 'angularfire2';
+import { AngularFire, FirebaseApp } from 'angularfire2';
 import { FirebaseGET } from "./get.service"
 
 @Injectable()

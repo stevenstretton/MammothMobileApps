@@ -14,7 +14,7 @@ import { MyTrips } from '../myTrips/myTrips';
 })
 export class NewTrip {
 	private _friendsAdded: Array<any>;
-	private _tripCoverPhotoSelected: boolean = false;
+	// private _tripCoverPhotoSelected: boolean = false;
 	private _todaysDate: string;
 	private _currentUser: any;
 	private _newTripForm: FormGroup;
