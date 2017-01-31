@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { App } from 'ionic-angular';
 
-import { NavController, ActionSheetController, Platform, ModalController } from 'ionic-angular';
+import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { Login } from '../login/login';
 import { LocationModal, ChangePasswordModal } from "./modals/modals";
 
@@ -26,7 +26,8 @@ export class Account {
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
-				public firebasePut: FirebasePUT) {
+				public firebasePut: FirebasePUT,
+				public toastCtrl: ToastController) {
 		this._usersToSeeLocation = [];
 		this._currentUserTrips = [];
 
@@ -36,7 +37,6 @@ export class Account {
 		let	allTrips = this.firebaseGet.getAllTrips();
 
 		allTrips.forEach((trip) => {
-			console.log(trip.friends);
 			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
 				this._currentUserTrips.push(trip);
 			}
@@ -53,8 +53,17 @@ export class Account {
 		let modal = this.modalCtrl.create(ChangePasswordModal);
 		modal.onDidDismiss((passwordData) => {
 			this.authenticationHandler.changeUserPassword(passwordData.newPassword);
+			this.showChangePasswordToast();
 		});
 		modal.present();
+	}
+
+	showChangePasswordToast(): void {
+		this.toastCtrl.create({
+			message: 'Password changed successfully!',
+			duration: 3000,
+			position: 'top'
+		}).present();
 	}
 
 	showLocationModal(trip): void {
