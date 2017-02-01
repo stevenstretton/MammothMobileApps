@@ -22,6 +22,7 @@ export class NewTrip {
 	private _itemList: Array<any>;
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
+	private _tripPhoto: string = '';
 
 	constructor(public navCtrl: NavController,
 	            public actionSheetCtrl: ActionSheetController,
@@ -101,7 +102,7 @@ export class NewTrip {
 				date: formData.endDate
 			},
 			leadOrganiser: this._currentUser.key,
-			coverPhotoUrl: "",
+			coverPhotoUrl: this._tripPhoto,
 		};
 		this.firebasePost.postNewTrip(this._tripInfo);
 		this.firebaseGet.setAllTrips();
@@ -126,6 +127,10 @@ export class NewTrip {
 		this._itemList.splice(index, 1);
 	}
 
+	clearTrip() {
+		console.log("someone has removed this function");
+	}	
+
 	presentActionSheet() {
 		let cameraOptions = {
 			quality: 75,
@@ -133,8 +138,8 @@ export class NewTrip {
 			sourceType: Camera.PictureSourceType.CAMERA,
 			allowEdit: true,
 			encodingType: Camera.EncodingType.JPEG,
-			targetWidth: 300,
-			targetHeight: 300,
+			targetWidth: 700,
+			targetHeight: 600,
 			saveToPhotoAlbum: false
 		};
 
@@ -146,6 +151,7 @@ export class NewTrip {
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
+						this._tripPhoto = '';
 						console.log('Destructive clicked');
 					}
 				}, {
@@ -154,9 +160,13 @@ export class NewTrip {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							console.log(image);
+							console.log("image here")
+							//console.log(image);
+							this._tripPhoto = "data:image/jpeg;base64,"+image;
 						});
 						console.log('Take Photo clicked');
+						
+						Camera.cleanup();
 					}
 				}, {
 					text: 'Choose From Library',
@@ -164,9 +174,12 @@ export class NewTrip {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							console.log(image);
+							console.log("image here")
+							//console.log(image);
+							this._tripPhoto = "data:image/jpeg;base64,"+image;
 						});
 						console.log('Library clicked');
+						Camera.cleanup();
 					}
 				}, {
 					text: 'Choose From Presets',
@@ -180,6 +193,7 @@ export class NewTrip {
 					role: 'cancel',
 					handler: () => {
 						console.log('Cancel clicked');
+						Camera.cleanup();
 					}
 				}
 			]

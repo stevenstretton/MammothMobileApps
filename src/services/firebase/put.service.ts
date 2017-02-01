@@ -85,4 +85,14 @@ export class FirebasePUT {
 			shareLocation: shareLocation
 		});
 	}
+
+	putNewUserPhotoInDB(userID, photoUrl) : void {
+		const userObjectObservable = this.af.database.object("users/" + userID);
+
+		userObjectObservable.update({
+			photoUrl: photoUrl
+		});
+
+	}
+
 }
