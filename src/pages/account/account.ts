@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { App } from 'ionic-angular';
+import { Camera } from 'ionic-native';
 
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { Login } from '../login/login';
@@ -18,6 +19,7 @@ export class Account {
 	private _currentUserTrips: Array<any>;
 	private _usersToSeeLocation: Array<any>;
 	private _allUsers: Array<any>;
+	private _userPhoto: string = '';
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -33,7 +35,7 @@ export class Account {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
-
+		this._userPhoto = this._currentUser.photoUrl;
 		let	allTrips = this.firebaseGet.getAllTrips();
 
 		allTrips.forEach((trip) => {
@@ -134,7 +136,35 @@ export class Account {
 		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
 	}
 
+	showChangeProfilePhotoToast(): void {
+		this.toastCtrl.create({
+			message: 'Profile Picture changed successfully!',
+			duration: 2000,
+			position: 'top'
+		}).present();
+	}
+
+	showChangeProfilePhotoRemovedToast(): void {
+		this.toastCtrl.create({
+			message: 'Profile Picture Removed',
+			duration: 2000,
+			position: 'top'
+		}).present();
+	}
+	
+
 	presentActionSheet(): void {
+		let cameraOptions = {
+			quality: 50,
+			destinationType: Camera.DestinationType.DATA_URL,
+			sourceType: Camera.PictureSourceType.CAMERA,
+			allowEdit: true,
+			encodingType: Camera.EncodingType.JPEG,
+			targetWidth: 300,
+			targetHeight: 300,
+			saveToPhotoAlbum: false
+		};
+
 		let actionSheet = this.actionSheetCtrl.create({
 			title: 'Edit Profile Picture',
 			buttons: [
@@ -143,19 +173,41 @@ export class Account {
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
+						this._userPhoto = "https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-user.png?alt=media&token=9f507196-f787-426b-8175-5c0ca1d74606";
+						this._currentUser.photoUrl = this._userPhoto;
+						this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+						this.showChangeProfilePhotoRemovedToast();
 						console.log('Destructive clicked');
 					}
 				}, {
 					text: 'Take Photo',
 					icon: !this.platform.is('ios') ? 'camera' : null,
 					handler: () => {
-						console.log('Archive clicked');
+						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
+						Camera.getPicture(cameraOptions).then((image) => {
+							//console.log(image);
+							this._userPhoto = "data:image/jpeg;base64,"+ image;
+							this._currentUser.photoUrl = this._userPhoto;
+							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+							this.showChangeProfilePhotoToast();
+						});
+						console.log('Take Photo clicked');
+						Camera.cleanup();
 					}
 				}, {
 					text: 'Choose From Library',
 					icon: !this.platform.is('ios') ? 'folder-open' : null,
 					handler: () => {
-						console.log('Archive clicked');
+						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+						Camera.getPicture(cameraOptions).then((image) => {
+							this._userPhoto = "data:image/jpeg;base64,"+ image;
+							this._currentUser.photoUrl = this._userPhoto;
+							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+							//console.log(image);
+							this.showChangeProfilePhotoToast();
+						});
+						console.log('Library clicked');
+						Camera.cleanup();
 					}
 				}, {
 					text: 'Cancel',
@@ -163,6 +215,7 @@ export class Account {
 					role: 'cancel',
 					handler: () => {
 						console.log('Cancel clicked');
+						Camera.cleanup();
 					}
 				}
 			]
