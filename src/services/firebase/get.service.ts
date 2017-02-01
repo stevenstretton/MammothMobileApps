@@ -76,7 +76,8 @@ export class FirebaseGET {
 					photoUrl: snapVal.photoUrl,
 					usersToSeeLocation: snapVal.usersToSeeLocation,
 					friends: snapVal.friends,
-					location: snapVal.location
+					location: snapVal.location,
+                    notifications: snapVal.notifications
 				});
 			});
 		});
@@ -105,7 +106,9 @@ export class FirebaseGET {
 				photoUrl: snapVal.photoUrl,
 				usersToSeeLocation: snapVal.usersToSeeLocation,
 				friends: snapVal.friends,
-				location: snapVal.location
+				location: snapVal.location,
+                notifications: snapVal.notifications
+                        
 			});
 		});
 	}
