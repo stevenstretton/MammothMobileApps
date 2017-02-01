@@ -9,7 +9,10 @@
 <ion-content>
 	<ion-card>
 		<div style="position:relative">
-			<img src="{{ _trip.trip.coverPhotoUrl }}"/>
+			<button *ngIf="_trip.lead.key === _currentUser.key" [hidden]="_trip.trip.coverPhotoUrl" ion-button clear (click)="presentActionSheet()">
+					<ion-icon name="camera"></ion-icon>&nbsp; Add Photo
+				</button>
+			<img [hidden]="!_trip.trip.coverPhotoUrl" src="{{ _trip.trip.coverPhotoUrl }}" (click)="presentActionSheet()"/>
 			<ion-fab right top>
 				<button ion-fab class="fab-pin" (click)="goToMap()">
 					<ion-icon name="pin"></ion-icon>
@@ -110,9 +113,9 @@
 			</ion-item-sliding>
 		</ion-list>
 
-		<ion-item>
+		<ion-item padding-bottom padding-top>
 			<button ion-button color="danger" block *ngIf="_trip.lead.key === _currentUser.key"
-			        (click)="deleteTrip()">Delete</button>
+			        (click)="deleteTrip()">Delete Trip</button>
 		</ion-item>
 	</ion-card>
 </ion-content>

@@ -24,7 +24,7 @@
 				<p>{{ trip.lead.firstName }} {{ trip.lead.lastName }}</p>
 			</ion-item>
 
-			<img (click)="goToTrip(trip)" src="{{ trip.trip.coverPhotoUrl }}"/>
+			<img [hidden]="! trip.trip.coverPhotoUrl" (click)="goToTrip(trip)" src="{{ trip.trip.coverPhotoUrl }}"/>
 			<ion-card-content>
 				<ion-card-title>
 					{{ trip.trip.name }}
