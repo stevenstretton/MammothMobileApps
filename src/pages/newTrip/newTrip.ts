@@ -104,11 +104,19 @@ export class NewTrip {
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: this._tripPhoto,
 		};
-		this.firebasePost.postNewTrip(this._tripInfo);
-		console.log("setAllTrips");
-		this.firebaseGet.setAllTrips();
-		this.navCtrl.push(MyTrips, {
-			justCreatedTrip: true
+		this.firebasePost.postNewTrip(this._tripInfo, () => {
+			this.navCtrl.push(MyTrips, {
+				justCreatedTrip: true
+			});
+
+			// Very unsure as to how this is working. I am posting a new trip, yes. But then I never update the set of trips stored locally
+			// and, somehow, when navigating to the `myTrips` page shows the updated version of the trips?
+
+			//this.firebaseGet.setAllTrips(() => {
+			//	this.navCtrl.push(MyTrips, {
+			//		justCreatedTrip: true
+			//	});
+			//});
 		});
 	}
 
@@ -130,7 +138,7 @@ export class NewTrip {
 
 	clearTrip() {
 		console.log("someone has removed this function");
-	}	
+	}
 
 	presentActionSheet() {
 		let cameraOptions = {
@@ -166,7 +174,7 @@ export class NewTrip {
 							this._tripPhoto = "data:image/jpeg;base64,"+image;
 						});
 						console.log('Take Photo clicked');
-						
+
 						Camera.cleanup();
 					}
 				}, {

@@ -22,8 +22,6 @@ export class Login {
 				public navParams: NavParams,
 				public toastCtrl: ToastController,
 				public formBuilder: FormBuilder) {
-		this.firebaseGet.setAllTrips();
-		this.firebaseGet.setAllUsers();
 		this._isError = false;
 
 		let justRegistered = this.navParams.get('justRegistered');
@@ -35,6 +33,11 @@ export class Login {
 			username: ['', Validators.required],
 			password: ['', Validators.required]
 		});
+
+		this.firebaseGet.setAllTrips(() => {
+			// unused callback
+		});
+		this.firebaseGet.setAllUsers();
 	}
 
 	showRegistrationToast(): void {
