@@ -41,6 +41,7 @@ export class Friends {
 			currentUser: this._currentUser
 		});
 		modal.onDidDismiss((setOfFriends) => {
+			console.log(setOfFriends);
 			setOfFriends.forEach((friend) => {
 				this._friends.push(friend);
 			});

@@ -105,6 +105,7 @@ export class NewTrip {
 			coverPhotoUrl: this._tripPhoto,
 		};
 		this.firebasePost.postNewTrip(this._tripInfo);
+		console.log("setAllTrips");
 		this.firebaseGet.setAllTrips();
 		this.navCtrl.push(MyTrips, {
 			justCreatedTrip: true
