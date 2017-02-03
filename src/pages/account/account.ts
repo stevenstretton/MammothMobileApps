@@ -45,6 +45,17 @@ export class Account {
 		});
 	}
 
+	ionViewWillEnter() {
+		let	allTrips = this.firebaseGet.getAllTrips();
+		this._currentUserTrips = [];
+		allTrips.forEach((trip) => {
+			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
+				this._currentUserTrips.push(trip);
+			}
+		});
+	}
+
+
 	logout(): void {
 		this.authenticationHandler.logoutFirebase();
 

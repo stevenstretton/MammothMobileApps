@@ -14,8 +14,8 @@
 		</ion-refresher-content>
 	</ion-refresher>
 
-	<ion-list *ngFor="let trip of _trips">
-		<ion-card>
+	<ion-list >
+		<ion-card *ngFor="let trip of _trips">
 			<ion-item>
 				<ion-avatar item-left>
 					<img src="{{ trip.lead.photoUrl }}">

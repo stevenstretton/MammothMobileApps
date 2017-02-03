@@ -76,7 +76,7 @@
 		<ion-list>
 			<ion-item *ngFor="let trip of _currentUserTrips">
 				<h2>{{ trip.name }}</h2>
-				<p>{{ trip.start.date }}</p>
+				<p>{{ trip.start.date | date:'dd/MM/y'  }}</p>
 				<p *ngIf="trip.leadOrganiser === _currentUser.uid">Lead</p>
 				<button *ngIf="trip.friends" ion-button clear item-right (click)="showLocationModal(trip)">View</button>
 			</ion-item>

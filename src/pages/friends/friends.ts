@@ -23,11 +23,13 @@ export class Friends {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
-		this._currentUser.friends.forEach((friendID) => {
-			this.firebaseGet.getUserWithID(friendID, (friend) => {
-				this._friends.push(friend);
+		if (this._currentUser.friends != null) {
+			this._currentUser.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (friend) => {
+					this._friends.push(friend);
+				});
 			});
-		});
+		}
 	}
 
 	unfriend(friend): void {

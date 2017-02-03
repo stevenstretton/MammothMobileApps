@@ -35,11 +35,14 @@ export class ViewTrip {
 		this._trip = this.navParams.get('trip');
 		this._callback = this.navParams.get('callback');
 
-		this._trip.trip.friends.forEach((friendID) => {
-			this.firebaseGet.getUserWithID(friendID, (user) => {
-				this._tripMembers.push(user);
+		if (this._trip.trip.friends != null)
+		{
+			this._trip.trip.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (user) => {
+					this._tripMembers.push(user);
+				});
 			});
-		});
+		}
 	}
 
 	showEditModal(index): void {

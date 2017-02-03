@@ -16,14 +16,14 @@
 	<form [formGroup]="_editForm" (ngSubmit)="onFormSubmit(_editForm.value)">
 		<ion-list>
 			<ion-item>
-				<ion-label>Old {{ _title | lowercase }}</ion-label>
-				<ion-textarea formControlName="oldValue" [formControl]="_editForm.controls['oldValue']"
+				<ion-label>Old <br>{{ _title | lowercase }}</ion-label>
+				<ion-textarea rows='6' formControlName="oldValue" [formControl]="_editForm.controls['oldValue']"
 				          disabled ngDefaultControl></ion-textarea>
 			</ion-item>
 
 			<ion-item>
-				<ion-label>New {{ _title | lowercase }}</ion-label>
-				<ion-textarea formControlName="newValue" [formControl]="_editForm.controls['newValue']"
+				<ion-label>New <br>{{ _title | lowercase }}</ion-label>
+				<ion-textarea rows='6' formControlName="newValue" [formControl]="_editForm.controls['newValue']"
 				              ngDefaultControl></ion-textarea>
 			</ion-item>
 

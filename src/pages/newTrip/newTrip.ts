@@ -35,7 +35,8 @@ export class NewTrip {
 		let today = new Date();
 
 		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
-			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
+			// nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
+			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
 
 		this._todaysDate = todayDate;
 
@@ -138,7 +139,7 @@ export class NewTrip {
 	}
 
 	clearTrip() {
-		console.log("someone has removed this function");
+		console.log("someone has removed the clearTrip() function");
 	}
 
 	presentActionSheet() {

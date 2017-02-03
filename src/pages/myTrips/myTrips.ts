@@ -25,20 +25,29 @@ export class MyTrips {
 		this.sortIfUserInTrip();
 	}
 
+	ionViewWillEnter() {
+		console.log("view will enter - fetching trips");
+    	this.firebaseGet.setAllTrips(() => {
+			this.sortIfUserInTrip();
+		});
+	}
+
 	sortIfUserInTrip(): void {
 		let allTrips = this.firebaseGet.getAllTrips();
-
-		allTrips.forEach((trip) => {
-			// determine they are a part of the trip
-			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
-				this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
-					this._trips.push({
-						lead: leadOrganiser,
-						trip: trip
+		this._trips = [];
+		if (allTrips != null) {
+			allTrips.forEach((trip) => {
+				// determine they are a part of the trip
+				if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
+					this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
+						this._trips.push({
+							lead: leadOrganiser,
+							trip: trip
+						});
 					});
-				});
-			}
-		});
+				}
+			});
+		}
 	}
 
 	refreshTrips(refresher): void {
