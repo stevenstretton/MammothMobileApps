@@ -19,10 +19,6 @@ export class MyTrips {
 	            public authenticationHandler: AuthenticationHandler,
 	            public navParams: NavParams,
 	            public toastCtrl: ToastController) {
-		let justCreatedTrip = this.navParams.get('justCreatedTrip');
-		if (justCreatedTrip) {
-			this.showCreateDeleteTripToast('Trip created successfully!');
-		}
 
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();

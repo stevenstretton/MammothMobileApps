@@ -6,7 +6,6 @@ import { AuthenticationHandler } from '../../services/authenticationHandler.serv
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { FriendsModal } from './modals/modals';
 import { Camera } from 'ionic-native';
-import { MyTrips } from '../myTrips/myTrips';
 
 @Component({
 	selector: 'page-newTrip',
@@ -107,9 +106,16 @@ export class NewTrip {
 		this.firebasePost.postNewTrip(this._tripInfo);
 		console.log("setAllTrips");
 		this.firebaseGet.setAllTrips();
-		this.navCtrl.push(MyTrips, {
-			justCreatedTrip: true
-		});
+		this.navCtrl.parent.select(0);
+		this.showCreateDeleteTripToast('Trip created successfully!');
+	}
+
+	showCreateDeleteTripToast(message): void {
+		this.toastCtrl.create({
+			message: message,
+			duration: 3000,
+			position: 'top'
+		}).present();
 	}
 
 	addItem() {
