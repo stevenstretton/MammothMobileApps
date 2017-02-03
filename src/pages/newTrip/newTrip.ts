@@ -136,7 +136,7 @@ export class NewTrip {
 
 	clearTrip() {
 		console.log("someone has removed this function");
-	}	
+	}
 
 	presentActionSheet() {
 		let cameraOptions = {
@@ -172,7 +172,7 @@ export class NewTrip {
 							this._tripPhoto = "data:image/jpeg;base64,"+image;
 						});
 						console.log('Take Photo clicked');
-						
+
 						Camera.cleanup();
 					}
 				}, {

@@ -19,10 +19,19 @@ export class MyTrips {
 	            public authenticationHandler: AuthenticationHandler,
 	            public navParams: NavParams,
 	            public toastCtrl: ToastController) {
-
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
+		let justCreatedTrip = this.navParams.get('justCreatedTrip');
+		if (justCreatedTrip) {
+			this.showCreateDeleteTripToast('Trip created successfully!');
+		}
+
+		this.sortIfUserInTrip();
+	}
+
+	sortIfUserInTrip(): void {
+		console.log("sortIfUserInTrip");
 		let allTrips = this.firebaseGet.getAllTrips();
 
 		allTrips.forEach((trip) => {
@@ -35,6 +44,16 @@ export class MyTrips {
 					});
 				});
 			}
+		});
+	}
+
+	refreshTrips(refresher): void {
+		// this.sortIfUserInTrip();
+		// refresher.complete()
+
+		this.firebaseGet.setAllTrips(() => {
+			this.sortIfUserInTrip();
+			refresher.complete();
 		});
 	}
 
