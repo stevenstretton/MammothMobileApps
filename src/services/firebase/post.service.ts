@@ -16,7 +16,7 @@ export class FirebasePOST {
 		const promise = this.af.database.list('/trips').push(trip);
 
 		promise.then(_ => {
-			console.log("success!");
+			console.log("trip posted!");
 			callback();
 		})
 			.catch(err => {

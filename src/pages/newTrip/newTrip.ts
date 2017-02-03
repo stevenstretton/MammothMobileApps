@@ -103,11 +103,14 @@ export class NewTrip {
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: this._tripPhoto,
 		};
-		this.firebasePost.postNewTrip(this._tripInfo);
-		console.log("setAllTrips");
-		this.firebaseGet.setAllTrips();
-		this.navCtrl.parent.select(0);
-		this.showCreateDeleteTripToast('Trip created successfully!');
+		console.log("postNewTrip");
+		this.firebasePost.postNewTrip(this._tripInfo, () => {
+			console.log("navigating");
+
+			// Doing this means that the constructor for myTrips is not invoked again
+			this.navCtrl.parent.select(0);
+			this.showCreateDeleteTripToast('Trip created successfully!');
+		});
 	}
 
 	showCreateDeleteTripToast(message): void {

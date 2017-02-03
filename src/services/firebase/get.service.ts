@@ -43,6 +43,7 @@ export class FirebaseGET {
 					items: snapVal.items
 				});
 			});
+			console.log("calling back");
 			callback();
 		});
 	}
@@ -52,6 +53,8 @@ export class FirebaseGET {
 		// which does happen, however, when returning it I've realised that there are duplicates in the array
 		// I have not fixed the issue but just avoided it with lodash
 
+		console.log("getAllTrips");
+		console.log(_.uniqBy(this._allTrips, 'key'));
 		return _.uniqBy(this._allTrips, 'key');
 	}
 
