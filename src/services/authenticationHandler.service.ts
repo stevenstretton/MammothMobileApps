@@ -78,7 +78,6 @@ export class AuthenticationHandler {
 
 	setCurrentUser(): void {
 		this.af.auth.subscribe((user) => {
-
 			// check to see if there actually is a user
 			if (user) {
 				this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
