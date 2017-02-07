@@ -49,7 +49,7 @@ export class Login {
 	}
 
 	onFormSubmit(formData): void {
-		let loginPromise = this.authenticationHandler.loginFirebase(formData.username, formData.password);
+		const loginPromise = this.authenticationHandler.loginFirebase(formData.username, formData.password);
 
 		loginPromise.then((successResponse) => {
 			this.authenticationHandler.setCurrentUser();
