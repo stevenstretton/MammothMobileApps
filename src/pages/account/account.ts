@@ -45,15 +45,15 @@ export class Account {
 		});
 	}
 
-	ionViewWillEnter() {
-		let	allTrips = this.firebaseGet.getAllTrips();
-		this._currentUserTrips = [];
-		allTrips.forEach((trip) => {
-			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
-				this._currentUserTrips.push(trip);
-			}
-		});
-	}
+	// ionViewWillEnter() {
+	// 	let	allTrips = this.firebaseGet.getAllTrips();
+	// 	this._currentUserTrips = [];
+	// 	allTrips.forEach((trip) => {
+	// 		if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
+	// 			this._currentUserTrips.push(trip);
+	// 		}
+	// 	});
+	// }
 
 
 	logout(): void {
@@ -133,7 +133,7 @@ export class Account {
 			members: tripMembers
 		});
 		modal.onDidDismiss((usersToSeeLocation) => {
-			if (usersToSeeLocation.length > 0) {
+			if ((usersToSeeLocation) && (usersToSeeLocation.length > 0)) {
 				this.firebasePut.putUserToSeeLocation(this._currentUser.key, tripID, usersToSeeLocation);
 
 				// Refreshing the user
@@ -162,7 +162,7 @@ export class Account {
 			position: 'top'
 		}).present();
 	}
-	
+
 
 	presentActionSheet(): void {
 		let cameraOptions = {

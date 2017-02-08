@@ -4,6 +4,7 @@ import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { AddFriendModal } from "./modals/modals";
+import set = Reflect.set;
 // import set = Reflect.set;
 
 @Component({
@@ -43,11 +44,12 @@ export class Friends {
 			currentUser: this._currentUser
 		});
 		modal.onDidDismiss((setOfFriends) => {
-			console.log(setOfFriends);
-			setOfFriends.forEach((friend) => {
-				this._friends.push(friend);
-			});
-			this.firebasePut.putUserFriends(this._currentUser.key, setOfFriends);
+			if (setOfFriends) {
+				setOfFriends.forEach((friend) => {
+					this._friends.push(friend);
+				});
+				this.firebasePut.putUserFriends(this._currentUser.key, setOfFriends);
+			}
 		});
 		modal.present();
 	}
