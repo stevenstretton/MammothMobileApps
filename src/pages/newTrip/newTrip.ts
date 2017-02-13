@@ -103,7 +103,7 @@ export class NewTrip {
 			endDate: this._todaysDate,
 			transport: presetData.transport})
 
-			// image stuff here 
+		this._tripPhoto = presetData.coverPhotoUrl
 		this._itemList = presetData.items	 
 	}
 
@@ -173,7 +173,17 @@ export class NewTrip {
 	}
 
 	clearTrip() {
-		console.log("someone has removed the clearTrip() function");
+		this._newTripForm.setValue({name: '',
+			loc: '',
+			description: '',
+			startDate: this._todaysDate,
+			startTime: this._nowTime,
+			endDate: this._todaysDate,
+			transport: ''})
+
+		this._tripPhoto = ''
+		this._itemList = []	 
+		
 	}
 
 	presentActionSheet() {
