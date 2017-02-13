@@ -24,6 +24,7 @@ export class FirebasePOST {
 			});
 	}
 
+
 	postNewUser(user, credentials): void {
 		const usersTable = this.af.database.object("users/" + user.uid);
 

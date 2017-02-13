@@ -86,6 +86,7 @@ export class FirebasePUT {
 		});
 	}
 
+
 	putNewUserPhotoInDB(userID, photoUrl) : void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
@@ -93,6 +94,15 @@ export class FirebasePUT {
 			photoUrl: photoUrl
 		});
 
+	}
+
+
+	putNewNotification(user, notifications): void {
+		const userObjectObservable = this.af.database.object("users/" + user);
+
+		userObjectObservable.update({
+			notifications : notifications
+		});
 	}
 
 }
