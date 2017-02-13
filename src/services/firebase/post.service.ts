@@ -20,6 +20,7 @@ export class FirebasePOST {
 			.catch(err => console.log(err));
 	}
 
+
 	postNewUser(user, credentials): void {
 		const usersTable = this.af.database.object("users/" + user.uid);
 
