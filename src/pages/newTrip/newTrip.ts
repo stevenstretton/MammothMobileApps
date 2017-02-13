@@ -240,6 +240,7 @@ export class NewTrip {
 					text: 'Choose From Presets',
 					icon: !this.platform.is('ios') ? 'folder-open' : null,
 					handler: () => {
+						this.presentPresetsModal()
 						console.log('Presets clicked');
 					}
 				}, {
