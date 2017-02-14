@@ -48,9 +48,7 @@ export class Notifications {
 				this._notifications = [];
 				console.log(this._currentUser);
 				
-				this._currentUser.notifications.forEach((notificationMessage) => {
-						this._notifications.push(notificationMessage);
-				});
+				this._notifications = this._currentUser.notifications
 
 
 			}
@@ -65,13 +63,21 @@ export class Notifications {
 		}
     
     	dismissNotification(notification): void {      
-				console.log(notification);
-				const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
+			console.log(notification);
+			const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
 
-				notificationObjectObservable
-					.then(_ => console.log("Success!"))
-					.catch(err => console.log(err));
-			}
+			notificationObjectObservable
+				.then(_ => {
+					console.log("Success!")
+					this._notifications = []
+					this._currentUser.notifications = []
+
+				})
+				.catch(err => console.log(err));
+
+			
+
+		}	
 
 }
 
