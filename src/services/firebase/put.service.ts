@@ -93,9 +93,7 @@ export class FirebasePUT {
 		userObjectObservable.update({
 			photoUrl: photoUrl
 		});
-
 	}
-
 
 	putNewNotification(user, notifications): void {
 		const userObjectObservable = this.af.database.object("users/" + user);

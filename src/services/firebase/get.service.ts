@@ -87,7 +87,7 @@ export class FirebaseGET {
 	}
 
 	getAllUsers(): Array<any> {
-		return this._allUsers;
+		return _.uniqBy(this._allUsers, "key");
 	}
 
 	getUserWithID(userID, callback): void {
@@ -111,7 +111,7 @@ export class FirebaseGET {
 				friends: snapVal.friends,
 				location: snapVal.location,
                 notifications: snapVal.notifications
-                        
+
 			});
 		});
 	}
