@@ -142,6 +142,7 @@ export class NewTrip {
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
 			console.log("navigating");
 
+			this.clearTrip()
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);
 			this.showCreateDeleteTripToast('Trip created successfully!');
@@ -181,6 +182,7 @@ export class NewTrip {
 			endDate: this._todaysDate,
 			transport: ''})
 
+		this._friendsAdded = []
 		this._tripPhoto = ''
 		this._itemList = []	 
 		
