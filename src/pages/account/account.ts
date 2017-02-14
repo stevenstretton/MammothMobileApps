@@ -28,15 +28,15 @@ export class Account {
 	            public modalCtrl: ModalController,
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
-				public firebasePut: FirebasePUT,
-				public toastCtrl: ToastController) {
+	            public firebasePut: FirebasePUT,
+	            public toastCtrl: ToastController) {
 		this._usersToSeeLocation = [];
 		this._currentUserTrips = [];
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
 		this._userPhoto = this._currentUser.photoUrl;
-		let	allTrips = this.firebaseGet.getAllTrips();
+		let allTrips = this.firebaseGet.getAllTrips();
 
 		allTrips.forEach((trip) => {
 			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
@@ -45,16 +45,17 @@ export class Account {
 		});
 	}
 
-	// ionViewWillEnter() {
-	// 	let	allTrips = this.firebaseGet.getAllTrips();
-	// 	this._currentUserTrips = [];
-	// 	allTrips.forEach((trip) => {
-	// 		if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
-	// 			this._currentUserTrips.push(trip);
-	// 		}
-	// 	});
-	// }
-
+	// Apologies Tim, this is needed for when a user creates a new trip and then renavigates to the account page
+	// the constructor does not get invoked again to update the trips so this function is needed
+	ionViewWillEnter() {
+		let allTrips = this.firebaseGet.getAllTrips();
+		this._currentUserTrips = [];
+		allTrips.forEach((trip) => {
+			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
+				this._currentUserTrips.push(trip);
+			}
+		});
+	}
 
 	logout(): void {
 		this.authenticationHandler.logoutFirebase();
@@ -163,7 +164,6 @@ export class Account {
 		}).present();
 	}
 
-
 	presentActionSheet(): void {
 		let cameraOptions = {
 			quality: 50,
@@ -197,7 +197,7 @@ export class Account {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
 							//console.log(image);
-							this._userPhoto = "data:image/jpeg;base64,"+ image;
+							this._userPhoto = "data:image/jpeg;base64," + image;
 							this._currentUser.photoUrl = this._userPhoto;
 							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
 							this.showChangeProfilePhotoToast();
@@ -211,7 +211,7 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							this._userPhoto = "data:image/jpeg;base64,"+ image;
+							this._userPhoto = "data:image/jpeg;base64," + image;
 							this._currentUser.photoUrl = this._userPhoto;
 							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
 							//console.log(image);
