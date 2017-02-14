@@ -33,7 +33,7 @@ import { FirebaseDELETE } from "../services/firebase/delete.service";
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
 import { LocationHandler } from '../services/locationHandler.service';
 
-import { AgmCoreModule } from "angular2-google-maps/core";
+// import { AgmCoreModule } from "angular2-google-maps/core";
 
 // Must export the config
 export const firebaseConfig = {
@@ -78,9 +78,6 @@ const firebaseAuthConfig = {
 		BrowserModule,
 		FormsModule,
 		IonicModule.forRoot(MyApp),
-		AgmCoreModule.forRoot({
-			apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"
-		}),
 		AngularFireModule.initializeApp(firebaseConfig, firebaseAuthConfig)
 	],
 	bootstrap: [IonicApp],
