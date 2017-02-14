@@ -138,9 +138,7 @@ export class NewTrip {
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: this._tripPhoto,
 		};
-		console.log("postNewTrip");
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-			console.log("navigating");
 
 			this.clearTrip()
 			// Doing this means that the constructor for myTrips is not invoked again

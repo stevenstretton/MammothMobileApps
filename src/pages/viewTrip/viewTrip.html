@@ -13,7 +13,7 @@
 					<ion-icon name="camera"></ion-icon>&nbsp; Add Photo
 				</button>
 			<img [hidden]="!_trip.trip.coverPhotoUrl" src="{{ _trip.trip.coverPhotoUrl }}" (click)="presentActionSheet()"/>
-			<ion-fab right top>
+			<ion-fab right top *ngIf="_currentUser.location">
 				<button ion-fab class="fab-pin" (click)="goToMap()">
 					<ion-icon name="pin"></ion-icon>
 				</button>

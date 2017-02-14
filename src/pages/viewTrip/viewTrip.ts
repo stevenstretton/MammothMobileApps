@@ -35,8 +35,7 @@ export class ViewTrip {
 		this._trip = this.navParams.get('trip');
 		this._callback = this.navParams.get('callback');
 
-		if (this._trip.trip.friends != null)
-		{
+		if (this._trip.trip.friends != null) {
 			this._trip.trip.friends.forEach((friendID) => {
 				this.firebaseGet.getUserWithID(friendID, (user) => {
 					this._tripMembers.push(user);
@@ -71,7 +70,6 @@ export class ViewTrip {
 						formData.forEach((person) => {
 							peopleIDs.push(person.key);
 						});
-						console.log(peopleIDs);
 						newValue = peopleIDs;
 					} else if (title === "Items") {
 						newValue = formData;
@@ -251,7 +249,7 @@ export class ViewTrip {
 							this.showEditToast('Trip Photo');
 						});
 						console.log('Take Photo clicked');
-						
+
 						Camera.cleanup();
 					}
 				}, {
