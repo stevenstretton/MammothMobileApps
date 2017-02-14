@@ -12,10 +12,12 @@
 </ion-header>
 
 <ion-content>
-	<sebm-google-map [latitude]="_currentUserLat" [longitude]="_currentUserLng" [zoom]="4">
+	<!--<sebm-google-map [latitude]="_currentUserLat" [longitude]="_currentUserLng" [zoom]="4">
 		<sebm-google-map-marker [latitude]="_currentUserLat" [longitude]="_currentUserLng"></sebm-google-map-marker>
 		<div *ngFor="let member of _membersAllowingToSeeLocation">
 			<sebm-google-map-marker [latitude]="member.location.lat" [longitude]="member.location.lng"></sebm-google-map-marker>
 		</div>
-	</sebm-google-map>
+	</sebm-google-map>-->
+	<div #map id="map" style="height:100%;"></div>
+
 </ion-content>

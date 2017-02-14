@@ -58,4 +58,10 @@
     </feature>
     <icon src="resources/ios/icon/icon-small@3x.png" />
     <plugin name="cordova-plugin-camera" spec="~2.3.1" />
+    <plugin name="cordova-plugin-googlemaps" spec="~1.4.0">
+        <variable name="API_KEY_FOR_ANDROID" value="AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y" />
+        <variable name="API_KEY_FOR_IOS" value="AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y" />
+        <variable name="NSLOCATIONWHENINUSEUSAGEDESCRIPTION" value="Show your location on the map" />
+        <variable name="NSLOCATIONALWAYSUSAGEDESCRIPTION" value="Trace your location on the map" />
+    </plugin>
 </widget>
