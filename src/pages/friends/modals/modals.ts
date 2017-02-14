@@ -34,6 +34,11 @@ export class AddFriendModal {
 		this.viewCtrl.dismiss(this._selectedPeople);
 	}
 
+	close()
+	{
+		this.viewCtrl.dismiss();
+	}
+
 	// TODO: There is a much simpler way to do this
 	updateSearchResults(event): void {
 		let currentVal = event.target.value;

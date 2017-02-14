@@ -43,7 +43,7 @@
 				</ion-note>
 			</ion-item>
 
-			<ion-item-sliding>
+			<ion-item-sliding #slidingItem>
 				<ion-item>
 					Password
 					<ion-note item-right>
@@ -51,7 +51,7 @@
 					</ion-note>
 				</ion-item>
 				<ion-item-options side="right">
-					<button ion-button icon-only color="positive" (click)="showChangePasswordModal()">
+					<button ion-button icon-only color="positive" (click)="showChangePasswordModal(slidingItem)">
 						<ion-icon name="create"></ion-icon>
 					</button>
 				</ion-item-options>

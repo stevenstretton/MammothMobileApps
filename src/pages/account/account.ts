@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App } from 'ionic-angular';
+import { App, ItemSliding } from 'ionic-angular';
 import { Camera } from 'ionic-native';
 
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
@@ -62,12 +62,17 @@ export class Account {
 		this.app.getRootNav().setRoot(Login);
 	}
 
-	showChangePasswordModal(): void {
+	showChangePasswordModal(slidingItem: ItemSliding): void {
 		let modal = this.modalCtrl.create(ChangePasswordModal);
 		modal.onDidDismiss((passwordData) => {
-			this.authenticationHandler.changeUserPassword(passwordData.newPassword);
-			this.showChangePasswordToast();
+			if (passwordData)
+			{
+				this.authenticationHandler.changeUserPassword(passwordData.newPassword);
+				this.showChangePasswordToast();
+			}
+			slidingItem.close();
 		});
+		// slidingItem.close();
 		modal.present();
 	}
 
