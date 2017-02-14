@@ -85,4 +85,12 @@ export class FirebasePUT {
 			shareLocation: shareLocation
 		});
 	}
+
+	putNewNotification(user, notifications): void {
+		const userObjectObservable = this.af.database.object("users/" + user);
+
+		userObjectObservable.update({
+			notifications : notifications
+		});
+	}
 }

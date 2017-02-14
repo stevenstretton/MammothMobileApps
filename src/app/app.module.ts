@@ -11,7 +11,7 @@ import { MyTrips } from '../pages/myTrips/myTrips';
 import { Notifications } from '../pages/notifications/notifications';
 
 import { NewTrip } from '../pages/newTrip/newTrip';
-import { FriendsModal } from '../pages/newTrip/modals/modals';
+import { FriendsModal, PresetsModal } from '../pages/newTrip/modals/modals';
 
 import { ViewTrip } from '../pages/viewTrip/viewTrip';
 import { EditInputModal, EditDateModal, EditTimeModal, EditTextareaModal, AddMembersModal, AddItemsModal } from '../pages/viewTrip/modals/modals';
@@ -58,6 +58,7 @@ const firebaseAuthConfig = {
 		Notifications,
 		NewTrip,
 		FriendsModal,
+		PresetsModal,
 		ViewTrip,
 		Friends,
 		Account,
@@ -92,6 +93,7 @@ const firebaseAuthConfig = {
 		Notifications,
 		NewTrip,
 		FriendsModal,
+		PresetsModal,
 		LocationModal,
 		ChangePasswordModal,
 		EditTimeModal,

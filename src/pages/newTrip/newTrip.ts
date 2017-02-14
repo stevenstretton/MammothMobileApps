@@ -4,7 +4,7 @@ import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePOST } from '../../services/firebase/post.service';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
-import { FriendsModal } from './modals/modals';
+import { FriendsModal, PresetsModal } from './modals/modals';
 import { Camera } from 'ionic-native';
 import { MyTrips } from '../myTrips/myTrips';
 
@@ -16,12 +16,15 @@ export class NewTrip {
 	private _friendsAdded: Array<any>;
 	// private _tripCoverPhotoSelected: boolean = false;
 	private _todaysDate: string;
+	private _nowTime: string;
 	private _currentUser: any;
 	private _newTripForm: FormGroup;
 	private _tripInfo: any;
 	private _itemList: Array<any>;
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
+
+	// private _presetData: Array<any>;
 
 	constructor(public navCtrl: NavController,
 	            public actionSheetCtrl: ActionSheetController,
@@ -38,6 +41,7 @@ export class NewTrip {
 			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
 
 		this._todaysDate = todayDate;
+		this._nowTime = nowTime;
 
 		this._newTripForm = this.formBuilder.group({
 			name: ['', Validators.required],
@@ -49,6 +53,7 @@ export class NewTrip {
 			transport: ['', Validators.required]
 		});
 
+		this.firebaseGet.setAllPresets()
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friendsAdded = [];
 		this._itemList = [];
@@ -70,6 +75,35 @@ export class NewTrip {
 		this.modalCtrl.create(FriendsModal, {
 			selectedFriends: this._friendsAdded
 		}).present();
+	}
+
+	presentPresetsModal() : void {
+
+
+		let presetModal = this.modalCtrl.create(PresetsModal)
+
+		presetModal.onWillDismiss((presetData => {
+			if (presetData != null)
+			{
+				this.setFieldsWithData(presetData)
+			}
+		}))
+
+		presetModal.present();
+
+	}
+
+	setFieldsWithData(presetData) : void {
+		this._newTripForm.setValue({name: presetData.name,
+			loc: "",
+			description: presetData.description,
+			startDate: this._todaysDate,
+			startTime: this._nowTime,
+			endDate: this._todaysDate,
+			transport: presetData.transport})
+
+			// image stuff here 
+		this._itemList = presetData.items	 
 	}
 
 	buildFriendIDsAttending(): Array<any> {

@@ -6,10 +6,12 @@ import _ from 'lodash';
 export class FirebaseGET {
 	private _allUsers: Array<any>;
 	private _allTrips: Array<any>;
+	private _allPresets: Array<any>;
 
 	constructor(private af: AngularFire) {
 		this._allUsers = [];
 		this._allTrips = [];
+		this._allPresets = [];
 	}
 
 	setAllTrips(): void {
@@ -141,5 +143,38 @@ export class FirebaseGET {
 				items: snapVal.items
 			});
 		});
+	}
+
+	setAllPresets(): void
+	{
+		this._allPresets = [];
+
+			let presetListObservable = this.af.database.list('/tripPresets', {
+				preserveSnapshot: true
+			});
+
+
+			presetListObservable.subscribe((snapshots) => {
+				snapshots.forEach((snapshot) => {
+					let snapKey = snapshot.key,
+						snapVal = snapshot.val();
+
+					this._allPresets.push({
+						key: snapKey,
+						name: snapVal.name,
+						description: snapVal.description,
+						coverPhotoUrl: snapVal.coverPhotoUrl,
+						transport: snapVal.transport,
+						items: snapVal.items
+					});
+				});
+			});
+
+		console.log(this._allPresets);
+	}
+
+	getAllPresets(): Array<any>
+	{
+		return this._allPresets;
 	}
 }
