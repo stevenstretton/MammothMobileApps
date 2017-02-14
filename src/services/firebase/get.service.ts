@@ -69,6 +69,13 @@ export class FirebaseGET {
 				let snapKey = snapshot.key,
 					snapVal = snapshot.val();
 
+					let notifications = snapVal.notifications;
+
+					if (!snapVal.notifications)
+					{
+						let notifications = []
+					}
+
 				this._allUsers.push({
 					key: snapKey,
 					email: snapVal.email,
@@ -80,7 +87,7 @@ export class FirebaseGET {
 					usersToSeeLocation: snapVal.usersToSeeLocation,
 					friends: snapVal.friends,
 					location: snapVal.location,
-                    notifications: snapVal.notifications
+                    notifications: notifications
 				});
 			});
 		});
@@ -99,6 +106,13 @@ export class FirebaseGET {
 			let snapVal = snapshot.val(),
 				snapKey = snapshot.key;
 
+				let notifications = snapVal.notifications;
+
+					if (!snapVal.notifications)
+					{
+						let notifications = []
+					}
+
 			callback({
 				key: snapKey,
 				email: snapVal.email,
@@ -110,8 +124,7 @@ export class FirebaseGET {
 				usersToSeeLocation: snapVal.usersToSeeLocation,
 				friends: snapVal.friends,
 				location: snapVal.location,
-                notifications: snapVal.notifications
-
+                notifications: notifications
 			});
 		});
 	}

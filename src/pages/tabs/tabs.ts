@@ -21,7 +21,7 @@ export class TabsPage {
 	tab4Root: any = Friends;
 	tab5Root: any = Account;
     
-private _noteCount: number;
+private _noteCount: number = 0;
     
 
 	constructor(public navCtrl: NavController, public authenticationHandler: AuthenticationHandler) {
@@ -32,8 +32,13 @@ private _noteCount: number;
 		//	{ page: Friends },
 		//	{ page: Account }
 		//])
-        this._noteCount = this.authenticationHandler.getCurrentUser().notifications.length;
+		let notes = this.authenticationHandler.getCurrentUser().notifications;
         
+        console.log(notes);
+		if (notes)
+		{
+			this._noteCount = notes.length
+		}
         
      
 	}
