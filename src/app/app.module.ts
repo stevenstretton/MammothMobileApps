@@ -33,8 +33,6 @@ import { FirebaseDELETE } from "../services/firebase/delete.service";
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
 import { LocationHandler } from '../services/locationHandler.service';
 
-// import { AgmCoreModule } from "angular2-google-maps/core";
-
 // Must export the config
 export const firebaseConfig = {
 	apiKey: 'AIzaSyCDRwbDvyyzCAQfaJF8vLoQx6XDBuQrw40',
