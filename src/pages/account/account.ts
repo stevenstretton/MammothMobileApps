@@ -31,13 +31,16 @@ export class Account {
 	            public firebasePut: FirebasePUT,
 	            public toastCtrl: ToastController) {
 		this._usersToSeeLocation = [];
-		this._currentUserTrips = [];
-
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
 		this._userPhoto = this._currentUser.photoUrl;
-		let allTrips = this.firebaseGet.getAllTrips();
 
+		this.setCurrentUserTrips();
+	}
+
+	setCurrentUserTrips(): void {
+		let allTrips = this.firebaseGet.getAllTrips();
+		this._currentUserTrips = [];
 		allTrips.forEach((trip) => {
 			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
 				this._currentUserTrips.push(trip);
@@ -48,13 +51,7 @@ export class Account {
 	// Apologies Tim, this is needed for when a user creates a new trip and then renavigates to the account page
 	// the constructor does not get invoked again to update the trips so this function is needed
 	ionViewWillEnter() {
-		let allTrips = this.firebaseGet.getAllTrips();
-		this._currentUserTrips = [];
-		allTrips.forEach((trip) => {
-			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
-				this._currentUserTrips.push(trip);
-			}
-		});
+		this.setCurrentUserTrips();
 	}
 
 	logout(): void {
