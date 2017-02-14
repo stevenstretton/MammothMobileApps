@@ -104,9 +104,7 @@ export class NewTrip {
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: this._tripPhoto,
 		};
-		console.log("postNewTrip");
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-			console.log("navigating");
 
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);

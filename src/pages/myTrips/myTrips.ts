@@ -19,20 +19,22 @@ export class MyTrips {
 	            public authenticationHandler: AuthenticationHandler,
 	            public navParams: NavParams,
 	            public toastCtrl: ToastController) {
+		console.log("myTrips constructor");
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
 		this.sortIfUserInTrip();
 	}
 
-	ionViewWillEnter() {
-		console.log("view will enter - fetching trips");
-    	this.firebaseGet.setAllTrips(() => {
-			this.sortIfUserInTrip();
-		});
-	}
+	// Why is this being done?
+	// ionViewWillEnter() {
+    	//this.firebaseGet.setAllTrips(() => {
+	//		this.sortIfUserInTrip();
+	//	});
+	//}
 
 	sortIfUserInTrip(): void {
+		console.log("sortIfUserInTrip");
 		let allTrips = this.firebaseGet.getAllTrips();
 		this._trips = [];
 		if (allTrips != null) {

@@ -67,8 +67,6 @@ export class FirebaseGET {
 				let snapKey = snapshot.key,
 					snapVal = snapshot.val();
 
-				console.log(snapVal.friends);
-
 				this._allUsers.push({
 					key: snapKey,
 					email: snapVal.email,

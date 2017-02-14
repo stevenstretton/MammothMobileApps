@@ -21,16 +21,13 @@ export class AuthenticationHandler {
 	}
 
 	loginFirebase(email, password): any {
-		console.log("loginFirebase");
 		return new Promise((resolve, reject) => {
 			this.af.auth.login({
 				email: email,
 				password: password
 			}).then((successResponse) => {
-				console.log(successResponse);
 				resolve(successResponse);
 			}).catch((errorResponse) => {
-				console.log(errorResponse);
 				reject(errorResponse);
 			});
 		});
@@ -77,6 +74,7 @@ export class AuthenticationHandler {
 	}
 
 	setCurrentUser(): void {
+		// TODO: Figure out why this is being hit on logout
 		this.af.auth.subscribe((user) => {
 			// check to see if there actually is a user
 			if (user) {
