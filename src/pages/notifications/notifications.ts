@@ -64,6 +64,23 @@ export class Notifications {
     
     	dismissNotification(notification): void {      
 			console.log(notification);
+//			const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
+
+//			notificationObjectObservable
+//				.then(_ => {
+//					console.log("Success!")
+//					this._notifications = []
+//					this._currentUser.notifications = []
+//
+//				})
+//				.catch(err => console.log(err));
+
+			
+
+		}	
+    
+        dismissNotifications(): void {      
+//			console.log(notification);
 			const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
 
 			notificationObjectObservable
