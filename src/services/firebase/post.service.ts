@@ -39,4 +39,10 @@ export class FirebasePOST {
 			});
 		});
 	}
+    
+    	postNewNotification(user, notifications): void {
+		const userObjectObservable = this.af.database.object("users/" + user + "/notifications");
+
+		userObjectObservable.set(notifications);
+	}
 }

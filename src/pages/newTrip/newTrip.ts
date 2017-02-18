@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePOST } from '../../services/firebase/post.service';
+import { FirebasePUT } from '../../services/firebase/put.service';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { FriendsModal, PresetsModal } from './modals/modals';
@@ -33,6 +34,7 @@ export class NewTrip {
 	            public authenticationHandler: AuthenticationHandler,
 	            public modalCtrl: ModalController,
 	            public firebasePost: FirebasePOST,
+                public firebasePut: FirebasePUT,
 	            private toastCtrl: ToastController,
 				private formBuilder: FormBuilder) {
 		let today = new Date();
@@ -114,11 +116,20 @@ export class NewTrip {
 			this._friendsAdded.forEach((friend) => {
 				if (friend.isAdded) {
 					friendsAttending.push(friend.user.key);
-				}
+                }
 			});
 		}
 		return friendsAttending;
 	}
+    
+        getNotifications(friendID): Array<any>{
+        var tempNotification;
+			this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
+				tempNotification = firebaseUser.notifications
+                })
+                
+			return tempNotification;
+		}
 
 	pushTrip(formData): void {
 		this._tripInfo = {
@@ -139,8 +150,28 @@ export class NewTrip {
 			coverPhotoUrl: this._tripPhoto,
 		};
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
+            var friends = this.buildFriendIDsAttending();
+			this.clearTrip();
+            var name = this._currentUser.firstName;
+            var tripName = this._tripInfo.name;
+            
+            friends.forEach((friend) => {
+            console.log(friend)
 
-			this.clearTrip()
+                    var usernotes = this.getNotifications(friend)
+                    
+                    console.log(usernotes)
+                    if(usernotes == null){
+                        var usernotes = []
+                        usernotes.push("You've been added to "+ tripName +" by "+ name)
+                        this.firebasePost.postNewNotification(friend, usernotes);
+                    }else{
+                        usernotes.push("You've been added to "+ tripName +" by "+ name)
+                        this.firebasePut.putNewNotification(friend, usernotes);
+                    }
+                    
+				
+			});
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);
 			this.showCreateDeleteTripToast('Trip created successfully!');
