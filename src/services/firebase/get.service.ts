@@ -125,11 +125,7 @@ export class FirebaseGET {
 				friends: snapVal.friends,
 				location: snapVal.location,
                 notifications: notifications
-<<<<<<< HEAD
-=======
-                        
 
->>>>>>> 5dcd39fc84fc96b93146ed5f5b16e1b1a64069ce
 			});
 		});
 	}

@@ -1,12 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController } from "ionic-angular";
-<<<<<<< HEAD
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-
-=======
-import { AuthenticationHandler } from "../../services/authenticationHandler.service";
->>>>>>> 5dcd39fc84fc96b93146ed5f5b16e1b1a64069ce
 import { MyTrips } from '../myTrips/myTrips';
 import { Notifications } from '../notifications/notifications';
 import { NewTrip } from '../newTrip/newTrip';
