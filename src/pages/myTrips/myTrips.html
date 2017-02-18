@@ -1,21 +1,21 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>My Trips</ion-title>
-  </ion-navbar>
+	<ion-navbar>
+		<ion-title>My Trips</ion-title>
+	</ion-navbar>
 </ion-header>
 
 <ion-content class="cards-bg">
-	<ion-refresher (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content
-      pullingIcon="arrow-dropdown"
-      pullingText="Pull to refresh"
-      refreshingSpinner="circles"
-      refreshingText="Loading Trips...">
-    </ion-refresher-content>
-  </ion-refresher>
+	<ion-refresher (ionRefresh)="refreshTrips($event)">
+		<ion-refresher-content
+			pullingIcon="arrow-dropdown"
+			pullingText="Pull to refresh"
+			refreshingSpinner="circles"
+			refreshingText="Loading Trips...">
+		</ion-refresher-content>
+	</ion-refresher>
 
-	<ion-list *ngFor="let trip of _trips">
-		<ion-card>
+	<ion-list >
+		<ion-card *ngFor="let trip of _trips">
 			<ion-item>
 				<ion-avatar item-left>
 					<img src="{{ trip.lead.photoUrl }}">
@@ -24,7 +24,7 @@
 				<p>{{ trip.lead.firstName }} {{ trip.lead.lastName }}</p>
 			</ion-item>
 
-			<img src="{{ trip.trip.coverPhotoUrl }}"/>
+			<img [hidden]="! trip.trip.coverPhotoUrl" (click)="goToTrip(trip)" src="{{ trip.trip.coverPhotoUrl }}"/>
 			<ion-card-content>
 				<ion-card-title>
 					{{ trip.trip.name }}

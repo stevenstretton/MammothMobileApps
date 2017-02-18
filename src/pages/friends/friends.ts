@@ -4,6 +4,7 @@ import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { AddFriendModal } from "./modals/modals";
+import set = Reflect.set;
 // import set = Reflect.set;
 
 @Component({
@@ -23,11 +24,13 @@ export class Friends {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
-		this._currentUser.friends.forEach((friendID) => {
-			this.firebaseGet.getUserWithID(friendID, (friend) => {
-				this._friends.push(friend);
+		if (this._currentUser.friends != null) {
+			this._currentUser.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (friend) => {
+					this._friends.push(friend);
+				});
 			});
-		});
+		}
 	}
 
 	unfriend(friend): void {
@@ -41,10 +44,12 @@ export class Friends {
 			currentUser: this._currentUser
 		});
 		modal.onDidDismiss((setOfFriends) => {
-			setOfFriends.forEach((friend) => {
-				this._friends.push(friend);
-			});
-			this.firebasePut.putUserFriends(this._currentUser.key, setOfFriends);
+			if (setOfFriends) {
+				setOfFriends.forEach((friend) => {
+					this._friends.push(friend);
+				});
+				this.firebasePut.putUserFriends(this._currentUser.key, setOfFriends);
+			}
 		});
 		modal.present();
 	}

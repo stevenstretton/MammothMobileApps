@@ -7,17 +7,21 @@ export class FirebasePOST {
 	private _fb: any;
 
 	constructor(private af: AngularFire,
-				public firebaseGet: FirebaseGET,
-				@Inject(FirebaseApp) firebaseApp: any) {
+	            public firebaseGet: FirebaseGET,
+	            @Inject(FirebaseApp) firebaseApp: any) {
 		this._fb = firebaseApp;
 	}
 
-	postNewTrip(trip): void {
+	postNewTrip(trip, callback): void {
 		const promise = this.af.database.list('/trips').push(trip);
 
-		promise
-			.then(_ => console.log("success!"))
-			.catch(err => console.log(err));
+		promise.then(_ => {
+			console.log("trip posted!");
+			callback();
+		})
+			.catch(err => {
+				console.log(err)
+			});
 	}
 
 

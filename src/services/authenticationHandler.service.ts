@@ -18,12 +18,6 @@ export class AuthenticationHandler {
 				@Inject(FirebaseApp) firebaseApp: any) {
 
 		this._fb = firebaseApp;
-
-		// Find out what this does
-		this._authState = af.auth.getAuth();
-		af.auth.subscribe((state: FirebaseAuthState) => {
-			this._authState = state;
-		});
 	}
 
 	loginFirebase(email, password): any {
@@ -40,7 +34,12 @@ export class AuthenticationHandler {
 	}
 
 	logoutFirebase(): void {
-		this.af.auth.logout();
+//		this.af.auth.logout();
+		this._fb.auth().signOut().then(() => {
+			console.log("Signout successful!");
+		}, (err) => {
+			console.log(err);
+		});
 	}
 
 	changeUserPassword(newPassword): void {
@@ -75,11 +74,14 @@ export class AuthenticationHandler {
 	}
 
 	setCurrentUser(): void {
+		// TODO: Figure out why this is being hit on logout
 		this.af.auth.subscribe((user) => {
-
-			this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
-				this._currentUser = currentUser;
-			});
+			// check to see if there actually is a user
+			if (user) {
+				this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
+					this._currentUser = currentUser;
+				});
+			}
 		});
 	}
 

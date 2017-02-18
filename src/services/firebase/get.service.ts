@@ -14,7 +14,7 @@ export class FirebaseGET {
 		this._allPresets = [];
 	}
 
-	setAllTrips(): void {
+	setAllTrips(callback): void {
 		this._allTrips = [];
 
 		let tripListObservable = this.af.database.list('/trips', {
@@ -45,6 +45,7 @@ export class FirebaseGET {
 					items: snapVal.items
 				});
 			});
+			callback();
 		});
 	}
 
@@ -93,7 +94,7 @@ export class FirebaseGET {
 	}
 
 	getAllUsers(): Array<any> {
-		return this._allUsers;
+		return _.uniqBy(this._allUsers, "key");
 	}
 
 	getUserWithID(userID, callback): void {
@@ -125,6 +126,7 @@ export class FirebaseGET {
 				location: snapVal.location,
                 notifications: notifications
                         
+
 			});
 		});
 	}

@@ -6,7 +6,6 @@ import { AuthenticationHandler } from '../../services/authenticationHandler.serv
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { FriendsModal, PresetsModal } from './modals/modals';
 import { Camera } from 'ionic-native';
-import { MyTrips } from '../myTrips/myTrips';
 
 @Component({
 	selector: 'page-newTrip',
@@ -23,6 +22,7 @@ export class NewTrip {
 	private _itemList: Array<any>;
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
+	private _tripPhoto: string = '';
 
 	// private _presetData: Array<any>;
 
@@ -38,7 +38,8 @@ export class NewTrip {
 		let today = new Date();
 
 		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
-			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
+			// nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
+			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
 
 		this._todaysDate = todayDate;
 		this._nowTime = nowTime;
@@ -102,7 +103,7 @@ export class NewTrip {
 			endDate: this._todaysDate,
 			transport: presetData.transport})
 
-			// image stuff here 
+		this._tripPhoto = presetData.coverPhotoUrl
 		this._itemList = presetData.items	 
 	}
 
@@ -135,13 +136,23 @@ export class NewTrip {
 				date: formData.endDate
 			},
 			leadOrganiser: this._currentUser.key,
-			coverPhotoUrl: "",
+			coverPhotoUrl: this._tripPhoto,
 		};
-		this.firebasePost.postNewTrip(this._tripInfo);
-		this.firebaseGet.setAllTrips();
-		this.navCtrl.push(MyTrips, {
-			justCreatedTrip: true
+		this.firebasePost.postNewTrip(this._tripInfo, () => {
+
+			this.clearTrip()
+			// Doing this means that the constructor for myTrips is not invoked again
+			this.navCtrl.parent.select(0);
+			this.showCreateDeleteTripToast('Trip created successfully!');
 		});
+	}
+
+	showCreateDeleteTripToast(message): void {
+		this.toastCtrl.create({
+			message: message,
+			duration: 3000,
+			position: 'top'
+		}).present();
 	}
 
 	addItem() {
@@ -160,6 +171,21 @@ export class NewTrip {
 		this._itemList.splice(index, 1);
 	}
 
+	clearTrip() {
+		this._newTripForm.setValue({name: '',
+			loc: '',
+			description: '',
+			startDate: this._todaysDate,
+			startTime: this._nowTime,
+			endDate: this._todaysDate,
+			transport: ''})
+
+		this._friendsAdded = []
+		this._tripPhoto = ''
+		this._itemList = []	 
+		
+	}
+
 	presentActionSheet() {
 		let cameraOptions = {
 			quality: 75,
@@ -167,8 +193,8 @@ export class NewTrip {
 			sourceType: Camera.PictureSourceType.CAMERA,
 			allowEdit: true,
 			encodingType: Camera.EncodingType.JPEG,
-			targetWidth: 300,
-			targetHeight: 300,
+			targetWidth: 700,
+			targetHeight: 600,
 			saveToPhotoAlbum: false
 		};
 
@@ -180,6 +206,7 @@ export class NewTrip {
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
+						this._tripPhoto = '';
 						console.log('Destructive clicked');
 					}
 				}, {
@@ -188,9 +215,13 @@ export class NewTrip {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							console.log(image);
+							console.log("image here")
+							//console.log(image);
+							this._tripPhoto = "data:image/jpeg;base64,"+image;
 						});
 						console.log('Take Photo clicked');
+
+						Camera.cleanup();
 					}
 				}, {
 					text: 'Choose From Library',
@@ -198,14 +229,18 @@ export class NewTrip {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							console.log(image);
+							console.log("image here")
+							//console.log(image);
+							this._tripPhoto = "data:image/jpeg;base64,"+image;
 						});
 						console.log('Library clicked');
+						Camera.cleanup();
 					}
 				}, {
 					text: 'Choose From Presets',
 					icon: !this.platform.is('ios') ? 'folder-open' : null,
 					handler: () => {
+						this.presentPresetsModal()
 						console.log('Presets clicked');
 					}
 				}, {
@@ -214,6 +249,7 @@ export class NewTrip {
 					role: 'cancel',
 					handler: () => {
 						console.log('Cancel clicked');
+						Camera.cleanup();
 					}
 				}
 			]

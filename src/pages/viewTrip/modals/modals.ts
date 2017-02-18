@@ -19,7 +19,11 @@ export class EditModal {
 				disabled: true
 			},
 				Validators.required],
-			newValue: ['', Validators.required]
+			newValue: [{
+				value: this.navParams.get('oldValue'),
+				disabled: false
+			},
+				 Validators.required]
 		});
 	}
 
@@ -109,9 +113,12 @@ export class AddMembersModal {
 			}
 		});
 
-		friendsOnTrip.forEach((friend) => {
-			this._friendsToBeOnTrip.push(friend);
-		});
+		if (friendsOnTrip != null)
+		{
+			friendsOnTrip.forEach((friend) => {
+				this._friendsToBeOnTrip.push(friend);
+			});
+		}
 	}
 
 	dismiss(): void {
@@ -157,9 +164,11 @@ export class AddItemsModal {
 			description: ['', Validators.required]
 		});
 
-		itemsForTrip.forEach((item) => {
-			this._itemsForTrip.push(item);
-		});
+		if (itemsForTrip != null){
+			itemsForTrip.forEach((item) => {
+				this._itemsForTrip.push(item);
+			});
+				}
 	}
 
 	addItemFormSubmit(formData): void {

@@ -19,26 +19,47 @@ export class MyTrips {
 	            public authenticationHandler: AuthenticationHandler,
 	            public navParams: NavParams,
 	            public toastCtrl: ToastController) {
-		let justCreatedTrip = this.navParams.get('justCreatedTrip');
-		if (justCreatedTrip) {
-			this.showCreateDeleteTripToast('Trip created successfully!');
-		}
-
+		console.log("myTrips constructor");
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
-		let allTrips = this.firebaseGet.getAllTrips();
+		this.sortIfUserInTrip();
+	}
 
-		allTrips.forEach((trip) => {
-			// determine they are a part of the trip
-			if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
-				this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
-					this._trips.push({
-						lead: leadOrganiser,
-						trip: trip
+	// Why is this being done?
+	// ionViewWillEnter() {
+    	//this.firebaseGet.setAllTrips(() => {
+	//		this.sortIfUserInTrip();
+	//	});
+	//}
+
+	sortIfUserInTrip(): void {
+		console.log("sortIfUserInTrip");
+		let allTrips = this.firebaseGet.getAllTrips();
+		this._trips = [];
+		if (allTrips != null) {
+			allTrips.forEach((trip) => {
+				// determine they are a part of the trip
+				if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
+					this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
+						this._trips.push({
+							lead: leadOrganiser,
+							trip: trip
+						});
 					});
-				});
-			}
+				}
+			});
+		}
+	}
+
+	refreshTrips(refresher): void {
+		this.firebaseGet.setAllTrips(() => {
+			this.sortIfUserInTrip();
+
+			// Timeout otherwise refresher is too short
+			setTimeout(() => {
+				refresher.complete();
+			}, 2000);
 		});
 	}
 

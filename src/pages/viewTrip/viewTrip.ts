@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-
-import { NavController, NavParams, AlertController, ModalController, ToastController } from 'ionic-angular';
+import { Camera } from 'ionic-native';
+import { NavController, NavParams, ActionSheetController, AlertController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { Map } from '../map/map';
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebaseDELETE } from "../../services/firebase/delete.service";
@@ -23,6 +23,8 @@ export class ViewTrip {
 				public firebaseGet: FirebaseGET,
 				public firebaseDelete: FirebaseDELETE,
 				public firebasePut: FirebasePUT,
+				public platform: Platform,
+				public actionSheetCtrl: ActionSheetController,
 				public alertCtrl: AlertController,
 				public authenticationHandler: AuthenticationHandler,
 				public modalCtrl: ModalController,
@@ -33,11 +35,13 @@ export class ViewTrip {
 		this._trip = this.navParams.get('trip');
 		this._callback = this.navParams.get('callback');
 
-		this._trip.trip.friends.forEach((friendID) => {
-			this.firebaseGet.getUserWithID(friendID, (user) => {
-				this._tripMembers.push(user);
+		if (this._trip.trip.friends != null) {
+			this._trip.trip.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (user) => {
+					this._tripMembers.push(user);
+				});
 			});
-		});
+		}
 	}
 
 	showEditModal(index): void {
@@ -66,7 +70,6 @@ export class ViewTrip {
 						formData.forEach((person) => {
 							peopleIDs.push(person.key);
 						});
-						console.log(peopleIDs);
 						newValue = peopleIDs;
 					} else if (title === "Items") {
 						newValue = formData;
@@ -194,17 +197,87 @@ export class ViewTrip {
 			title: 'Delete Item',
 			message: 'Are you sure you want to delete this item from the trip?',
 			buttons: [
-				{
+				 {
+					text: 'No',
+					role: 'cancel'
+				},{
 					text: 'Yes',
 					handler: () => {
 						//this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
 						//this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
 					}
-				}, {
-					text: 'No',
-					role: 'cancel'
 				}
 			]
 		}).present();
+	}
+
+	presentActionSheet() {
+		let cameraOptions = {
+			quality: 75,
+			destinationType: Camera.DestinationType.DATA_URL,
+			sourceType: Camera.PictureSourceType.CAMERA,
+			allowEdit: true,
+			encodingType: Camera.EncodingType.JPEG,
+			targetWidth: 700,
+			targetHeight: 600,
+			saveToPhotoAlbum: false
+		};
+
+		let actionSheet = this.actionSheetCtrl.create({
+			title: 'Edit Trip Picture',
+			buttons: [
+				{
+					text: 'Remove Trip Picture',
+					icon: !this.platform.is('ios') ? 'trash' : null,
+					role: 'destructive',
+					handler: () => {
+						this._trip.trip.coverPhotoUrl = '';
+						this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+						this.showEditToast('Trip Photo');
+						console.log('Destructive clicked');
+					}
+				}, {
+					text: 'Take Photo',
+					icon: !this.platform.is('ios') ? 'camera' : null,
+					handler: () => {
+						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
+						Camera.getPicture(cameraOptions).then((image) => {
+							console.log("image here")
+							//console.log(image);
+							this._trip.trip.coverPhotoUrl = "data:image/jpeg;base64,"+image;
+							this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+							this.showEditToast('Trip Photo');
+						});
+						console.log('Take Photo clicked');
+
+						Camera.cleanup();
+					}
+				}, {
+					text: 'Choose From Library',
+					icon: !this.platform.is('ios') ? 'folder-open' : null,
+					handler: () => {
+						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+						Camera.getPicture(cameraOptions).then((image) => {
+							console.log("image here")
+							//console.log(image);
+							this._trip.trip.coverPhotoUrl = "data:image/jpeg;base64,"+image;
+							this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+							this.showEditToast('Trip Photo');
+						});
+						console.log('Library clicked');
+						Camera.cleanup();
+					}
+				}, {
+					text: 'Cancel',
+					icon: !this.platform.is('ios') ? 'close' : null,
+					role: 'cancel',
+					handler: () => {
+						console.log('Cancel clicked');
+						Camera.cleanup();
+					}
+				}
+			]
+		});
+		actionSheet.present();
 	}
 }

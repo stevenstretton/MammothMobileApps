@@ -1,34 +1,66 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
+import { NavController } from 'ionic-angular';
 
-import { NavController, NavParams } from 'ionic-angular';
-import { AuthenticationHandler } from "../../services/authenticationHandler.service";
+declare var google;
 
 @Component({
-	selector: 'page-map',
-	templateUrl: 'map.html'
+  selector: 'page-map',
+  templateUrl: 'map.html'
 })
 export class Map {
-	private _currentUserLat: number;
-	private _currentUserLng: number;
-	private _tripMembers: Array<any>;
-	private _currentUser: any;
-	private _membersAllowingToSeeLocation: Array<any> = [];
 
-	constructor(public navCtrl: NavController,
-				public navParams: NavParams,
-				public authenticationHandler: AuthenticationHandler) {
-		this._tripMembers = this.navParams.get('tripMembers');
-		this._currentUser = this.authenticationHandler.getCurrentUser();
+  @ViewChild('map') mapElement: ElementRef;
+  map: any;
 
-		this._currentUserLat = this._currentUser.location["lat"];
-		this._currentUserLng = this._currentUser.location["lng"];
+  constructor(public navCtrl: NavController) {
 
-		this._tripMembers.forEach((tripMember) => {
-			// determining they have a location and that the current user is allowed to see it
-			if ((tripMember.location) && (tripMember.usersToSeeLocation) &&
-				(tripMember.usersToSeeLocation.indexOf(this._currentUser.key) > -1)) {
-				this._membersAllowingToSeeLocation.push(tripMember);
-			}
-		});
-	}
+  }
+
+  ionViewDidLoad() {
+    this.loadMap();
+  }
+
+  loadMap() {
+
+    let latLng = new google.maps.LatLng(-34.9290, 138.6010);
+
+    let mapOptions = {
+      center: latLng,
+      zoom: 15,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+
+    this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+    console.log("HERE");
+
+    this.addMarker();
+
+  }
+
+  addMarker(){
+ 
+  let marker = new google.maps.Marker({
+    map: this.map,
+    animation: google.maps.Animation.DROP,
+    position: this.map.getCenter()
+  });
+ 
+  let content = "<h4>Information!</h4>";          
+ 
+  this.addInfoWindow(marker, content);
+ 
+}
+
+  addInfoWindow(marker, content){
+  
+    let infoWindow = new google.maps.InfoWindow({
+      content: content
+    });
+  
+    google.maps.event.addListener(marker, 'click', () => {
+      infoWindow.open(this.map, marker);
+    });
+  
+  }
+
 }

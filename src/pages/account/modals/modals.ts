@@ -17,6 +17,7 @@ export class LocationModal {
 	            public params: NavParams) {
 		this._usersToSeeLocation = [];
 
+		this._tripMembers = []
 		this._tripName = params.get('name');
 		this._tripMembers = params.get('members');
 
@@ -29,6 +30,10 @@ export class LocationModal {
 
 	dismiss() {
 		this.viewCtrl.dismiss(this._usersToSeeLocation);
+	}
+
+	close() {
+		this.viewCtrl.dismiss();
 	}
 
 	ifInArray(userID): boolean {

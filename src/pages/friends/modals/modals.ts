@@ -28,21 +28,19 @@ export class AddFriendModal {
 				this._usersThatNotFriends.push(user);
 			}
 		});
-		this.initPeople();
-	}
-
-	initPeople(): void {
-		this._people = this._usersThatNotFriends;
 	}
 
 	dismiss() {
 		this.viewCtrl.dismiss(this._selectedPeople);
 	}
 
+	close()
+	{
+		this.viewCtrl.dismiss();
+	}
+
 	// TODO: There is a much simpler way to do this
 	updateSearchResults(event): void {
-		this.initPeople();
-
 		let currentVal = event.target.value;
 
 		if (currentVal && currentVal.trim() != '') {

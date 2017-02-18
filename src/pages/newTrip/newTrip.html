@@ -32,18 +32,18 @@
 
 			<ion-item>
 				<ion-label>Description</ion-label>
-				<ion-textarea formControlName="description" [formControl]="_newTripForm.controls['description']" ngDefaultControl></ion-textarea>
+				<ion-textarea rows='3' formControlName="description" [formControl]="_newTripForm.controls['description']" ngDefaultControl></ion-textarea>
 			</ion-item>
 
 			<ion-item>
-				Choose an image for your trip...
+				<ion-thumbnail [hidden]="!_tripPhoto" item-left (click)="presentActionSheet()">
+      				<img src="{{_tripPhoto}}">
+    			</ion-thumbnail>
+				<ion-label>Choose an image for your trip...</ion-label>
 				<button ion-button clear item-right icon-only (click)="presentActionSheet()">
 					<ion-icon name="camera"></ion-icon>
 				</button>
-			</ion-item>
-
-			<ion-item *ngIf="_tripCoverPhotoSelected">
-
+				<
 			</ion-item>
 
 			<ion-item>
@@ -81,7 +81,7 @@
 
 		<ion-item>
 			<ion-label>Friends</ion-label>
-			<ion-badge item-right [hidden]="!_friendsAdded.length">{{_friendsAdded.length}}</ion-badge>
+			<ion-badge item-right [hidden]="!buildFriendIDsAttending().length">{{_friendsAdded.length}}</ion-badge>
 			<button ion-button clear item-right (click)="presentModal()">View</button>
 		</ion-item>
 	</ion-list>
