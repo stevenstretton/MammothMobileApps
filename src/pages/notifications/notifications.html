@@ -16,17 +16,20 @@
 
    <br><button ion-button color="warning" (click)="dismissNotifications()">
           Mark all as read
+    </button> 
+        <button ion-button color="warning" (click)="addNotification()">
+          Add Notification
     </button>  
 	</ion-list-header>
        
 	<ion-list>
-		<ion-item-sliding *ngFor="let notification of _notifications">
+		<ion-item-sliding *ngFor="let notification of _notifications let i = index">
 			<ion-item>
-				<ion-icon name="paper-plane"></ion-icon>  {{ notification }}
+				<ion-icon name="paper-plane"></ion-icon>{{ notification }}
 			</ion-item>
         
 			<ion-item-options side="right">
-				<button ion-button color="danger" (click)="dismissNotification(notification)">
+				<button ion-button color="danger" (click)="dismissNotification(i)">
 					<ion-icon name="close"></ion-icon>
 					Dismiss
 				</button>
