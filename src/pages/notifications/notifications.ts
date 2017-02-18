@@ -28,13 +28,6 @@ export class Notifications {
 
 			this._currentUser = this.authenticationHandler.getCurrentUser();
 
-			// if (this._currentUser.notifications != null)
-			// {
-			// 	this._currentUser.notifications.forEach((notificationMessage) => {
-			// 			this._notifications.push(notificationMessage);
-			// 	});
-			// }
-
 			this.getNotifications();
 
 			console.log(this._currentUser.notifications);
@@ -48,30 +41,58 @@ export class Notifications {
 				this._notifications = [];
 				console.log(this._currentUser);
 				
-				this._currentUser.notifications.forEach((notificationMessage) => {
-						this._notifications.push(notificationMessage);
-				});
+				this._notifications = this._currentUser.notifications
 
 
 			}
 		}
 
 		addNotification(): void {
+            var temp = this._notifications;
+            this._notifications = temp;
 			this._notifications.push("test Note");
 			this.firebasePut.putNewNotification(this._currentUser.key, this._notifications);
-			this.getNotifications();
+			
 			// console.log(this._currentUser.key);
 			
 		}
     
-    	dismissNotification(notification): void {      
-				console.log(notification);
-				const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
+    	dismissNotification(index): void {      
+            console.log(index)
+            var temp = this._notifications;
+            temp.splice(index, 1);
+            this._notifications = temp;
+            
+            console.log(this._notifications)
 
-				notificationObjectObservable
-					.then(_ => console.log("Success!"))
-					.catch(err => console.log(err));
-			}
+            const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").set(temp);
+			notificationObjectObservable
+				.then(_ => {
+                console.log("Success!")
+                    
+
+				})
+				.catch(err => console.log(err));
+
+			
+
+		}	
+    
+        dismissNotifications(): void {      
+			const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
+
+			notificationObjectObservable
+				.then(_ => {
+					console.log("Success!")
+					this._notifications = []
+					this._currentUser.notifications = []
+
+				})
+				.catch(err => console.log(err));
+
+			
+
+		}	
 
 }
 

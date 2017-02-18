@@ -9,24 +9,31 @@
 <ion-content>
     <ion-list-header>
 		Your Notifications...
+   <br><button ion-button color="warning" (click)="dismissNotifications()">
 
-        <!--<button ion-button color="warning" (click)="addNotification()">
+<<<<<<< HEAD
+        <button ion-button color="warning" (click)="addNotification()">
 					Add Notification
-				</button>-->
+				</button>
 
-   <br><button ion-button color="warning" (click)="dismissNotification()">
+   <br><button ion-button color="warning" (click)="dismissNotifications()">
+=======
+>>>>>>> 5dcd39fc84fc96b93146ed5f5b16e1b1a64069ce
           Mark all as read
+    </button> 
+        <button ion-button color="warning" (click)="addNotification()">
+          Add Notification
     </button>  
 	</ion-list-header>
        
 	<ion-list>
-		<ion-item-sliding *ngFor="let notification of _notifications">
+		<ion-item-sliding *ngFor="let notification of _notifications let i = index">
 			<ion-item>
-				<ion-icon name="paper-plane"></ion-icon>  {{ notification }}
+				<ion-icon name="paper-plane"></ion-icon>{{ notification }}
 			</ion-item>
         
 			<ion-item-options side="right">
-				<button ion-button color="danger" (click)="dismissNotification(notification)">
+				<button ion-button color="danger" (click)="dismissNotification(i)">
 					<ion-icon name="close"></ion-icon>
 					Dismiss
 				</button>
