@@ -6,6 +6,8 @@ import { NavController, ActionSheetController, Platform, ModalController, ToastC
 import { Login } from '../login/login';
 import { LocationModal, ChangePasswordModal } from "./modals/modals";
 
+import { LocationHandler } from "../../services/locationHandler.service";
+
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebasePUT } from "../../services/firebase/put.service";
@@ -29,7 +31,8 @@ export class Account {
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
 	            public firebasePut: FirebasePUT,
-	            public toastCtrl: ToastController) {
+	            public toastCtrl: ToastController,
+				public locationHandler: LocationHandler) {
 		this._usersToSeeLocation = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
@@ -143,6 +146,14 @@ export class Account {
 
 	changeSharingLocation(): void {
 		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
+
+		if (this._currentUser.shareLocation) {
+			console.log("logging location");
+			this.locationHandler.startLoggingLocation();
+		} else {
+			console.log("not logging location");
+			this.locationHandler.stopLoggingLocation();
+		}
 	}
 
 	showChangeProfilePhotoToast(): void {

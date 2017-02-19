@@ -1,7 +1,8 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from "@angular/forms";
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicApp, IonicModule, IonicErrorHandler, Platform } from 'ionic-angular';
+import { BackgroundGeolocation } from "ionic-native";
 import { MyApp } from './app.component';
 
 import { Login } from '../pages/login/login';
@@ -116,4 +117,28 @@ const firebaseAuthConfig = {
 		AuthenticationHandler,
 		LocationHandler]
 })
-export class AppModule {}
+export class AppModule {
+
+	// As far as I can see, the configuration for the location needs to be in here
+	constructor(private platform: Platform) {
+		platform.ready().then(() => {
+			const geolocationConfig = {
+				desiredAccuracy: 10,
+				stationaryRadius: 20,
+				distanceFilter: 30,
+				debug: true,
+				stopOnTerminate: false
+			};
+
+			BackgroundGeolocation.configure((location) => {
+				console.log("Lat: " + location.latitude);
+				console.log("Lng: " + location.longitude);
+			}, (error) => {
+				console.log("BackgroundGeolocation error");
+			}, geolocationConfig);
+
+			// Set to use in background
+			BackgroundGeolocation.Mode = 0;
+		});
+	}
+}
