@@ -45,13 +45,12 @@ export class Notifications {
 	}
 
 	dismissNotification(index, slidingItem: ItemSliding): void {
+		slidingItem.close()
 		console.log(index)
 		var temp = this._notifications;
 		temp.splice(index, 1);
-
+			
 		this.firebasePut.putNewNotification(this._currentUser.key, temp);
-
-		slidingItem.close()
 		this._notifications = temp;
 		console.log(this._notifications)
 

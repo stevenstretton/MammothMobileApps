@@ -14,7 +14,7 @@
 		Your Friends...
 	</ion-list-header>
 	<ion-list>
-		<ion-item-sliding *ngFor="let friend of _friends">
+		<ion-item-sliding *ngFor="let friend of _friends" #slidingItem>
 			<ion-item>
 				<ion-avatar item-left>
 					<img src="{{ friend.photoUrl }}">
@@ -23,7 +23,7 @@
 				<p>{{ friend.username }}</p>
 			</ion-item>
 			<ion-item-options side="right">
-				<button ion-button color="danger" (click)="unfriend(friend)">
+				<button ion-button color="danger" (click)="unfriend(friend, slidingItem)">
 					<ion-icon name="close" ></ion-icon>
 					Unfriend
 				</button>

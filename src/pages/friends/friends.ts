@@ -48,13 +48,14 @@ export class Friends {
 		}
 	}
 
-	unfriend(friend): void {
+	unfriend(friend, slidingItem: ItemSliding): void {
 		let index = this._friends.indexOf(friend);
-
+		slidingItem.close()
 		this._friends.splice(index, 1);
 
 		this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
 		this._currentUser = this.authenticationHandler.getCurrentUser();
+
 	}
 
 	presentAddFriendModal(): void {
