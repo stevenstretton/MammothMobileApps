@@ -33,9 +33,10 @@ export class NewTrip {
 		public actionSheetCtrl: ActionSheetController,
 		public platform: Platform,
 		public firebaseGet: FirebaseGET,
+		public firebasePost: FirebasePOST,
+		public firebasePut: FirebasePUT,
 		public authenticationHandler: AuthenticationHandler,
 		public modalCtrl: ModalController,
-		public firebasePost: FirebasePOST,
 		private toastCtrl: ToastController,
 		private formBuilder: FormBuilder) {
 
