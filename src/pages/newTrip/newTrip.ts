@@ -139,49 +139,49 @@ export class NewTrip {
 			this._friendsAdded.forEach((friend) => {
 				if (friend.isAdded) {
 					friendsAttending.push(friend.user.key);
-                }
+				}
 			});
 		}
 
 		return friendsAttending;
 	}
-    
-        getNotifications(friendID): Array<any>{
-        let tempNotification;
-			this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
-				tempNotification = firebaseUser.notifications
-                })
-                
-			return tempNotification;
-		}
+
+	getNotifications(friendID): Array<any> {
+		let tempNotification;
+		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
+			tempNotification = firebaseUser.notifications
+		})
+
+		return tempNotification;
+	}
 
 	pushTrip(formData): void {
-		
+
 		this.buildForm(formData);
-		
+
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
 			let friends = this.buildFriendIDsAttending();
-            let name = this._currentUser.firstName;
-            let tripName = this._tripInfo.name;
-            
-            friends.forEach((friend) => {
-            console.log(friend)
+			let name = this._currentUser.firstName;
+			let tripName = this._tripInfo.name;
 
-                    let usernotes = this.getNotifications(friend)
-                    
-                    console.log(usernotes)
-                    if(usernotes == null){
-                        let usernotes = []
-                        usernotes.push(name + " added you to "+tripName)
-                        this.firebasePost.postNewNotification(friend, usernotes);
-                    }else{
-                        usernotes.push(name + " added you to "+tripName)
-                        this.firebasePut.putNewNotification(friend, usernotes);
-                    }
-                    
-				
+			friends.forEach((friend) => {
+				console.log(friend)
+
+				let usernotes = this.getNotifications(friend)
+
+				console.log(usernotes)
+				if (usernotes == null) {
+					let usernotes = []
+					usernotes.push(name + " added you to " + tripName)
+					this.firebasePost.postNewNotification(friend, usernotes);
+				} else {
+					usernotes.push(name + " added you to " + tripName)
+					this.firebasePut.putNewNotification(friend, usernotes);
+				}
+
+
 			});
-			
+
 			this.clearTrip()
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);
@@ -210,7 +210,7 @@ export class NewTrip {
 			coverPhotoUrl: this._tripPhoto,
 
 		};
-		
+
 	}
 
 

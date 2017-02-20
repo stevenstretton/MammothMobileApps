@@ -69,12 +69,11 @@ export class FirebaseGET {
 				let snapKey = snapshot.key,
 					snapVal = snapshot.val();
 
-					let notifications = snapVal.notifications;
+				let notifications = snapVal.notifications;
 
-					if (!snapVal.notifications)
-					{
-						let notifications = []
-					}
+				if (!snapVal.notifications) {
+					let notifications = []
+				}
 
 				this._allUsers.push({
 					key: snapKey,
@@ -87,7 +86,7 @@ export class FirebaseGET {
 					usersToSeeLocation: snapVal.usersToSeeLocation,
 					friends: snapVal.friends,
 					location: snapVal.location,
-                    notifications: notifications
+					notifications: notifications
 				});
 			});
 		});
@@ -106,12 +105,11 @@ export class FirebaseGET {
 			let snapVal = snapshot.val(),
 				snapKey = snapshot.key;
 
-				let notifications = snapVal.notifications;
+			let notifications = snapVal.notifications;
 
-				if (!snapVal.notifications)
-				{
-					let notifications = []
-				}
+			if (!snapVal.notifications) {
+				let notifications = []
+			}
 
 			callback({
 				key: snapKey,
@@ -124,7 +122,7 @@ export class FirebaseGET {
 				usersToSeeLocation: snapVal.usersToSeeLocation,
 				friends: snapVal.friends,
 				location: snapVal.location,
-                notifications: notifications
+				notifications: notifications
 
 			});
 		});
@@ -160,36 +158,34 @@ export class FirebaseGET {
 		});
 	}
 
-	setAllPresets(): void
-	{
+	setAllPresets(): void {
 		this._allPresets = [];
 
-			let presetListObservable = this.af.database.list('/tripPresets', {
-				preserveSnapshot: true
-			});
+		let presetListObservable = this.af.database.list('/tripPresets', {
+			preserveSnapshot: true
+		});
 
 
-			presetListObservable.subscribe((snapshots) => {
-				snapshots.forEach((snapshot) => {
-					let snapKey = snapshot.key,
-						snapVal = snapshot.val();
+		presetListObservable.subscribe((snapshots) => {
+			snapshots.forEach((snapshot) => {
+				let snapKey = snapshot.key,
+					snapVal = snapshot.val();
 
-					this._allPresets.push({
-						key: snapKey,
-						name: snapVal.name,
-						description: snapVal.description,
-						coverPhotoUrl: snapVal.coverPhotoUrl,
-						transport: snapVal.transport,
-						items: snapVal.items
-					});
+				this._allPresets.push({
+					key: snapKey,
+					name: snapVal.name,
+					description: snapVal.description,
+					coverPhotoUrl: snapVal.coverPhotoUrl,
+					transport: snapVal.transport,
+					items: snapVal.items
 				});
 			});
+		});
 
 		console.log(this._allPresets);
 	}
 
-	getAllPresets(): Array<any>
-	{
+	getAllPresets(): Array<any> {
 		return this._allPresets;
 	}
 }
