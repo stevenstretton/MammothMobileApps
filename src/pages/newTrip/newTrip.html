@@ -82,7 +82,7 @@
 		<ion-item>
 			<ion-label>Friends</ion-label>
 			<ion-badge item-right [hidden]="!buildFriendIDsAttending().length">{{_friendsAdded.length}}</ion-badge>
-			<button ion-button clear item-right (click)="presentModal()">View</button>
+			<button ion-button clear item-right *ngIf="_currentUser.friends" (click)="presentModal()">View</button>
 		</ion-item>
 	</ion-list>
 

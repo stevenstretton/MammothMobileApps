@@ -34,9 +34,9 @@ export class NewTrip {
 	            public authenticationHandler: AuthenticationHandler,
 	            public modalCtrl: ModalController,
 	            public firebasePost: FirebasePOST,
-                public firebasePut: FirebasePUT,
+	            public firebasePut: FirebasePUT,
 	            private toastCtrl: ToastController,
-				private formBuilder: FormBuilder) {
+	            private formBuilder: FormBuilder) {
 		let today = new Date();
 
 		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
@@ -66,28 +66,29 @@ export class NewTrip {
 		let friendIDsAdded = this.buildFriendIDsAttending();
 		this._friendsAdded = [];
 
-		this._currentUser.friends.forEach((friendID) => {
-			this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
-				this._friendsAdded.push({
-					isAdded: (friendIDsAdded.indexOf(friendID) > -1),
-					user: firebaseUser
+		if (this._currentUser.friends) {
+			this._currentUser.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
+					this._friendsAdded.push({
+						isAdded: (friendIDsAdded.indexOf(friendID) > -1),
+						user: firebaseUser
+					});
 				});
 			});
-		});
 
-		this.modalCtrl.create(FriendsModal, {
-			selectedFriends: this._friendsAdded
-		}).present();
+
+			this.modalCtrl.create(FriendsModal, {
+				selectedFriends: this._friendsAdded
+			}).present();
+		}
 	}
 
-	presentPresetsModal() : void {
-
+	presentPresetsModal(): void {
 
 		let presetModal = this.modalCtrl.create(PresetsModal)
 
 		presetModal.onWillDismiss((presetData => {
-			if (presetData != null)
-			{
+			if (presetData != null) {
 				this.setFieldsWithData(presetData)
 			}
 		}))
@@ -96,17 +97,19 @@ export class NewTrip {
 
 	}
 
-	setFieldsWithData(presetData) : void {
-		this._newTripForm.setValue({name: presetData.name,
+	setFieldsWithData(presetData): void {
+		this._newTripForm.setValue({
+			name: presetData.name,
 			loc: "",
 			description: presetData.description,
 			startDate: this._todaysDate,
 			startTime: this._nowTime,
 			endDate: this._todaysDate,
-			transport: presetData.transport})
+			transport: presetData.transport
+		})
 
 		this._tripPhoto = presetData.coverPhotoUrl
-		this._itemList = presetData.items	 
+		this._itemList = presetData.items
 	}
 
 	buildFriendIDsAttending(): Array<any> {
@@ -116,20 +119,20 @@ export class NewTrip {
 			this._friendsAdded.forEach((friend) => {
 				if (friend.isAdded) {
 					friendsAttending.push(friend.user.key);
-                }
+				}
 			});
 		}
 		return friendsAttending;
 	}
-    
-        getNotifications(friendID): Array<any>{
-        var tempNotification;
-			this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
-				tempNotification = firebaseUser.notifications
-                })
-                
-			return tempNotification;
-		}
+
+	getNotifications(friendID): Array<any> {
+		var tempNotification;
+		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
+			tempNotification = firebaseUser.notifications
+		})
+
+		return tempNotification;
+	}
 
 	pushTrip(formData): void {
 		this._tripInfo = {
@@ -150,27 +153,26 @@ export class NewTrip {
 			coverPhotoUrl: this._tripPhoto,
 		};
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-            var friends = this.buildFriendIDsAttending();
+			var friends = this.buildFriendIDsAttending();
 			this.clearTrip();
-            var name = this._currentUser.firstName;
-            var tripName = this._tripInfo.name;
-            
-            friends.forEach((friend) => {
-            console.log(friend)
+			var name = this._currentUser.firstName;
+			var tripName = this._tripInfo.name;
 
-                    var usernotes = this.getNotifications(friend)
-                    
-                    console.log(usernotes)
-                    if(usernotes == null){
-                        var usernotes = []
-                        usernotes.push("You've been added to "+ tripName +" by "+ name)
-                        this.firebasePost.postNewNotification(friend, usernotes);
-                    }else{
-                        usernotes.push("You've been added to "+ tripName +" by "+ name)
-                        this.firebasePut.putNewNotification(friend, usernotes);
-                    }
-                    
-				
+			friends.forEach((friend) => {
+				console.log(friend)
+
+				var usernotes = this.getNotifications(friend)
+
+				console.log(usernotes)
+				if (usernotes == null) {
+					var usernotes = []
+					usernotes.push("You've been added to " + tripName + " by " + name)
+					this.firebasePost.postNewNotification(friend, usernotes);
+				} else {
+					usernotes.push("You've been added to " + tripName + " by " + name)
+					this.firebasePut.putNewNotification(friend, usernotes);
+				}
+
 			});
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);
@@ -203,18 +205,20 @@ export class NewTrip {
 	}
 
 	clearTrip() {
-		this._newTripForm.setValue({name: '',
+		this._newTripForm.setValue({
+			name: '',
 			loc: '',
 			description: '',
 			startDate: this._todaysDate,
 			startTime: this._nowTime,
 			endDate: this._todaysDate,
-			transport: ''})
+			transport: ''
+		})
 
 		this._friendsAdded = []
 		this._tripPhoto = ''
-		this._itemList = []	 
-		
+		this._itemList = []
+
 	}
 
 	presentActionSheet() {
@@ -248,7 +252,7 @@ export class NewTrip {
 						Camera.getPicture(cameraOptions).then((image) => {
 							console.log("image here")
 							//console.log(image);
-							this._tripPhoto = "data:image/jpeg;base64,"+image;
+							this._tripPhoto = "data:image/jpeg;base64," + image;
 						});
 						console.log('Take Photo clicked');
 
@@ -262,7 +266,7 @@ export class NewTrip {
 						Camera.getPicture(cameraOptions).then((image) => {
 							console.log("image here")
 							//console.log(image);
-							this._tripPhoto = "data:image/jpeg;base64,"+image;
+							this._tripPhoto = "data:image/jpeg;base64," + image;
 						});
 						console.log('Library clicked');
 						Camera.cleanup();

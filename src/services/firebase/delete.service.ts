@@ -44,7 +44,34 @@ export class FirebaseDELETE {
 		});
 	}
 
-	deleteUserAccount(): void {
+	deleteUserAccount(callback): void {
 
+	}
+
+	deleteUserFromDB(userID): void {
+		const userObjectObservable = this.af.database.object('users/' + userID).remove();
+
+		userObjectObservable
+			.then(_ => console.log("Success!"))
+			.catch(err => console.log(err));
+	}
+
+	deleteUserFromAllTrips(userID, tripsUserIsOn): void {
+		let tripObjectObservable;
+
+		tripsUserIsOn.forEach((trip) => {
+			tripObjectObservable = this.af.database.object('trips/' + trip.key);
+			if (trip.leadOrganiser === userID) {
+				tripObjectObservable.remove().then(() => {
+					console.log("Success");
+				});
+			} else {
+				trip.friends.splice(trip.friends.indexOf(userID), 1);
+
+				tripObjectObservable.update({
+					friends: trip.friends
+				});
+			}
+		});
 	}
 }

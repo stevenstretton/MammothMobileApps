@@ -103,4 +103,8 @@ export class FirebasePUT {
 		});
 	}
 
+	putTripFriends(tripID, friends): void {
+
+	}
+
 }
