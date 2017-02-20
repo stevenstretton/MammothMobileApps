@@ -43,4 +43,8 @@ export class FirebaseDELETE {
 			items: tripItemIDs
 		});
 	}
+
+	deleteUserAccount(): void {
+
+	}
 }
