@@ -133,10 +133,10 @@ export class AppModule {
 			BackgroundGeolocation.configure((location) => {
 				console.log("Lat: " + location.latitude);
 				console.log("Lng: " + location.longitude);
+				BackgroundGeolocation.finish();
 			}, (error) => {
 				console.log("BackgroundGeolocation error");
 			}, geolocationConfig);
-
 			// Set to use in background
 			BackgroundGeolocation.Mode = 0;
 		});
