@@ -147,7 +147,7 @@ export class NewTrip {
 	}
     
         getNotifications(friendID): Array<any>{
-        var tempNotification;
+        let tempNotification;
 			this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
 				tempNotification = firebaseUser.notifications
                 })
@@ -160,22 +160,22 @@ export class NewTrip {
 		this.buildForm(formData);
 		
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-			var friends = this.buildFriendIDsAttending();
-            var name = this._currentUser.firstName;
-            var tripName = this._tripInfo.name;
+			let friends = this.buildFriendIDsAttending();
+            let name = this._currentUser.firstName;
+            let tripName = this._tripInfo.name;
             
             friends.forEach((friend) => {
             console.log(friend)
 
-                    var usernotes = this.getNotifications(friend)
+                    let usernotes = this.getNotifications(friend)
                     
                     console.log(usernotes)
                     if(usernotes == null){
-                        var usernotes = []
-                        usernotes.push("You've been added to "+ tripName +" by "+ name)
+                        let usernotes = []
+                        usernotes.push(name + " added you to "+tripName)
                         this.firebasePost.postNewNotification(friend, usernotes);
                     }else{
-                        usernotes.push("You've been added to "+ tripName +" by "+ name)
+                        usernotes.push(name + " added you to "+tripName)
                         this.firebasePut.putNewNotification(friend, usernotes);
                     }
                     
