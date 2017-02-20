@@ -108,10 +108,10 @@ export class FirebaseGET {
 
 				let notifications = snapVal.notifications;
 
-					if (!snapVal.notifications)
-					{
-						let notifications = []
-					}
+				if (!snapVal.notifications)
+				{
+					let notifications = []
+				}
 
 			callback({
 				key: snapKey,
