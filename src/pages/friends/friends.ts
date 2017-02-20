@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
+import { NavController, ModalController, ItemSliding } from 'ionic-angular';
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
@@ -33,10 +33,28 @@ export class Friends {
 		}
 	}
 
+	ionViewWillEnter()
+	{
+		this._friends = [];
+
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+
+		if (this._currentUser.friends != null) {
+			this._currentUser.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (friend) => {
+					this._friends.push(friend);
+				});
+			});
+		}
+	}
+
 	unfriend(friend): void {
 		let index = this._friends.indexOf(friend);
 
 		this._friends.splice(index, 1);
+
+		this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+		this._currentUser = this.authenticationHandler.getCurrentUser();
 	}
 
 	presentAddFriendModal(): void {
@@ -48,8 +66,9 @@ export class Friends {
 				setOfFriends.forEach((friend) => {
 					this._friends.push(friend);
 				});
-				this.firebasePut.putUserFriends(this._currentUser.key, setOfFriends);
+				this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
 			}
+			this._currentUser = this.authenticationHandler.getCurrentUser();
 		});
 		modal.present();
 	}

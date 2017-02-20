@@ -5,6 +5,7 @@ import { Map } from '../map/map';
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebaseDELETE } from "../../services/firebase/delete.service";
 import { FirebasePUT } from "../../services/firebase/put.service";
+import { FirebasePOST } from "../../services/firebase/post.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { EditDateModal, EditInputModal, EditTimeModal, EditTextareaModal, AddMembersModal, AddItemsModal } from "./modals/modals";
 
@@ -23,6 +24,7 @@ export class ViewTrip {
 				public firebaseGet: FirebaseGET,
 				public firebaseDelete: FirebaseDELETE,
 				public firebasePut: FirebasePUT,
+				public firebasePost: FirebasePOST,
 				public platform: Platform,
 				public actionSheetCtrl: ActionSheetController,
 				public alertCtrl: AlertController,
@@ -213,7 +215,7 @@ export class ViewTrip {
 
 	presentActionSheet() {
 		let cameraOptions = {
-			quality: 75,
+			quality: 90,
 			destinationType: Camera.DestinationType.DATA_URL,
 			sourceType: Camera.PictureSourceType.CAMERA,
 			allowEdit: true,
@@ -222,18 +224,19 @@ export class ViewTrip {
 			targetHeight: 600,
 			saveToPhotoAlbum: false
 		};
+		let ID = this._currentUser.key + Math.random().toString(36).substring(8);
 
 		let actionSheet = this.actionSheetCtrl.create({
 			title: 'Edit Trip Picture',
 			buttons: [
 				{
-					text: 'Remove Trip Picture',
+					text: 'Reset to Default Picture',
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
-						this._trip.trip.coverPhotoUrl = '';
+						this._trip.trip.coverPhotoUrl = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
 						this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
-						this.showEditToast('Trip Photo');
+						this.showEditToast('Trip Photo Reset');
 						console.log('Destructive clicked');
 					}
 				}, {
@@ -243,10 +246,13 @@ export class ViewTrip {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
 							console.log("image here")
-							//console.log(image);
-							this._trip.trip.coverPhotoUrl = "data:image/jpeg;base64,"+image;
-							this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
-							this.showEditToast('Trip Photo');
+							this.firebasePost.postNewTripImage(image, ID , (url) =>
+							{
+								console.log("storage");
+								this._trip.trip.coverPhotoUrl = url
+								this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+							})
+							this.showEditToast('Trip Photo Added');
 						});
 						console.log('Take Photo clicked');
 
@@ -259,10 +265,13 @@ export class ViewTrip {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
 							console.log("image here")
-							//console.log(image);
-							this._trip.trip.coverPhotoUrl = "data:image/jpeg;base64,"+image;
-							this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
-							this.showEditToast('Trip Photo');
+							this.firebasePost.postNewTripImage(image, ID , (url) =>
+							{
+								console.log("storage");
+								this._trip.trip.coverPhotoUrl = url
+								this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+							})
+							this.showEditToast('Trip Photo Added');
 						});
 						console.log('Library clicked');
 						Camera.cleanup();
