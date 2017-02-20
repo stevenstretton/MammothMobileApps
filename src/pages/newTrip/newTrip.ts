@@ -23,36 +23,31 @@ export class NewTrip {
 	private _itemList: Array<any>;
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
-	private _tripPhoto: string = '';
+	private _tripPhoto: string = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+	private _endDate: any;
+	private _tripPhotoID: any;
 
 	// private _presetData: Array<any>;
 
 	constructor(public navCtrl: NavController,
-	            public actionSheetCtrl: ActionSheetController,
-	            public platform: Platform,
-	            public firebaseGet: FirebaseGET,
-	            public authenticationHandler: AuthenticationHandler,
-	            public modalCtrl: ModalController,
-	            public firebasePost: FirebasePOST,
-                public firebasePut: FirebasePUT,
-	            private toastCtrl: ToastController,
-				private formBuilder: FormBuilder) {
-		let today = new Date();
+		public actionSheetCtrl: ActionSheetController,
+		public platform: Platform,
+		public firebaseGet: FirebaseGET,
+		public authenticationHandler: AuthenticationHandler,
+		public modalCtrl: ModalController,
+		public firebasePost: FirebasePOST,
+		private toastCtrl: ToastController,
+		private formBuilder: FormBuilder) {
 
-		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
-			// nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2) + ":" + ('0' + today.getSeconds()).slice(-2);
-			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
-
-		this._todaysDate = todayDate;
-		this._nowTime = nowTime;
-
+		this.setDateTime();
+		this._endDate = this._todaysDate;
 		this._newTripForm = this.formBuilder.group({
 			name: ['', Validators.required],
 			loc: ['', Validators.required],
 			description: '',
-			startDate: [todayDate, Validators.required],
-			startTime: [nowTime, Validators.required],
-			endDate: [todayDate, Validators.required],
+			startDate: [this._todaysDate, Validators.required],
+			startTime: [this._nowTime, Validators.required],
+			endDate: [this._todaysDate, Validators.required],
 			transport: ['', Validators.required]
 		});
 
@@ -60,7 +55,33 @@ export class NewTrip {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friendsAdded = [];
 		this._itemList = [];
+
+		this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
 	}
+
+	ionViewDidEnter() {
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+		this.setDateTime();
+		this._newTripForm.patchValue({ startDate: this._todaysDate, endDate: this._todaysDate, startTime: this._nowTime })
+	}
+
+	setDateTime() {
+		let today = new Date();
+
+		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
+
+			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
+
+		this._todaysDate = todayDate;
+		console.log(this._todaysDate);
+		this._nowTime = nowTime;
+	}
+
+	setEndDate() {
+		this._endDate = this._newTripForm.controls['startDate']
+		console.log(this._endDate);
+	}
+
 
 	presentModal(): void {
 		let friendIDsAdded = this.buildFriendIDsAttending();
@@ -80,14 +101,13 @@ export class NewTrip {
 		}).present();
 	}
 
-	presentPresetsModal() : void {
+	presentPresetsModal(): void {
 
 
 		let presetModal = this.modalCtrl.create(PresetsModal)
 
 		presetModal.onWillDismiss((presetData => {
-			if (presetData != null)
-			{
+			if (presetData != null) {
 				this.setFieldsWithData(presetData)
 			}
 		}))
@@ -96,17 +116,19 @@ export class NewTrip {
 
 	}
 
-	setFieldsWithData(presetData) : void {
-		this._newTripForm.setValue({name: presetData.name,
+	setFieldsWithData(presetData): void {
+		this._newTripForm.setValue({
+			name: presetData.name,
 			loc: "",
 			description: presetData.description,
 			startDate: this._todaysDate,
 			startTime: this._nowTime,
 			endDate: this._todaysDate,
-			transport: presetData.transport})
+			transport: presetData.transport
+		})
 
 		this._tripPhoto = presetData.coverPhotoUrl
-		this._itemList = presetData.items	 
+		this._itemList = presetData.items
 	}
 
 	buildFriendIDsAttending(): Array<any> {
@@ -119,6 +141,7 @@ export class NewTrip {
                 }
 			});
 		}
+
 		return friendsAttending;
 	}
     
@@ -132,26 +155,11 @@ export class NewTrip {
 		}
 
 	pushTrip(formData): void {
-		this._tripInfo = {
-			name: formData.name,
-			location: formData.loc,
-			description: formData.description,
-			transport: formData.transport,
-			friends: this.buildFriendIDsAttending(),
-			items: this._itemList,
-			start: {
-				date: formData.startDate,
-				time: formData.startTime
-			},
-			end: {
-				date: formData.endDate
-			},
-			leadOrganiser: this._currentUser.key,
-			coverPhotoUrl: this._tripPhoto,
-		};
+		
+		this.buildForm(formData);
+		
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-            var friends = this.buildFriendIDsAttending();
-			this.clearTrip();
+			var friends = this.buildFriendIDsAttending();
             var name = this._currentUser.firstName;
             var tripName = this._tripInfo.name;
             
@@ -172,11 +180,38 @@ export class NewTrip {
                     
 				
 			});
+			
+			this.clearTrip()
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);
 			this.showCreateDeleteTripToast('Trip created successfully!');
+			this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
 		});
 	}
+
+	buildForm(formData) {
+
+		this._tripInfo = {
+			name: formData.name,
+			location: formData.loc,
+			description: formData.description,
+			transport: formData.transport,
+			friends: this.buildFriendIDsAttending(),
+			items: this._itemList,
+			start: {
+				date: formData.startDate,
+				time: formData.startTime
+			},
+			end: {
+				date: formData.endDate
+			},
+			leadOrganiser: this._currentUser.key,
+			coverPhotoUrl: this._tripPhoto,
+
+		};
+		
+	}
+
 
 	showCreateDeleteTripToast(message): void {
 		this.toastCtrl.create({
@@ -203,23 +238,25 @@ export class NewTrip {
 	}
 
 	clearTrip() {
-		this._newTripForm.setValue({name: '',
+		this._newTripForm.setValue({
+			name: '',
 			loc: '',
 			description: '',
 			startDate: this._todaysDate,
 			startTime: this._nowTime,
 			endDate: this._todaysDate,
-			transport: ''})
+			transport: ''
+		})
 
 		this._friendsAdded = []
-		this._tripPhoto = ''
-		this._itemList = []	 
-		
+		this._tripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+		this._itemList = []
+
 	}
 
 	presentActionSheet() {
 		let cameraOptions = {
-			quality: 75,
+			quality: 90,
 			destinationType: Camera.DestinationType.DATA_URL,
 			sourceType: Camera.PictureSourceType.CAMERA,
 			allowEdit: true,
@@ -233,11 +270,11 @@ export class NewTrip {
 			title: 'Edit Trip Picture',
 			buttons: [
 				{
-					text: 'Remove Trip Picture',
+					text: 'Reset to Default Picture',
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
-						this._tripPhoto = '';
+						this._tripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
 						console.log('Destructive clicked');
 					}
 				}, {
@@ -247,8 +284,10 @@ export class NewTrip {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
 							console.log("image here")
-							//console.log(image);
-							this._tripPhoto = "data:image/jpeg;base64,"+image;
+							this.firebasePost.postNewTripImage(image, this._tripPhotoID, (imageURL) => {
+								console.log(imageURL);
+								this._tripPhoto = imageURL
+							})
 						});
 						console.log('Take Photo clicked');
 
@@ -261,8 +300,10 @@ export class NewTrip {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
 							console.log("image here")
-							//console.log(image);
-							this._tripPhoto = "data:image/jpeg;base64,"+image;
+							this.firebasePost.postNewTripImage(image, this._tripPhotoID, (imageURL) => {
+								console.log(imageURL);
+								this._tripPhoto = imageURL
+							})
 						});
 						console.log('Library clicked');
 						Camera.cleanup();

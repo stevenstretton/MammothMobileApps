@@ -10,19 +10,14 @@ export class FirebasePUT {
 	putUserFriends(userID, friends): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
-		let currentFriendIDs = [];
-
-		this.firebaseGet.getUserWithID(userID, (user) => {
-			if ((typeof user.friends !== "undefined") && (user.friends.length > 0)) {
-				currentFriendIDs = user.friends;
-			}
+		let currentFriendIDs= [];
 
 			if (friends.length > 0) {
 				friends.forEach((friend) => {
 					currentFriendIDs.push(friend.key);
 				});
 			}
-		});
+
 
 		userObjectObservable.update({
 			friends: currentFriendIDs

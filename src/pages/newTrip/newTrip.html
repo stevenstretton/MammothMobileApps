@@ -35,12 +35,12 @@
 				<ion-textarea rows='3' formControlName="description" [formControl]="_newTripForm.controls['description']" ngDefaultControl></ion-textarea>
 			</ion-item>
 
-			<ion-item>
-				<ion-thumbnail [hidden]="!_tripPhoto" item-left (click)="presentActionSheet()">
+			<ion-item (click)="presentActionSheet()">
+				<ion-thumbnail [hidden]="!_tripPhoto" item-left>
       				<img src="{{_tripPhoto}}">
     			</ion-thumbnail>
-				<ion-label>Choose an image for your trip...</ion-label>
-				<button ion-button clear item-right icon-only (click)="presentActionSheet()">
+				<ion-label>Choose an image for trip...</ion-label>
+				<button ion-button clear item-right icon-only >
 					<ion-icon name="camera"></ion-icon>
 				</button>
 				<
@@ -56,13 +56,13 @@
 			<ion-item>
 				<ion-label>Start Time</ion-label>
 				<ion-datetime displayFormat="h:mm A" pickerFormat="h mm A"
-				              formControlName="startTime" [formControl]="_newTripForm.controls['startTime']"
+				              formControlName="startTime" [formControl]="_newTripForm.controls['startTime']" (ionChange)="setEndDate()"
 				              ngDefaultControl></ion-datetime>
 			</ion-item>
 
 			<ion-item>
 				<ion-label>Ends</ion-label>
-				<ion-datetime displayFormat="DD MMM YYYY" [min]="_todaysDate" [max]="2020"
+				<ion-datetime displayFormat="DD MMM YYYY" [min]="_endDate" [max]="2020"
 				              formControlName="endDate" [formControl]="_newTripForm.controls['endDate']"
 				              ngDefaultControl></ion-datetime>
 			</ion-item>
@@ -81,7 +81,7 @@
 
 		<ion-item>
 			<ion-label>Friends</ion-label>
-			<ion-badge item-right [hidden]="!buildFriendIDsAttending().length">{{_friendsAdded.length}}</ion-badge>
+			<ion-badge item-right [hidden]="!buildFriendIDsAttending().length">{{buildFriendIDsAttending().length}}</ion-badge>
 			<button ion-button clear item-right (click)="presentModal()">View</button>
 		</ion-item>
 	</ion-list>
@@ -133,7 +133,7 @@
 	<!--</ion-card>-->
 
 	<div padding>
-		<button ion-button color="primary" block [disabled]="!_newTripForm.valid" (click)="pushTrip(_newTripForm.value)">Create Trip</button>
+		<button ion-button color="primary" block [disabled]="!_newTripForm.valid || buildFriendIDsAttending().length <= 0" (click)="pushTrip(_newTripForm.value)">Create Trip</button>
 	</div>
 
 </ion-content>

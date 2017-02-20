@@ -7,8 +7,8 @@ export class FirebasePOST {
 	private _fb: any;
 
 	constructor(private af: AngularFire,
-	            public firebaseGet: FirebaseGET,
-	            @Inject(FirebaseApp) firebaseApp: any) {
+		public firebaseGet: FirebaseGET,
+		@Inject(FirebaseApp) firebaseApp: any) {
 		this._fb = firebaseApp;
 	}
 
@@ -24,6 +24,35 @@ export class FirebasePOST {
 			});
 	}
 
+	postNewAccountPhoto(image, userID, callback) {
+		var storageRef = this._fb.storage().ref('/user_images/');
+
+		var metadata = {
+			contentType: 'image/jpeg'
+		};
+
+		storageRef.child(userID).child("profile_image.jpeg").putString(image, 'base64', metadata).then(function (snapshot) {
+			console.log('Uploaded a base64 string!');
+			console.log(snapshot.downloadURL);
+			callback(snapshot.downloadURL)
+		});
+
+	}
+
+	postNewTripImage(image, tripID, callback) {
+		var storageRef = this._fb.storage().ref('/trip_images/');
+
+		var metadata = {
+			contentType: 'image/jpeg'
+		};
+
+		storageRef.child(tripID).child("trip_image.jpeg").putString(image, 'base64', metadata).then(function (snapshot) {
+			console.log('Uploaded a base64 string!');
+			console.log(snapshot.downloadURL);
+			callback(snapshot.downloadURL)
+		});
+
+	}
 
 	postNewUser(user, credentials): void {
 		const usersTable = this.af.database.object("users/" + user.uid);

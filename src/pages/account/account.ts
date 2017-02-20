@@ -9,6 +9,7 @@ import { LocationModal, ChangePasswordModal } from "./modals/modals";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebasePUT } from "../../services/firebase/put.service";
+import { FirebasePOST } from "../../services/firebase/post.service";
 
 @Component({
 	selector: 'page-account',
@@ -19,7 +20,7 @@ export class Account {
 	private _currentUserTrips: Array<any>;
 	private _usersToSeeLocation: Array<any>;
 	private _allUsers: Array<any>;
-	private _userPhoto: string = '';
+	private _userPhoto: any;
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -29,6 +30,7 @@ export class Account {
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
 	            public firebasePut: FirebasePUT,
+				public firebasePost: FirebasePOST,
 	            public toastCtrl: ToastController) {
 		this._usersToSeeLocation = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
@@ -39,6 +41,7 @@ export class Account {
 	}
 
 	setCurrentUserTrips(): void {
+		this._currentUser = this.authenticationHandler.getCurrentUser();
 		let allTrips = this.firebaseGet.getAllTrips();
 		this._currentUserTrips = [];
 		allTrips.forEach((trip) => {
@@ -198,10 +201,13 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							//console.log(image);
-							this._userPhoto = "data:image/jpeg;base64," + image;
-							this._currentUser.photoUrl = this._userPhoto;
-							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+							this.firebasePost.postNewAccountPhoto(image, this._currentUser.key, (url) =>
+							{
+								console.log("storage");
+								this._currentUser.photoUrl = url
+								this._userPhoto = url
+								this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, url);
+							})
 							this.showChangeProfilePhotoToast();
 						});
 						console.log('Take Photo clicked');
@@ -213,10 +219,13 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							this._userPhoto = "data:image/jpeg;base64," + image;
-							this._currentUser.photoUrl = this._userPhoto;
-							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
-							//console.log(image);
+							this.firebasePost.postNewAccountPhoto(image, this._currentUser.key, (url) =>
+							{
+								console.log("storage");
+								this._currentUser.photoUrl = url
+								this._userPhoto = url
+								this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, url);
+							})
 							this.showChangeProfilePhotoToast();
 						});
 						console.log('Library clicked');

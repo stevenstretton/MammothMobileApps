@@ -14,28 +14,43 @@ export class AddFriendModal {
 	private _selectedPeople: Array<any>;
 
 	constructor(public viewCtrl: ViewController,
-	            public params: NavParams,
-	            public firebaseGet: FirebaseGET) {
+		public params: NavParams,
+		public firebaseGet: FirebaseGET) {
+		this._people = [];
 		this._selectedPeople = [];
 		this._usersThatNotFriends = [];
 
-		this._currentUser = params.get('currentUser');
-
+		this._currentUser = this.params.get('currentUser');
+		console.log(this._currentUser);
 		let allUsers = this.firebaseGet.getAllUsers();
 
 		allUsers.forEach((user) => {
-			if ((this._currentUser.friends.indexOf(user.key) <= -1) && (user.key !== this._currentUser.key)) {
-				this._usersThatNotFriends.push(user);
+			if (this._currentUser.friends != null) {
+				if ((this._currentUser.friends.indexOf(user.key) <= -1) && (user.key !== this._currentUser.key)) {
+					this._usersThatNotFriends.push(user);
+				}
 			}
+			else
+			{
+				if (user.key !== this._currentUser.key) {
+					this._usersThatNotFriends.push(user);
+				}
+			}
+
 		});
 	}
 
+
+
 	dismiss() {
+		this._people = [];
+		this._usersThatNotFriends = []
 		this.viewCtrl.dismiss(this._selectedPeople);
 	}
 
-	close()
-	{
+	close() {
+		this._people = [];
+		this._usersThatNotFriends = []
 		this.viewCtrl.dismiss();
 	}
 
@@ -46,7 +61,7 @@ export class AddFriendModal {
 		if (currentVal && currentVal.trim() != '') {
 			this._people = this._people.filter((person) => {
 				return ((person.firstName.toLowerCase().indexOf(currentVal.toLowerCase()) > -1) ||
-				(person.lastName.toLowerCase().indexOf(currentVal.toLowerCase()) > -1));
+					(person.lastName.toLowerCase().indexOf(currentVal.toLowerCase()) > -1));
 			});
 		}
 	}
