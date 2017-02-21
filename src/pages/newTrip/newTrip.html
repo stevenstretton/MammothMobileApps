@@ -48,7 +48,7 @@
 
 			<ion-item>
 				<ion-label>Start Date</ion-label>
-				<ion-datetime displayFormat="DD MMM YYYY" [min]="_todaysDate" [max]="2020"
+				<ion-datetime displayFormat="DDD DD MMM YYYY" [min]="_todaysDate" [max]="2020"
 				              formControlName="startDate" [formControl]="_newTripForm.controls['startDate']"
 				              ngDefaultControl></ion-datetime>
 			</ion-item>
@@ -62,7 +62,7 @@
 
 			<ion-item>
 				<ion-label>Ends</ion-label>
-				<ion-datetime displayFormat="DD MMM YYYY" [min]="_endDate" [max]="2020"
+				<ion-datetime displayFormat="DDD DD MMM YYYY" [min]="_endDate" [max]="2020"
 				              formControlName="endDate" [formControl]="_newTripForm.controls['endDate']"
 				              ngDefaultControl></ion-datetime>
 			</ion-item>
