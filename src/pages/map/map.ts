@@ -17,8 +17,8 @@ export class Map {
 
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams  ) {
-    
+    public navParams: NavParams) {
+
     this._currentUser = navParams.get('currentUser');
     this._tripMembers = navParams.get('tripMembers');
   }
@@ -29,12 +29,16 @@ export class Map {
 
   loadMap() {
 
+    //*********** MAP OPTIONS ****************//
+
     let mapOptions = {
       center: new google.maps.LatLng(53.376853, -1.467352),
       zoom: 15,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     }
     this.map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
+
+    //*********** ARRAY OF MEMBER OBJECTS ****************//
 
     var users = [
       {
@@ -46,44 +50,80 @@ export class Map {
       }
     ];
 
-    for(var i = 0, tripMember; tripMember = this._tripMembers[i]; i++ ){
+    for (var i = 0, tripMember; tripMember = this._tripMembers[i]; i++) {
       var member = {
-        username:  tripMember.username,
+        username: tripMember.username,
         firstName: tripMember.firstName,
         lastName: tripMember.lastName,
         position: tripMember.location,
         image: tripMember.photoUrl
       }
-      users.push(member);    
+      users.push(member);
     };
+
+    //*********** ADD MARKERS ****************//
 
     for (var i = 0, user; user = users[i]; i++) {
       this.addMarker(user);
     }
 
-     var myoverlay = new google.maps.OverlayView();
-     myoverlay.draw = function () {
-         this.getPanes().markerLayer.id='markerLayer';
-     };
-     myoverlay.setMap(this.map); 
-  }
+    //*********** OVERLAY TO STYLE MARKERS ****************//
 
+    var myoverlay = new google.maps.OverlayView();
+    myoverlay.draw = function () {
+      this.getPanes().markerLayer.id = 'markerLayer';
+    };
+    myoverlay.setMap(this.map);
+
+    //*********** ROUTING ****************//
+
+    //Initialize the Direction Services
+    var directionsService = new google.maps.DirectionsService();
+    var directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(this.map);
+    directionsDisplay.setOptions( { suppressMarkers: true } );
+
+    var src = new google.maps.LatLng(users[0].position);
+
+    //Loop and Draw Path Route between the Points on MAP
+    for (var i = 1; i < users.length; i++) {
+
+      var des = new google.maps.LatLng(users[i].position);
+      var route = {
+        origin: src,
+        destination: des,
+        travelMode: google.maps.DirectionsTravelMode.WALKING
+      };
+
+      directionsService.route(route, function (result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          directionsDisplay.setDirections(result);
+        } else {
+          alert("couldn't get directions:" + status);
+        }
+      });
+    }
+  }
   addMarker(user) {
 
+    //*********** STYLE MARKER ****************//
+
     var icon = {
-      url: user.image, 
+      url: user.image,
       size: new google.maps.Size(40, 40),
-      scaledSize: new google.maps.Size(40, 40),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(0, 0)      
+      scaledSize: new google.maps.Size(40, 40)
     };
 
-    let marker = new google.maps.Marker({ 
-      map: this.map,      
+    //*********** POSITION MARKER ****************//
+
+    let marker = new google.maps.Marker({
+      map: this.map,
       position: user.position,
-      icon: icon, 
+      icon: icon,
       optimized: false
     });
+
+    //*********** SET INFO WINDOW ****************//
 
     let content = '<div class="marker-content">' +
       '<h5 style="font-size:12px;">' + user.username + '</h5>' +
