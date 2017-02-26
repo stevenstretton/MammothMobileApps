@@ -1,47 +1,46 @@
 <ion-header>
-	<ion-navbar>
-		<ion-title>
-			Notifications
-		</ion-title>
-		<ion-buttons end>
-			<button ion-button icon-only (click)="dismissNotifications()">
-			<ion-icon name="more"></ion-icon>
+    <ion-navbar>
+        <ion-title>
+            Notifications
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="speakNotifications()">
+			<ion-icon name="volume-up"></ion-icon>
 		</button>
-		</ion-buttons>
-	</ion-navbar>
+        </ion-buttons>
+    </ion-navbar>
 </ion-header>
 
 
 <ion-content>
 
-	<ion-list-header>
-		<button ion-button block small (click)="dismissNotifications()" [color]="_notifications.length ? 'danger' : 'primary'">
+    <ion-list-header>
+        <button ion-button block small (click)="dismissNotifications()" [color]="_notifications.length ? 'danger' : 'primary'">
           Mark all as read
 		</button>
-		<br> 
-			Your Notifications...
-		<br><br>
-		<button ion-button color="dark" block small (click)="addNotification()">
+        <br> Your Notifications...
+        <br><br>
+        <button ion-button color="dark" block small (click)="addNotification()">
 				Add Notification
 		</button>
 
-	</ion-list-header>
+    </ion-list-header>
 
-	<ion-list>
+    <ion-list>
 
-		<ion-item-sliding *ngFor="let notification of _notifications let i = index" #slidingItem>
-			<ion-item>
-				<ion-icon name="paper-plane" item-left></ion-icon>
-				{{ notification }}
-			</ion-item>
+        <ion-item-sliding *ngFor="let notification of _notifications let i = index" #slidingItem>
+            <ion-item>
+                <ion-icon name="paper-plane" item-left></ion-icon>
+                {{ notification }}
+            </ion-item>
 
-			<ion-item-options side="right">
-				<button ion-button color="danger" (click)="dismissNotification(i, slidingItem)">
+            <ion-item-options side="right">
+                <button ion-button color="danger" (click)="dismissNotification(i, slidingItem)">
 					<ion-icon name="close"></ion-icon>
 					Dismiss
 				</button>
-			</ion-item-options>
-		</ion-item-sliding>
+            </ion-item-options>
+        </ion-item-sliding>
 
-	</ion-list>
+    </ion-list>
 </ion-content>

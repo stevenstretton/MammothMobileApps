@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Camera } from 'ionic-native';
+import { Camera, TextToSpeech } from 'ionic-native';
 import { NavController, NavParams, ActionSheetController, AlertController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { Map } from '../map/map';
 import { FirebaseGET } from "../../services/firebase/get.service";
@@ -160,6 +160,7 @@ export class ViewTrip {
 					text: 'Yes',
 					handler: () => {
 						this.firebaseDelete.deleteTrip(this._trip.trip.key);
+						this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
 						this._callback({
 							justDeletedTrip: true
 						}).then(() => {
@@ -213,6 +214,23 @@ export class ViewTrip {
 		}).present();
 	}
 
+	speakTrip() {
+		var friends: string = "";
+		this._tripMembers.forEach(friend => {
+			friends += friend.firstName + " " + friend.lastName + ", " 
+		});
+
+		TextToSpeech.speak({text: "Trip Name: " + this._trip.trip.name 
+			+ ", Description: " +  this._trip.trip.description
+			+ ", Location: "+ this._trip.trip.location
+			+ ", Start Date: " + this._trip.trip.start.date
+			+ ", Friends on Trip: " + friends,
+            locale: 'en-GB',
+            rate: 1.4})
+			.then(() => console.log('Success'))
+			.catch((reason: any) => console.log(reason));
+	}
+
 	presentActionSheet() {
 		let cameraOptions = {
 			quality: 90,
@@ -224,7 +242,7 @@ export class ViewTrip {
 			targetHeight: 600,
 			saveToPhotoAlbum: false
 		};
-		let ID = this._currentUser.key + Math.random().toString(36).substring(8);
+		let ID = this._trip.trip.coverPhotoID;
 
 		let actionSheet = this.actionSheetCtrl.create({
 			title: 'Edit Trip Picture',
@@ -287,6 +305,10 @@ export class ViewTrip {
 				}
 			]
 		});
-		actionSheet.present();
+		if (this._trip.lead.key === this._currentUser.key)
+		{
+			actionSheet.present();
+		}
+		
 	}
 }

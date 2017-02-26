@@ -47,13 +47,24 @@ private _fb: any;
 		});
 	}
 
-	//do not use!!!
-	deletePhotoFromStorage(): void {
+	deleteTripPhotoFromStorage(photoID): void {
 		
 		var storageRef = this._fb.storage().ref('/trip_images/');
 
 		// Delete the file
-		storageRef.delete().then(function() {
+		storageRef.child(photoID).child("trip_image.jpeg").delete().then(function() {
+		// File deleted successfully
+		}).catch(function(error) {
+		// Uh-oh, an error occurred!
+		});
+	}
+
+	deleteUserPhotoFromStorage(userID): void {
+		
+		var storageRef = this._fb.storage().ref('/user_images/');
+
+		// Delete the file
+		storageRef.child(userID).child("profile_image.jpeg").delete().then(function() {
 		// File deleted successfully
 		}).catch(function(error) {
 		// Uh-oh, an error occurred!

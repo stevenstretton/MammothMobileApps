@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavController, ItemSliding } from 'ionic-angular';
+import { TextToSpeech } from 'ionic-native';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 
@@ -62,5 +63,25 @@ export class Notifications {
 		this._notifications = []
 		this._currentUser.notifications = []
 	
+	}
+
+	speakNotifications() {
+		var notes: string = "";
+		this._notifications.forEach(note => {
+			notes += "Notification: " + note + ", " 
+		});
+		if (notes == "")
+		{
+			notes = "No Notifications"
+		}
+		else {
+			notes += "End of notifications"
+		}
+
+		TextToSpeech.speak({text: notes ,
+            locale: 'en-GB',
+            rate: 1.4})
+			.then(() => console.log('Success'))
+			.catch((reason: any) => console.log(reason));
 	}
 }

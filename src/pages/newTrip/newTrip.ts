@@ -208,6 +208,7 @@ export class NewTrip {
 			},
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: this._tripPhoto,
+			coverPhotoID: this._tripPhotoID
 
 		};
 
