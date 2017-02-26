@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import { AngularFire } from 'angularfire2';
+import { Injectable, Inject } from '@angular/core';
+import { AngularFire, FirebaseApp } from 'angularfire2';
 import _ from 'lodash';
 
 @Injectable()
@@ -7,8 +7,11 @@ export class FirebaseGET {
 	private _allUsers: Array<any>;
 	private _allTrips: Array<any>;
 	private _allPresets: Array<any>;
+	private _fb: any;
 
-	constructor(private af: AngularFire) {
+	constructor(private af: AngularFire,
+	@Inject(FirebaseApp) firebaseApp: any) {
+		this._fb = firebaseApp;
 		this._allUsers = [];
 		this._allTrips = [];
 		this._allPresets = [];
@@ -48,6 +51,36 @@ export class FirebaseGET {
 			});
 			callback();
 		});
+	}
+
+	//test event listener
+	allTripsEvent(callback)
+	{
+		var tripsRef = firebase.database().ref('/trips/');
+		tripsRef.on('child_added', function(snapshot) {
+			let snapKey = snapshot.key,
+					snapVal = snapshot.val();
+
+				this._allTrips.push({
+					key: snapKey,
+					name: snapVal.name,
+					leadOrganiser: snapVal.leadOrganiser,
+					description: snapVal.description,
+					location: snapVal.location,
+					start: {
+						time: snapVal.start.time,
+						date: snapVal.start.date
+					},
+					end: {
+						date: snapVal.end.date
+					},
+					coverPhotoUrl: snapVal.coverPhotoUrl,
+					coverPhotoID: snapVal.coverPhotoID,
+					friends: snapVal.friends,
+					transport: snapVal.transport,
+					items: snapVal.items
+				});
+			});
 	}
 
 	getAllTrips(): Array<any> {
