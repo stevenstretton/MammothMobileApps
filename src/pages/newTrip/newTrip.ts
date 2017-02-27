@@ -7,6 +7,7 @@ import { AuthenticationHandler } from '../../services/authenticationHandler.serv
 import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
 import { FriendsModal, PresetsModal } from './modals/modals';
 import { Camera } from 'ionic-native';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'page-newTrip',
@@ -24,8 +25,8 @@ export class NewTrip {
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
 	private _tripPhoto: string = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
-	private _endDate: any;
 	private _tripPhotoID: any;
+	private _endDate: any;
 
 	// private _presetData: Array<any>;
 
@@ -67,23 +68,26 @@ export class NewTrip {
 	}
 
 	setDateTime() {
-		let today = new Date();
-
-		let todayDate = today.getFullYear() + "-" + ('0' + (today.getMonth() + 1)).slice(-2) + "-" + ('0' + today.getDate()).slice(-2),
-
-			nowTime = ('0' + today.getHours()).slice(-2) + ":" + ('0' + today.getMinutes()).slice(-2);
-
-		this._todaysDate = todayDate;
+		this._todaysDate = moment().format("Y-MM-DD");
 		console.log(this._todaysDate);
-		this._nowTime = nowTime;
+		this._nowTime = moment().format("HH:mm");
+		console.log(this._nowTime);
 	}
 
-	setEndDate() {
-		this._endDate = this._newTripForm.controls['startDate']
-		console.log(this._endDate);
+	endDateIsValid() : Boolean
+	{
+		return moment(this._newTripForm.controls['startDate'].value).isSameOrBefore(this._newTripForm.controls['endDate'].value);
 	}
 
-
+	setEndDate(bool?:boolean){
+		this._endDate = this._newTripForm.controls['startDate'].value;
+		if (!bool)
+		{
+			this._newTripForm.patchValue({endDate:  this._newTripForm.controls['startDate'].value});
+		}
+		
+	}
+	
 	presentModal(): void {
 		let friendIDsAdded = this.buildFriendIDsAttending();
 		this._friendsAdded = [];
@@ -103,8 +107,6 @@ export class NewTrip {
 	}
 
 	presentPresetsModal(): void {
-
-
 		let presetModal = this.modalCtrl.create(PresetsModal)
 
 		presetModal.onWillDismiss((presetData => {
@@ -114,7 +116,6 @@ export class NewTrip {
 		}))
 
 		presetModal.present();
-
 	}
 
 	setFieldsWithData(presetData): void {
@@ -142,7 +143,6 @@ export class NewTrip {
 				}
 			});
 		}
-
 		return friendsAttending;
 	}
 

@@ -41,10 +41,12 @@ export class EditModal {
 	templateUrl: './templates/editDateModal.html'
 })
 export class EditDateModal extends EditModal {
+	private _minDate: any;
 	constructor(public viewCtrl: ViewController,
 	            public navParams: NavParams,
 	            public formBuilder: FormBuilder) {
 		super(viewCtrl, navParams, formBuilder);
+		this._minDate = this.navParams.get('minDate')
 	}
 }
 

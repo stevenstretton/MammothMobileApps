@@ -8,6 +8,7 @@ import { FirebasePUT } from "../../services/firebase/put.service";
 import { FirebasePOST } from "../../services/firebase/post.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { EditDateModal, EditInputModal, EditTimeModal, EditTextareaModal, AddMembersModal, AddItemsModal } from "./modals/modals";
+import * as moment from 'moment';
 
 @Component({
 	selector: 'page-viewTrip',
@@ -58,10 +59,11 @@ export class ViewTrip {
 		// 7 = friends
 		// 8 = items
 
-		let createModal = (modal, title, oldValue, callback) => {
+		let createModal = (modal, title, oldValue, callback, minDate?) => {
 			let editModal = this.modalCtrl.create(modal, {
 				title: title,
-				oldValue: oldValue
+				oldValue: oldValue,
+				minDate : minDate
 			});
 			editModal.onDidDismiss((formData) => {
 				if (typeof formData !== "undefined") {
@@ -102,7 +104,7 @@ export class ViewTrip {
 				createModal(EditDateModal, 'Start Date', this._trip.trip.start.date, (formData) => {
 					this._trip.trip.start.date = formData.newValue;
 					this.showEditToast('Start date');
-				});
+				}, moment().format("Y-MM-DD"));
 				break;
 			case 4:
 				createModal(EditTimeModal, 'Start Time', this._trip.trip.start.time, (formData) => {
@@ -114,7 +116,7 @@ export class ViewTrip {
 				createModal(EditDateModal, 'End Date', this._trip.trip.end.date, (formData) => {
 					this._trip.trip.end.date = formData.newValue;
 					this.showEditToast('End date');
-				});
+				}, this._trip.trip.start.date);
 				break;
 			case 6:
 				createModal(EditInputModal, 'Transport', this._trip.trip.transport, (formData) => {
@@ -180,6 +182,10 @@ export class ViewTrip {
 			title: 'Delete Member',
 			message: 'Are you sure you want to delete ' + member.firstName + ' ' + member.lastName + ' from this trip?',
 			buttons: [
+				 {
+					text: 'No',
+					role: 'cancel'
+				},
 				{
 					text: 'Yes',
 					handler: () => {
@@ -187,9 +193,6 @@ export class ViewTrip {
 						this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
 						this.showEditToast('Friends');
 					}
-				}, {
-					text: 'No',
-					role: 'cancel'
 				}
 			]
 		}).present();

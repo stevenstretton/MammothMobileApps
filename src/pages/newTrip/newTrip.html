@@ -1,139 +1,133 @@
 <ion-header>
-	<ion-navbar>
-		<ion-title>
-			New Trip
-		</ion-title>
-		<ion-buttons start>
-			<button ion-button (click)="clearTrip()">
+    <ion-navbar>
+        <ion-title>
+            New Trip
+        </ion-title>
+        <ion-buttons start>
+            <button ion-button (click)="clearTrip()">
 				<span>Clear</span>
 			</button>
-		</ion-buttons>
-		<ion-buttons end>
-			<button ion-button icon-right icon-only color="royal" (click)="presentPresetsModal()">
+        </ion-buttons>
+        <ion-buttons end>
+            <button ion-button icon-right icon-only color="royal" (click)="presentPresetsModal()">
 				<ion-icon name="options"></ion-icon>
 			</button>
-		</ion-buttons>
-	</ion-navbar>
+        </ion-buttons>
+    </ion-navbar>
 </ion-header>
 
 <ion-content class="outer-content">
 
-	<form [formGroup]="_newTripForm">
-		<ion-list>
-			<ion-item>
-				<ion-label>Trip Name</ion-label>
-				<ion-input type="text" formControlName="name" [formControl]="_newTripForm.controls['name']" ngDefaultControl></ion-input>
-			</ion-item>
+    <form [formGroup]="_newTripForm">
+        <ion-list>
+            <ion-item>
+                <ion-label [color]="!_newTripForm.controls['name'].valid ? 'danger' : 'dark'">Trip Name</ion-label>
+                <ion-input type="text" placeholder="required" formControlName="name" [formControl]="_newTripForm.controls['name']" ngDefaultControl></ion-input>
+            </ion-item>
 
-			<ion-item>
-				<ion-label>Location</ion-label>
-				<ion-input type="text" formControlName="loc" [formControl]="_newTripForm.controls['loc']" ngDefaultControl></ion-input>
-			</ion-item>
+            <ion-item>
+                <ion-label [color]="!_newTripForm.controls['loc'].valid ? 'danger' : 'dark'">Location</ion-label>
+                <ion-input type="text" placeholder="required" formControlName="loc" [formControl]="_newTripForm.controls['loc']" ngDefaultControl></ion-input>
+            </ion-item>
 
-			<ion-item>
-				<ion-label>Description</ion-label>
-				<ion-textarea rows='3' formControlName="description" [formControl]="_newTripForm.controls['description']" ngDefaultControl></ion-textarea>
-			</ion-item>
+            <ion-item>
+                <ion-label>Description</ion-label>
+                <ion-textarea rows='3' formControlName="description" [formControl]="_newTripForm.controls['description']" ngDefaultControl></ion-textarea>
+            </ion-item>
 
-			<ion-item (click)="presentActionSheet()">
-				<ion-thumbnail [hidden]="!_tripPhoto" item-left>
-      				<img src="{{_tripPhoto}}">
-    			</ion-thumbnail>
-				<ion-label>Choose an image for trip...</ion-label>
-				<button ion-button clear item-right icon-only >
+            <ion-item (click)="presentActionSheet()">
+                <ion-thumbnail [hidden]="!_tripPhoto" item-left>
+                    <img src="{{_tripPhoto}}">
+                </ion-thumbnail>
+                <ion-label>Choose an image for trip...</ion-label>
+                <button ion-button clear item-right icon-only>
 					<ion-icon name="camera"></ion-icon>
 				</button>
-				<
-			</ion-item>
 
-			<ion-item>
-				<ion-label>Start Date</ion-label>
-				<ion-datetime displayFormat="DDD DD MMM YYYY" [min]="_todaysDate" [max]="2020"
-				              formControlName="startDate" [formControl]="_newTripForm.controls['startDate']"
-				              ngDefaultControl></ion-datetime>
-			</ion-item>
+            </ion-item>
 
-			<ion-item>
-				<ion-label>Start Time</ion-label>
-				<ion-datetime displayFormat="h:mm A" pickerFormat="h mm A"
-				              formControlName="startTime" [formControl]="_newTripForm.controls['startTime']" (ionChange)="setEndDate()"
-				              ngDefaultControl></ion-datetime>
-			</ion-item>
+            <ion-item>
+                <ion-label>Start Date</ion-label>
+                <ion-datetime (ionChange)="setEndDate()" displayFormat="DDD DD MMM YYYY" [min]="_todaysDate" [max]="2020" formControlName="startDate" [formControl]="_newTripForm.controls['startDate']" ngDefaultControl></ion-datetime>
+            </ion-item>
 
-			<ion-item>
-				<ion-label>Ends</ion-label>
-				<ion-datetime displayFormat="DDD DD MMM YYYY" [min]="_endDate" [max]="2020"
-				              formControlName="endDate" [formControl]="_newTripForm.controls['endDate']"
-				              ngDefaultControl></ion-datetime>
-			</ion-item>
+            <ion-item>
+                <ion-label>Start Time</ion-label>
+                <ion-datetime (ionChange)="setEndDate()" displayFormat="h:mm A" pickerFormat="h mm A" formControlName="startTime" [formControl]="_newTripForm.controls['startTime']" ngDefaultControl></ion-datetime>
+            </ion-item>
 
-			<ion-item>
-				<ion-label>Transport</ion-label>
-				<ion-input type="text" formControlName="transport" [formControl]="_newTripForm.controls['transport']" ngDefaultControl></ion-input>
-			</ion-item>
-		</ion-list>
-	</form>
+            <ion-item>
+                <ion-label [color]="!endDateIsValid() ? 'danger' : 'dark'">Ends</ion-label>
+                <ion-datetime (ionChange)="setEndDate(true)" displayFormat="DDD DD MMM YYYY" [min]="_endDate" [max]="2020" formControlName="endDate" [formControl]="_newTripForm.controls['endDate']" ngDefaultControl></ion-datetime>
+            </ion-item>
 
-	<ion-list>
-		<ion-item-divider color="light">
-			Choose participants from friends:
-		</ion-item-divider>
+            <ion-item>
+                <ion-label [color]="!_newTripForm.controls['transport'].valid ? 'danger' : 'dark'">Transport</ion-label>
+                <ion-input type="text" placeholder="required" formControlName="transport" [formControl]="_newTripForm.controls['transport']" ngDefaultControl></ion-input>
+            </ion-item>
+        </ion-list>
+    </form>
 
-		<ion-item>
-			<ion-label>Friends</ion-label>
-			<ion-badge item-right [hidden]="!buildFriendIDsAttending().length">{{buildFriendIDsAttending().length}}</ion-badge>
-			<button ion-button clear item-right (click)="presentModal()">View</button>
-		</ion-item>
-	</ion-list>
+    <ion-list>
+        <ion-item-divider color="light">
+            Choose participants from friends:
+        </ion-item-divider>
 
-	<ion-list>
-		<ion-item-divider color="light">
-			Add custom items to trip list:
-		</ion-item-divider>
+        <ion-item (click)="presentModal()">
+            <ion-label>Friends</ion-label>
+            <ion-badge item-right [color]="!buildFriendIDsAttending().length ? 'danger' : 'primary'">{{buildFriendIDsAttending().length}}</ion-badge>
+            <button ion-button clear item-right>View</button>
+        </ion-item>
+    </ion-list>
 
-		<ion-item>
-			<ion-label>Item</ion-label>
-			<ion-input type="text" [(ngModel)]="_itemTitle"></ion-input>
-		</ion-item>
+    <ion-list>
+        <ion-item-divider color="light">
+            Add custom items to trip list:
+        </ion-item-divider>
 
-		<ion-item>
-			<ion-label>Short Description</ion-label>
-			<ion-input type="text" [(ngModel)]="_itemDescription"></ion-input>
-		</ion-item>
+        <ion-item>
+            <ion-label>Item</ion-label>
+            <ion-input type="text" placeholder="enter title..." [(ngModel)]="_itemTitle"></ion-input>
+        </ion-item>
 
-		<div padding>
-			<button ion-button outline color="primary" block (click)="addItem()">Add Item</button>
-		</div>
-	</ion-list>
+        <ion-item>
+            <ion-label>Description</ion-label>
+            <ion-input type="text" placeholder="enter description..." [(ngModel)]="_itemDescription"></ion-input>
+        </ion-item>
 
-	<ion-list>
-		<ion-item-divider color="light">
-			Trip list:
-		</ion-item-divider>
+        <div padding>
+            <button ion-button outline color="primary" block (click)="addItem()">Add Item</button>
+        </div>
+    </ion-list>
 
-		<ion-item-sliding *ngFor="let item of _itemList">
-			<ion-item>
-				{{item.name}}
-				<ion-note item-right>
-					{{item.description}}
-				</ion-note>
-			</ion-item>
-			<ion-item-options side="right">
-				<button ion-button icon-only color="danger" (click)="deleteItem(item)">
+    <ion-list>
+        <ion-item-divider color="light">
+            Trip list:
+        </ion-item-divider>
+
+        <ion-item-sliding *ngFor="let item of _itemList">
+            <ion-item text-wrap>
+                <ion-label item-left>{{item.name}}</ion-label>
+                <ion-note item-right>
+                    {{item.description}}
+                </ion-note>
+            </ion-item>
+            <ion-item-options side="right">
+                <button ion-button icon-only color="danger" (click)="deleteItem(item)">
 					<ion-icon name="trash"></ion-icon>
 				</button>
-			</ion-item-options>
-		</ion-item-sliding>
+            </ion-item-options>
+        </ion-item-sliding>
 
-		<ion-item item-note [hidden]="_itemList.length">
-			None
-		</ion-item>
+        <ion-item item-note [hidden]="_itemList.length">
+            None
+        </ion-item>
 
-	</ion-list>
-	<!--</ion-card>-->
+    </ion-list>
+    <!--</ion-card>-->
 
-	<div padding>
-		<button ion-button color="primary" block [disabled]="!_newTripForm.valid || buildFriendIDsAttending().length <= 0" (click)="pushTrip(_newTripForm.value)">Create Trip</button>
-	</div>
+    <div padding>
+        <button ion-button color="primary" block [disabled]="!_newTripForm.valid || buildFriendIDsAttending().length <= 0 || !endDateIsValid()" (click)="pushTrip(_newTripForm.value)">Create Trip</button>
+    </div>
 
 </ion-content>

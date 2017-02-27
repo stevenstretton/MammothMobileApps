@@ -42,7 +42,7 @@
         <ion-item>
             <ion-icon name="calendar" item-left small></ion-icon>
             <p>Start Date</p>
-            <h2>{{ _trip.trip.start.date | date:'dd/MM/y' }}</h2>
+            <h2>{{ _trip.trip.start.date | date:'EEE dd/MM/y' }}</h2>
             <button *ngIf="_trip.lead.key === _currentUser.key" ion-button clear item-right (click)="showEditModal(3)">Edit</button>
         </ion-item>
 
@@ -56,7 +56,7 @@
         <ion-item>
             <ion-icon name="calendar" item-left small></ion-icon>
             <p>End Date</p>
-            <h2>{{ _trip.trip.end.date | date:'dd/MM/y' }}</h2>
+            <h2>{{ _trip.trip.end.date | date:'EEE dd/MM/y' }}</h2>
             <button *ngIf="_trip.lead.key === _currentUser.key" ion-button clear item-right (click)="showEditModal(5)">Edit</button>
         </ion-item>
 
@@ -101,8 +101,8 @@
                 <button *ngIf="_trip.lead.key === _currentUser.key" ion-button clear item-right (click)="showEditModal(8)">Add</button>
             </ion-item-divider>
             <ion-item-sliding *ngFor="let item of _trip.trip.items">
-                <ion-item>
-                    <ion-label>{{ item.name }}</ion-label>
+                <ion-item text-wrap>
+                    <ion-label item-left>{{ item.name }}</ion-label>
                     <ion-note item-right>
                         {{ item.description }}
                     </ion-note>
