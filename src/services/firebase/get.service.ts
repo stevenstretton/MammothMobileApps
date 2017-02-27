@@ -1,5 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
 import { AngularFire, FirebaseApp } from 'angularfire2';
+import { Events } from "ionic-angular";
 import _ from 'lodash';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class FirebaseGET {
 	private _fb: any;
 
 	constructor(private af: AngularFire,
+	private events: Events,
 	@Inject(FirebaseApp) firebaseApp: any) {
 		this._fb = firebaseApp;
 		this._allUsers = [];
@@ -82,6 +84,7 @@ export class FirebaseGET {
 				});
 			});
 	}
+
 
 	getAllTrips(): Array<any> {
 		// When you add a newTrip, I call to `setTrips()` again which should reset the array back to empty
