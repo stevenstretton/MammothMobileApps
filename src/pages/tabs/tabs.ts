@@ -1,6 +1,4 @@
-import { Component } from '@angular/core';
-import { NavController } from "ionic-angular";
-import { FirebaseGET } from '../../services/firebase/get.service';
+import { Component} from '@angular/core';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { MyTrips } from '../myTrips/myTrips';
 import { Notifications } from '../notifications/notifications';
@@ -19,27 +17,17 @@ export class TabsPage {
 	tab3Root: any = NewTrip;
 	tab4Root: any = Friends;
 	tab5Root: any = Account;
-    
-private _noteCount: number = 0;
-    
 
-	constructor(public navCtrl: NavController, public authenticationHandler: AuthenticationHandler) {
-		//this.navCtrl.insertPages(1, [
-		//	{ page: MyTrips },
-		//	{ page: Notifications },
-		//	{ page: NewTrip },
-		//	{ page: Friends },
-		//	{ page: Account }
-		//])
+	constructor(public authenticationHandler: AuthenticationHandler) { }
+
+	getNotifications(){
 		let notes = this.authenticationHandler.getCurrentUser().notifications;
-        
-        console.log(notes);
 		if (notes)
 		{
-			this._noteCount = notes.length
+			return notes.length
 		}
-        
-     
+		else 
+		return 0
 	}
 
 }

@@ -26,6 +26,11 @@ export class Notifications {
 		this.num = 1;
 	}
 
+	ionViewWillEnter() {
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+		this.getNotifications();
+	}
+
 	getNotifications() {
 
 		if (this._currentUser.notifications != null) {
