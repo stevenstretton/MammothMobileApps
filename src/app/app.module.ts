@@ -2,7 +2,6 @@ import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from "@angular/forms";
 import { IonicApp, IonicModule, IonicErrorHandler, Platform } from 'ionic-angular';
-import { BackgroundGeolocation } from "ionic-native";
 import { MyApp } from './app.component';
 
 import { Login } from '../pages/login/login';
@@ -32,7 +31,7 @@ import { FirebasePOST } from '../services/firebase/post.service';
 import { FirebasePUT } from "../services/firebase/put.service";
 import { FirebaseDELETE } from "../services/firebase/delete.service";
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
-import { LocationHandler } from '../services/locationHandler.service';
+import { LocationHandler } from "../services/locationHandler.service";
 
 import { AgmCoreModule } from "angular2-google-maps/core";
 
@@ -63,7 +62,6 @@ const firebaseAuthConfig = {
 		ViewTrip,
 		Friends,
 		Account,
-		LocationModal,
 		EditTimeModal,
 		EditDateModal,
 		EditInputModal,
@@ -95,7 +93,6 @@ const firebaseAuthConfig = {
 		NewTrip,
 		FriendsModal,
 		PresetsModal,
-		LocationModal,
 		ChangePasswordModal,
 		EditTimeModal,
 		EditDateModal,
@@ -115,30 +112,7 @@ const firebaseAuthConfig = {
 		FirebasePUT,
 		FirebaseDELETE,
 		AuthenticationHandler,
-		LocationHandler]
+		LocationHandler
+	]
 })
-export class AppModule {
-
-	// As far as I can see, the configuration for the location needs to be in here
-	constructor(private platform: Platform) {
-		platform.ready().then(() => {
-			const geolocationConfig = {
-				desiredAccuracy: 10,
-				stationaryRadius: 20,
-				distanceFilter: 30,
-				debug: true,
-				stopOnTerminate: false
-			};
-
-			BackgroundGeolocation.configure((location) => {
-				console.log("Lat: " + location.latitude);
-				console.log("Lng: " + location.longitude);
-			}, (error) => {
-				console.log("BackgroundGeolocation error");
-			}, geolocationConfig);
-
-			// Set to use in background
-			BackgroundGeolocation.Mode = 0;
-		});
-	}
-}
+export class AppModule {}

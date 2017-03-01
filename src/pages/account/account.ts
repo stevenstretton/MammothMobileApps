@@ -148,11 +148,9 @@ export class Account {
 		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
 
 		if (this._currentUser.shareLocation) {
-			console.log("logging location");
-			this.locationHandler.startLoggingLocation();
+			this.locationHandler.logLocation(true);
 		} else {
-			console.log("not logging location");
-			this.locationHandler.stopLoggingLocation();
+			this.locationHandler.logLocation(false);
 		}
 	}
 

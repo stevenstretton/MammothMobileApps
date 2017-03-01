@@ -99,8 +99,15 @@ export class FirebasePUT {
 		const userObjectObservable = this.af.database.object("users/" + user);
 
 		userObjectObservable.update({
-			notifications : notifications
+			notifications: notifications
 		});
 	}
 
+	putUserLocation(user, location): void {
+		const userObjectObservable = this.af.database.object("users/" + user);
+
+		userObjectObservable.update({
+			location: location
+		});
+	}
 }
