@@ -38,6 +38,7 @@ export class Register {
 				this._callback({
 					justRegistered: true
 				}).then(() => {
+					this.authenticationHandler.sendEmailVerification();
 					this.navCtrl.pop();
 				});
 			}).catch((errorRepsonse) => {

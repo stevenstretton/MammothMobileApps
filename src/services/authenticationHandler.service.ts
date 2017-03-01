@@ -105,4 +105,14 @@ export class AuthenticationHandler {
 			console.log(error);
 		});
 	}
+
+	sendEmailVerification(): void {
+		console.log(this._fb.auth().currentUser);
+
+		this._fb.auth().currentUser.sendEmailVerification().then(() => {
+			console.log("Email sent");
+		}, (error) => {
+			console.log(error);
+		});
+	}
 }
