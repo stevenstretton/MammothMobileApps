@@ -97,4 +97,12 @@ export class AuthenticationHandler {
 	logoutFacebook(): void {
 		this.af.auth.logout();
 	}
+
+	sendPasswordReset(email: string): void {
+		this._fb.auth().sendPasswordResetEmail(email).then(() => {
+			console.log("Email sent");
+		}, (error) => {
+			console.log(error);
+		});
+	}
 }

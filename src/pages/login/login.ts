@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 
-import { NavController, NavParams, ToastController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, ModalController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
+import { ForgotPasswordModal } from "./modals/modals";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
@@ -21,6 +22,7 @@ export class Login {
 				public firebaseGet: FirebaseGET,
 				public navParams: NavParams,
 				public toastCtrl: ToastController,
+				public modalCtrl: ModalController,
 				public formBuilder: FormBuilder) {
 		this._isError = false;
 
@@ -73,4 +75,12 @@ export class Login {
 		});
 	}
 
+	forgottenPassword(): void {
+		let forgottenPassModal = this.modalCtrl.create(ForgotPasswordModal);
+
+		forgottenPassModal.onDidDismiss((email) => {
+			this.authenticationHandler.sendPasswordReset(email);
+		});
+		forgottenPassModal.present();
+	}
 }
