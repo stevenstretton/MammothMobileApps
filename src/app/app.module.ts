@@ -5,6 +5,8 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { Login } from '../pages/login/login';
+import { ForgotPasswordModal } from "../pages/login/modals/modals";
+
 import { Register } from '../pages/register/register';
 
 import { MyTrips } from '../pages/myTrips/myTrips';
@@ -67,6 +69,7 @@ const firebaseAuthConfig = {
 		EditTextareaModal,
 		AddMembersModal,
 		AddItemsModal,
+		ForgotPasswordModal,
 		ChangePasswordModal,
 		AddFriendModal,
 		Map,
@@ -95,6 +98,7 @@ const firebaseAuthConfig = {
 		EditDateModal,
 		EditInputModal,
 		EditTextareaModal,
+		ForgotPasswordModal,
 		AddMembersModal,
 		AddItemsModal,
 		AddFriendModal,
