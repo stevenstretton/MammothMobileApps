@@ -1,6 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
-import { AngularFire, FirebaseApp } from 'angularfire2';
-import { Events } from "ionic-angular";
+import { Injectable } from '@angular/core';
+import { AngularFire } from 'angularfire2';
 import _ from 'lodash';
 
 @Injectable()
@@ -8,12 +7,8 @@ export class FirebaseGET {
 	private _allUsers: Array<any>;
 	private _allTrips: Array<any>;
 	private _allPresets: Array<any>;
-	private _fb: any;
 
-	constructor(private af: AngularFire,
-	private events: Events,
-	@Inject(FirebaseApp) firebaseApp: any) {
-		this._fb = firebaseApp;
+	constructor(private af: AngularFire) {
 		this._allUsers = [];
 		this._allTrips = [];
 		this._allPresets = [];
@@ -45,7 +40,6 @@ export class FirebaseGET {
 						date: snapVal.end.date
 					},
 					coverPhotoUrl: snapVal.coverPhotoUrl,
-					coverPhotoID: snapVal.coverPhotoID,
 					friends: snapVal.friends,
 					transport: snapVal.transport,
 					items: snapVal.items
@@ -54,37 +48,6 @@ export class FirebaseGET {
 			callback();
 		});
 	}
-
-	//test event listener
-	allTripsEvent(callback)
-	{
-		var tripsRef = firebase.database().ref('/trips/');
-		tripsRef.on('child_added', function(snapshot) {
-			let snapKey = snapshot.key,
-					snapVal = snapshot.val();
-
-				this._allTrips.push({
-					key: snapKey,
-					name: snapVal.name,
-					leadOrganiser: snapVal.leadOrganiser,
-					description: snapVal.description,
-					location: snapVal.location,
-					start: {
-						time: snapVal.start.time,
-						date: snapVal.start.date
-					},
-					end: {
-						date: snapVal.end.date
-					},
-					coverPhotoUrl: snapVal.coverPhotoUrl,
-					coverPhotoID: snapVal.coverPhotoID,
-					friends: snapVal.friends,
-					transport: snapVal.transport,
-					items: snapVal.items
-				});
-			});
-	}
-
 
 	getAllTrips(): Array<any> {
 		// When you add a newTrip, I call to `setTrips()` again which should reset the array back to empty
@@ -106,12 +69,6 @@ export class FirebaseGET {
 				let snapKey = snapshot.key,
 					snapVal = snapshot.val();
 
-				let notifications = snapVal.notifications;
-
-				if (!snapVal.notifications) {
-					let notifications = []
-				}
-
 				this._allUsers.push({
 					key: snapKey,
 					email: snapVal.email,
@@ -123,7 +80,7 @@ export class FirebaseGET {
 					usersToSeeLocation: snapVal.usersToSeeLocation,
 					friends: snapVal.friends,
 					location: snapVal.location,
-					notifications: notifications
+                    notifications: snapVal.notifications
 				});
 			});
 		});
@@ -142,26 +99,22 @@ export class FirebaseGET {
 			let snapVal = snapshot.val(),
 				snapKey = snapshot.key;
 
-			let notifications = snapVal.notifications;
-
-			if (!snapVal.notifications) {
-				let notifications = []
+			if (snapVal) {
+				callback({
+					key: snapKey,
+					email: snapVal.email,
+					firstName: snapVal.firstName,
+					lastName: snapVal.lastName,
+					username: snapVal.username,
+					shareLocation: snapVal.shareLocation,
+					photoUrl: snapVal.photoUrl,
+					usersToSeeLocation: snapVal.usersToSeeLocation,
+					friends: snapVal.friends,
+					location: snapVal.location,
+					notifications: snapVal.notifications
+				});
 			}
-
-			callback({
-				key: snapKey,
-				email: snapVal.email,
-				firstName: snapVal.firstName,
-				lastName: snapVal.lastName,
-				username: snapVal.username,
-				shareLocation: snapVal.shareLocation,
-				photoUrl: snapVal.photoUrl,
-				usersToSeeLocation: snapVal.usersToSeeLocation,
-				friends: snapVal.friends,
-				location: snapVal.location,
-				notifications: notifications
-
-			});
+			callback();
 		});
 	}
 
@@ -188,7 +141,6 @@ export class FirebaseGET {
 					date: snapVal.end.date
 				},
 				coverPhotoUrl: snapVal.coverPhotoUrl,
-				coverPhotoID: snapVal.coverPhotoID,
 				friends: snapVal.friends,
 				transport: snapVal.transport,
 				items: snapVal.items
@@ -196,34 +148,36 @@ export class FirebaseGET {
 		});
 	}
 
-	setAllPresets(): void {
+	setAllPresets(): void
+	{
 		this._allPresets = [];
 
-		let presetListObservable = this.af.database.list('/tripPresets', {
-			preserveSnapshot: true
-		});
+			let presetListObservable = this.af.database.list('/tripPresets', {
+				preserveSnapshot: true
+			});
 
 
-		presetListObservable.subscribe((snapshots) => {
-			snapshots.forEach((snapshot) => {
-				let snapKey = snapshot.key,
-					snapVal = snapshot.val();
+			presetListObservable.subscribe((snapshots) => {
+				snapshots.forEach((snapshot) => {
+					let snapKey = snapshot.key,
+						snapVal = snapshot.val();
 
-				this._allPresets.push({
-					key: snapKey,
-					name: snapVal.name,
-					description: snapVal.description,
-					coverPhotoUrl: snapVal.coverPhotoUrl,
-					transport: snapVal.transport,
-					items: snapVal.items
+					this._allPresets.push({
+						key: snapKey,
+						name: snapVal.name,
+						description: snapVal.description,
+						coverPhotoUrl: snapVal.coverPhotoUrl,
+						transport: snapVal.transport,
+						items: snapVal.items
+					});
 				});
 			});
-		});
 
 		console.log(this._allPresets);
 	}
 
-	getAllPresets(): Array<any> {
+	getAllPresets(): Array<any>
+	{
 		return this._allPresets;
 	}
 }
