@@ -6,6 +6,8 @@ import { NavController, ActionSheetController, Platform, ModalController, ToastC
 import { Login } from '../login/login';
 import { LocationModal, ChangePasswordModal } from "./modals/modals";
 
+import { LocationHandler } from "../../services/locationHandler.service";
+
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebasePUT } from "../../services/firebase/put.service";
@@ -30,6 +32,8 @@ export class Account {
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
 	            public firebasePut: FirebasePUT,
+	            public toastCtrl: ToastController,
+				public locationHandler: LocationHandler,
                 public firebaseDelete: FirebaseDELETE,
 	            public toastCtrl: ToastController,
 				public alertCtrl: AlertController) {
@@ -51,7 +55,7 @@ export class Account {
 		});
 	}
 
-	// Apologies Tim, this is needed for when a user creates a new trip and then re-navigates to the account page
+	// Apologies Tim, this is needed for when a user creates a new trip and then renavigates to the account page
 	// the constructor does not get invoked again to update the trips so this function is needed
 	ionViewWillEnter() {
 		this.setCurrentUserTrips();
@@ -151,6 +155,12 @@ export class Account {
 
 	changeSharingLocation(): void {
 		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
+
+		if (this._currentUser.shareLocation) {
+			this.locationHandler.logLocation(true);
+		} else {
+			this.locationHandler.logLocation(false);
+		}
 	}
 
 	showChangeProfilePhotoToast(): void {

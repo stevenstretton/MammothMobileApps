@@ -5,7 +5,9 @@ import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { ForgotPasswordModal } from "./modals/modals";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-import { FirebaseGET } from "../../services/firebase/get.service";
+import { LocationHandler } from "../../services/locationHandler.service";
+import { FirebaseGET } from "../../services/firebase/get.service"
+import { FirebasePUT } from "../../services/firebase/put.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
@@ -16,10 +18,13 @@ export class Login {
 	private _loginForm: FormGroup;
 	private _isError: boolean;
 	private _error: string;
+	private _currentUser: any;
 
 	constructor(public navCtrl: NavController,
 	            public authenticationHandler: AuthenticationHandler,
+	            public locationHandler: LocationHandler,
 				public firebaseGet: FirebaseGET,
+				public firebasePut: FirebasePUT,
 				public navParams: NavParams,
 				public toastCtrl: ToastController,
 				public modalCtrl: ModalController,
@@ -56,6 +61,9 @@ export class Login {
 		loginPromise.then((successResponse) => {
 			this.authenticationHandler.setCurrentUser();
 			this.navCtrl.setRoot(TabsPage);
+			setTimeout(() => {
+				this.locationHandler.checkUserLocation();
+			}, 2000);
 		}).catch((errorResponse) => {
 			this._isError = true;
 			this._error = errorResponse;
