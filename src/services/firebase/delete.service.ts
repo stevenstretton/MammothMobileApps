@@ -44,10 +44,6 @@ export class FirebaseDELETE {
 		});
 	}
 
-	deleteUserAccount(callback): void {
-
-	}
-
 	deleteUserFromDB(userID): void {
 		const userObjectObservable = this.af.database.object('users/' + userID).remove();
 

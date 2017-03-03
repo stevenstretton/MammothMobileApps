@@ -32,7 +32,6 @@ export class Account {
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
 	            public firebasePut: FirebasePUT,
-	            public toastCtrl: ToastController,
 				public locationHandler: LocationHandler,
                 public firebaseDelete: FirebaseDELETE,
 	            public toastCtrl: ToastController,

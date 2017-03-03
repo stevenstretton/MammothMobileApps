@@ -162,7 +162,7 @@ export class ViewTrip {
 					text: 'Yes',
 					handler: () => {
 						this.firebaseDelete.deleteTrip(this._trip.trip.key);
-						this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
+						// this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
 						this._callback({
 							justDeletedTrip: true
 						}).then(() => {
@@ -220,10 +220,10 @@ export class ViewTrip {
 	speakTrip() {
 		var friends: string = "";
 		this._tripMembers.forEach(friend => {
-			friends += friend.firstName + " " + friend.lastName + ", " 
+			friends += friend.firstName + " " + friend.lastName + ", "
 		});
 
-		TextToSpeech.speak({text: "Trip Name: " + this._trip.trip.name 
+		TextToSpeech.speak({text: "Trip Name: " + this._trip.trip.name
 			+ ", Description: " +  this._trip.trip.description
 			+ ", Location: "+ this._trip.trip.location
 			+ ", Start Date: " + this._trip.trip.start.date
@@ -312,6 +312,6 @@ export class ViewTrip {
 		{
 			actionSheet.present();
 		}
-		
+
 	}
 }
