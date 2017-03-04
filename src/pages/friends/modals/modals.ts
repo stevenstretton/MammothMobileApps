@@ -43,15 +43,20 @@ export class AddFriendModal {
 
 
 	dismiss() {
+		console.log(this._people);
+		console.log(this._selectedPeople);
 		this._people = [];
 		this._usersThatNotFriends = []
 		this.viewCtrl.dismiss(this._selectedPeople);
+		this.viewCtrl._destroy
+		this._selectedPeople = [];
 	}
 
 	close() {
 		this._people = [];
 		this._usersThatNotFriends = []
 		this.viewCtrl.dismiss();
+		this._selectedPeople = [];
 	}
 
 	// TODO: There is a much simpler way to do this

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController, ModalController, ItemSliding } from 'ionic-angular';
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
@@ -34,6 +34,11 @@ export class Friends {
 			});
 		}
 	}
+	ngOnInit() {
+		//Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+		//Add 'implements OnInit' to the class.
+		
+	}
 
 	ionViewWillEnter()
 	{
@@ -50,6 +55,24 @@ export class Friends {
 		}
 	}
 
+	getFriends()
+	{
+		let friends = [];
+
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+		
+		if (this._currentUser.friends != null) {
+			this._currentUser.friends.forEach((friendID) => {
+				this.firebaseGet.getUserWithID(friendID, (friend) => {
+					friends.push(friend);
+				});
+			});
+		}
+
+
+		return friends;
+	}
+
 	unfriend(friend, slidingItem: ItemSliding): void {
 		let index = this._friends.indexOf(friend);
 		slidingItem.close()
@@ -60,7 +83,7 @@ export class Friends {
 
 	}
 
-		getNotifications(friendID): Array<any> {
+	getNotifications(friendID): Array<any> {
 		let tempNotification;
 		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
 			tempNotification = firebaseUser.notifications
@@ -74,27 +97,30 @@ export class Friends {
 			currentUser: this._currentUser
 		});
 		modal.onDidDismiss((setOfFriends) => {
+			console.log(setOfFriends);
 			if (setOfFriends) {
 				setOfFriends.forEach((friend) => {
-					this._friends.push(friend);
 					console.log(friend);
-					let usernotes = this.getNotifications(friend.key);
-
-				
-				if (usernotes == null) {
-					let usernotes = []
-					
-					usernotes.push(this._currentUser.firstName + " added you as a friend")
-					this.firebasePost.postNewNotification(friend.key, usernotes);
-				} else {
-					
-					usernotes.push(this._currentUser.firstName + " added you as friend")
-					this.firebasePut.putNewNotification(friend.key, usernotes);
-				}
+					this._friends.push(friend);
+					//console.log(friend);
+					//let usernotes = this.getNotifications(friend.key);
+					let usernotes = friend.notifications
+					console.log(usernotes);
+					if (usernotes == null) {
+						let usernotes = []
+						
+						usernotes.push(this._currentUser.firstName + " added you as a friend")
+						this.firebasePost.postNewNotification(friend.key, usernotes);
+					} else {
+						
+						usernotes.push(this._currentUser.firstName + " added you as friend")
+						this.firebasePut.putNewNotification(friend.key, usernotes);
+					}
 				});
 				this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+				this._currentUser = this.authenticationHandler.getCurrentUser();
 			}
-			this._currentUser = this.authenticationHandler.getCurrentUser();
+			
 		});
 		modal.present();
 	}

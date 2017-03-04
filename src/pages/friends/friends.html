@@ -1,36 +1,36 @@
 <ion-header>
-	<ion-navbar>
-		<ion-title>Friends</ion-title>
-		<ion-buttons end>
-			<button ion-button icon-only (click)="presentAddFriendModal()">
+    <ion-navbar>
+        <ion-title>Friends</ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (click)="presentAddFriendModal()">
 				<ion-icon name="person-add"></ion-icon>
 			</button>
-		</ion-buttons>
-	</ion-navbar>
+        </ion-buttons>
+    </ion-navbar>
 </ion-header>
 
 <ion-content>
-	<ion-list-header>
-		Your Friends...
-	</ion-list-header>
-	<ion-list>
-		<ion-item-sliding *ngFor="let friend of _friends" #slidingItem>
-			<ion-item>
-				<ion-avatar item-left>
-					<img src="{{ friend.photoUrl }}">
-				</ion-avatar>
-				<h2>{{ friend.firstName }} {{ friend.lastName }}</h2>
-				<p>{{ friend.username }}</p>
-			</ion-item>
-			<ion-item-options side="right">
-				<button ion-button color="danger" (click)="unfriend(friend, slidingItem)">
+    <ion-list-header>
+        Your Friends...
+    </ion-list-header>
+    <ion-list>
+        <ion-item-sliding *ngFor="let friend of _friends" #slidingItem>
+            <ion-item>
+                <ion-avatar item-left>
+                    <img src="{{ friend.photoUrl }}">
+                </ion-avatar>
+                <h2>{{ friend.firstName }} {{ friend.lastName }}</h2>
+                <p>{{ friend.username }}</p>
+            </ion-item>
+            <ion-item-options side="right">
+                <button ion-button color="danger" (click)="unfriend(friend, slidingItem)">
 					<ion-icon name="close" ></ion-icon>
 					Unfriend
 				</button>
-			</ion-item-options>
-		</ion-item-sliding>
-		<ion-item item-note [hidden]="_friends.length">
-			No Friends
-		</ion-item>
-	</ion-list>
+            </ion-item-options>
+        </ion-item-sliding>
+        <ion-item item-note [hidden]="_friends.length">
+            No Friends
+        </ion-item>
+    </ion-list>
 </ion-content>
