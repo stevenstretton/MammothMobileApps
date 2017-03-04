@@ -162,7 +162,7 @@ export class ViewTrip {
 					text: 'Yes',
 					handler: () => {
 						this.firebaseDelete.deleteTrip(this._trip.trip.key);
-						// this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
+						this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
 						this._callback({
 							justDeletedTrip: true
 						}).then(() => {

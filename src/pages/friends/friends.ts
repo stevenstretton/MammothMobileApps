@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component} from '@angular/core';
 import { NavController, ModalController, ItemSliding } from 'ionic-angular';
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
@@ -22,49 +22,31 @@ export class Friends {
 				public authenticationHandler: AuthenticationHandler,
 				public modalCtrl: ModalController,
 				public firebasePut: FirebasePUT) {
-		this._friends = [];
-
-		this._currentUser = this.authenticationHandler.getCurrentUser();
-
-		if (this._currentUser.friends != null) {
-			this._currentUser.friends.forEach((friendID) => {
-				this.firebaseGet.getUserWithID(friendID, (friend) => {
-					this._friends.push(friend);
-				});
-			});
-		}
-	}
-	ngOnInit() {
-		//Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-		//Add 'implements OnInit' to the class.
 		
+		this.getFriends();
+
 	}
 
 	ionViewWillEnter()
 	{
-		this._friends = [];
-
-		this._currentUser = this.authenticationHandler.getCurrentUser();
-
-		if (this._currentUser.friends != null) {
-			this._currentUser.friends.forEach((friendID) => {
-				this.firebaseGet.getUserWithID(friendID, (friend) => {
-					this._friends.push(friend);
-				});
-			});
-		}
+		this.getFriends();
 	}
 
 	getFriends()
 	{
 		let friends = [];
+		this._friends = [];
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		
 		if (this._currentUser.friends != null) {
 			this._currentUser.friends.forEach((friendID) => {
 				this.firebaseGet.getUserWithID(friendID, (friend) => {
-					friends.push(friend);
+					if (friend != null)
+					{
+						this._friends.push(friend);
+						friends.push(friend)
+					}
 				});
 			});
 		}

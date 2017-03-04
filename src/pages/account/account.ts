@@ -257,6 +257,7 @@ export class Account {
 					text: 'Yes',
 					handler: () => {
 						this.firebaseDelete.deleteUserFromDB(this._currentUser.key);
+						this.firebaseDelete.deleteUserPhotoFromStorage(this._currentUser.key);
 						this.firebaseDelete.deleteUserFromAllTrips(this._currentUser.key, this._currentUserTrips);
 						this.authenticationHandler.deleteFirebaseUser(() => {
 							this.navCtrl.setRoot(Login);

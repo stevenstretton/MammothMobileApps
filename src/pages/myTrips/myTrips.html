@@ -1,45 +1,45 @@
 <ion-header>
-	<ion-navbar>
-		<ion-title>My Trips</ion-title>
-	</ion-navbar>
+    <ion-navbar>
+        <ion-title>My Trips</ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content class="cards-bg">
-	<ion-refresher (ionRefresh)="refreshTrips($event)">
-		<ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Loading Trips...">
-		</ion-refresher-content>
-	</ion-refresher>
+    <ion-refresher (ionRefresh)="refreshTrips($event)">
+        <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Loading Trips...">
+        </ion-refresher-content>
+    </ion-refresher>
 
-	<ion-list>
-		<ion-card *ngFor="let trip of _trips">
-			<ion-item>
-				<ion-avatar item-left>
-					<img src="{{ trip.lead.photoUrl }}">
-				</ion-avatar>
-				<h2>Trip Lead</h2>
-				<p>{{ trip.lead.firstName }} {{ trip.lead.lastName }}</p>
-			</ion-item>
+    <ion-list>
+        <ion-card *ngFor="let trip of _trips">
+            <ion-item>
+                <ion-avatar item-left>
+                    <img src="{{ trip.lead.photoUrl }}">
+                </ion-avatar>
+                <h2>Trip Lead</h2>
+                <p>{{ trip.lead.firstName }} {{ trip.lead.lastName }}</p>
+            </ion-item>
 
-			<img [hidden]="! trip.trip.coverPhotoUrl" (click)="goToTrip(trip)" src="{{ trip.trip.coverPhotoUrl }}" />
-			<ion-card-content>
-				<ion-card-title>
-					{{ trip.trip.name }}
-				</ion-card-title>
-				<p>
-					{{ trip.trip.description }}
-				</p>
-			</ion-card-content>
+            <img [hidden]="! trip.trip.coverPhotoUrl" (click)="goToTrip(trip)" src="{{ trip.trip.coverPhotoUrl }}" />
+            <ion-card-content>
+                <ion-card-title>
+                    {{ trip.trip.name }}
+                </ion-card-title>
+                <p>
+                    {{ trip.trip.description }}
+                </p>
+            </ion-card-content>
 
-			<ion-row no-padding>
-				<ion-col>
-					<button ion-button clear small color="positive" (click)="goToTrip(trip)">
+            <ion-row no-padding>
+                <ion-col>
+                    <button ion-button clear small color="positive" (click)="goToTrip(trip)">
 						View More Trip Information
 					</button>
-				</ion-col>
-			</ion-row>
-		</ion-card>
-		<ion-item item-note [hidden]="_trips.length">
-			No Trips Found
-		</ion-item>
-	</ion-list>
+                </ion-col>
+            </ion-row>
+        </ion-card>
+        <ion-item item-note [hidden]="_trips.length">
+            No Trips Found
+        </ion-item>
+    </ion-list>
 </ion-content>

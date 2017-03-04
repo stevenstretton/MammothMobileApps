@@ -1,10 +1,13 @@
-import { Injectable } from '@angular/core';
-import { AngularFire } from 'angularfire2';
+import { Injectable, Inject } from '@angular/core';
+import { AngularFire, FirebaseApp } from 'angularfire2';
 
 @Injectable()
 export class FirebaseDELETE {
-
-	constructor(private af: AngularFire) {}
+private _fb: any;
+	constructor(private af: AngularFire,
+	@Inject(FirebaseApp) firebaseApp: any) {
+		this._fb = firebaseApp;
+	}
 
 	deleteTrip(tripID): void {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID).remove();
@@ -68,6 +71,30 @@ export class FirebaseDELETE {
 					friends: trip.friends
 				});
 			}
+		});
+	}
+
+	deleteTripPhotoFromStorage(photoID): void {
+		
+		var storageRef = this._fb.storage().ref('/trip_images/');
+
+		// Delete the file
+		storageRef.child(photoID).child("trip_image.jpeg").delete().then(function() {
+		// File deleted successfully
+		}).catch(function(error) {
+		// Uh-oh, an error occurred!
+		});
+	}
+
+	deleteUserPhotoFromStorage(userID): void {
+		
+		var storageRef = this._fb.storage().ref('/user_images/');
+
+		// Delete the file
+		storageRef.child(userID).child("profile_image.jpeg").delete().then(function() {
+		// File deleted successfully
+		}).catch(function(error) {
+		// Uh-oh, an error occurred!
 		});
 	}
 }
