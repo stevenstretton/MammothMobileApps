@@ -1,10 +1,12 @@
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from "@angular/forms";
-import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
+import { IonicApp, IonicModule, IonicErrorHandler, Platform } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { Login } from '../pages/login/login';
+import { ForgotPasswordModal } from "../pages/login/modals/modals";
+
 import { Register } from '../pages/register/register';
 
 import { MyTrips } from '../pages/myTrips/myTrips';
@@ -31,7 +33,7 @@ import { FirebasePOST } from '../services/firebase/post.service';
 import { FirebasePUT } from "../services/firebase/put.service";
 import { FirebaseDELETE } from "../services/firebase/delete.service";
 import { AuthenticationHandler } from '../services/authenticationHandler.service';
-import { LocationHandler } from '../services/locationHandler.service';
+import { LocationHandler } from "../services/locationHandler.service";
 
 // Must export the config
 export const firebaseConfig = {
@@ -60,13 +62,13 @@ const firebaseAuthConfig = {
 		ViewTrip,
 		Friends,
 		Account,
-		LocationModal,
 		EditTimeModal,
 		EditDateModal,
 		EditInputModal,
 		EditTextareaModal,
 		AddMembersModal,
 		AddItemsModal,
+		ForgotPasswordModal,
 		ChangePasswordModal,
 		AddFriendModal,
 		Map,
@@ -89,12 +91,12 @@ const firebaseAuthConfig = {
 		NewTrip,
 		FriendsModal,
 		PresetsModal,
-		LocationModal,
 		ChangePasswordModal,
 		EditTimeModal,
 		EditDateModal,
 		EditInputModal,
 		EditTextareaModal,
+		ForgotPasswordModal,
 		AddMembersModal,
 		AddItemsModal,
 		AddFriendModal,
@@ -109,6 +111,7 @@ const firebaseAuthConfig = {
 		FirebasePUT,
 		FirebaseDELETE,
 		AuthenticationHandler,
-		LocationHandler]
+		LocationHandler
+	]
 })
 export class AppModule {}

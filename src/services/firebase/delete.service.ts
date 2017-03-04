@@ -1,13 +1,10 @@
-import { Injectable, Inject } from '@angular/core';
-import { AngularFire, FirebaseApp } from 'angularfire2';
+import { Injectable } from '@angular/core';
+import { AngularFire } from 'angularfire2';
 
 @Injectable()
 export class FirebaseDELETE {
-private _fb: any;
-	constructor(private af: AngularFire,
-	@Inject(FirebaseApp) firebaseApp: any) {
-		this._fb = firebaseApp;
-	}
+
+	constructor(private af: AngularFire) {}
 
 	deleteTrip(tripID): void {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID).remove();
@@ -47,27 +44,30 @@ private _fb: any;
 		});
 	}
 
-	deleteTripPhotoFromStorage(photoID): void {
-		
-		var storageRef = this._fb.storage().ref('/trip_images/');
+	deleteUserFromDB(userID): void {
+		const userObjectObservable = this.af.database.object('users/' + userID).remove();
 
-		// Delete the file
-		storageRef.child(photoID).child("trip_image.jpeg").delete().then(function() {
-		// File deleted successfully
-		}).catch(function(error) {
-		// Uh-oh, an error occurred!
-		});
+		userObjectObservable
+			.then(_ => console.log("Success!"))
+			.catch(err => console.log(err));
 	}
 
-	deleteUserPhotoFromStorage(userID): void {
-		
-		var storageRef = this._fb.storage().ref('/user_images/');
+	deleteUserFromAllTrips(userID, tripsUserIsOn): void {
+		let tripObjectObservable;
 
-		// Delete the file
-		storageRef.child(userID).child("profile_image.jpeg").delete().then(function() {
-		// File deleted successfully
-		}).catch(function(error) {
-		// Uh-oh, an error occurred!
+		tripsUserIsOn.forEach((trip) => {
+			tripObjectObservable = this.af.database.object('trips/' + trip.key);
+			if (trip.leadOrganiser === userID) {
+				tripObjectObservable.remove().then(() => {
+					console.log("Success");
+				});
+			} else {
+				trip.friends.splice(trip.friends.indexOf(userID), 1);
+
+				tripObjectObservable.update({
+					friends: trip.friends
+				});
+			}
 		});
 	}
 }

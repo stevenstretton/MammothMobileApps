@@ -59,4 +59,10 @@
     <icon src="resources/ios/icon/icon-small@3x.png" />
     <plugin name="cordova-plugin-camera" spec="~2.3.1" />
     <plugin name="cordova-plugin-tts" spec="~0.2.3" />
+    <plugin name="cordova-plugin-mauron85-background-geolocation" spec="^2.2.0">
+        <variable name="ALWAYS_USAGE_DESCRIPTION" value="This app requires background tracking enabled" />
+    </plugin>
+    <plugin name="cordova-plugin-geolocation" spec="~2.4.1">
+        <variable name="GEOLOCATION_USAGE_DESCRIPTION" value=" " />
+    </plugin>
 </widget>

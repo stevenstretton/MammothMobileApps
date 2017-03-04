@@ -14,7 +14,7 @@
 				           type="password" ngDefaultControl></ion-input>
 			</ion-item>
 
-			<div padding>		
+			<div padding>
 				<button  class="login-button" ion-button block type="submit" [disabled]="!_loginForm.valid">Sign in</button>
 			</div>
 		</ion-list>
@@ -24,4 +24,6 @@
 	<div padding>
 		<button ion-button outline color="primary" block (click)="goToRegister()">Create An Account</button>
 	</div>
+
+	<a (click)="forgottenPassword()">Forgot your password?</a>
 </ion-content>

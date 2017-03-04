@@ -2,14 +2,16 @@ import { Component } from '@angular/core';
 import { App, ItemSliding } from 'ionic-angular';
 import { Camera } from 'ionic-native';
 
-import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
+import { NavController, ActionSheetController, Platform, ModalController, ToastController, AlertController } from 'ionic-angular';
 import { Login } from '../login/login';
 import { LocationModal, ChangePasswordModal } from "./modals/modals";
+
+import { LocationHandler } from "../../services/locationHandler.service";
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebasePUT } from "../../services/firebase/put.service";
-import { FirebasePOST } from "../../services/firebase/post.service";
+import { FirebaseDELETE } from "../../services/firebase/delete.service"
 
 @Component({
 	selector: 'page-account',
@@ -20,7 +22,7 @@ export class Account {
 	private _currentUserTrips: Array<any>;
 	private _usersToSeeLocation: Array<any>;
 	private _allUsers: Array<any>;
-	private _userPhoto: any;
+	private _userPhoto: string = '';
 
 	constructor(private app: App,
 	            public navCtrl: NavController,
@@ -30,8 +32,10 @@ export class Account {
 	            public authenticationHandler: AuthenticationHandler,
 	            public firebaseGet: FirebaseGET,
 	            public firebasePut: FirebasePUT,
-				public firebasePost: FirebasePOST,
-	            public toastCtrl: ToastController) {
+				public locationHandler: LocationHandler,
+                public firebaseDelete: FirebaseDELETE,
+	            public toastCtrl: ToastController,
+				public alertCtrl: AlertController) {
 		this._usersToSeeLocation = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
@@ -41,7 +45,6 @@ export class Account {
 	}
 
 	setCurrentUserTrips(): void {
-		this._currentUser = this.authenticationHandler.getCurrentUser();
 		let allTrips = this.firebaseGet.getAllTrips();
 		this._currentUserTrips = [];
 		allTrips.forEach((trip) => {
@@ -151,6 +154,12 @@ export class Account {
 
 	changeSharingLocation(): void {
 		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
+
+		if (this._currentUser.shareLocation) {
+			this.locationHandler.logLocation(true);
+		} else {
+			this.locationHandler.logLocation(false);
+		}
 	}
 
 	showChangeProfilePhotoToast(): void {
@@ -201,13 +210,10 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							this.firebasePost.postNewAccountPhoto(image, this._currentUser.key, (url) =>
-							{
-								console.log("storage");
-								this._currentUser.photoUrl = url
-								this._userPhoto = url
-								this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, url);
-							})
+							//console.log(image);
+							this._userPhoto = "data:image/jpeg;base64," + image;
+							this._currentUser.photoUrl = this._userPhoto;
+							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
 							this.showChangeProfilePhotoToast();
 						});
 						console.log('Take Photo clicked');
@@ -219,13 +225,10 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							this.firebasePost.postNewAccountPhoto(image, this._currentUser.key, (url) =>
-							{
-								console.log("storage");
-								this._currentUser.photoUrl = url
-								this._userPhoto = url
-								this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, url);
-							})
+							this._userPhoto = "data:image/jpeg;base64," + image;
+							this._currentUser.photoUrl = this._userPhoto;
+							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+							//console.log(image);
 							this.showChangeProfilePhotoToast();
 						});
 						console.log('Library clicked');
@@ -245,4 +248,25 @@ export class Account {
 		actionSheet.present();
 	}
 
+	deleteAccount(): void {
+		this.alertCtrl.create({
+			title: 'Delete Account',
+			message: 'Are you sure you want to delete your account?',
+			buttons: [
+				{
+					text: 'Yes',
+					handler: () => {
+						this.firebaseDelete.deleteUserFromDB(this._currentUser.key);
+						this.firebaseDelete.deleteUserFromAllTrips(this._currentUser.key, this._currentUserTrips);
+						this.authenticationHandler.deleteFirebaseUser(() => {
+							this.navCtrl.setRoot(Login);
+						});
+					}
+				}, {
+					text: 'No',
+					role: 'cancel'
+				}
+			]
+		}).present();
+	}
 }

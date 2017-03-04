@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { NavController, ItemSliding } from 'ionic-angular';
-import { TextToSpeech } from 'ionic-native';
+import { NavController, ModalController } from 'ionic-angular';
+import { AngularFire } from 'angularfire2';
+import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
+// import { FirebasePOST } from '../../services/firebase/post.service';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-
 
 @Component({
 	selector: 'page-notifications',
@@ -12,81 +13,77 @@ import { AuthenticationHandler } from "../../services/authenticationHandler.serv
 export class Notifications {
 	private _notifications: Array<any>;
 	private _currentUser: any;
-	private num: any;
 
 	constructor(public navCtrl: NavController,
-		public authenticationHandler: AuthenticationHandler,
-		private firebasePut: FirebasePUT,
-	) {
+	            public authenticationHandler: AuthenticationHandler,
+	            public modalCtrl: ModalController,
+	            private af: AngularFire,
+	            // private firebasePost: FirebasePOST,
+	            private firebasePut: FirebasePUT,
+	            private firebaseGet: FirebaseGET) {
 
 		this._notifications = [];
-		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.getNotifications();
-		console.log(this._currentUser.notifications);
-		this.num = 1;
-	}
 
-	ionViewWillEnter() {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
+
 		this.getNotifications();
+
+		console.log(this._currentUser.notifications);
+
 	}
 
 	getNotifications() {
 
-		if (this._currentUser.notifications != null) {
+		if (this._currentUser.notifications) {
 			this._notifications = [];
 			console.log(this._currentUser);
 
 			this._notifications = this._currentUser.notifications
+
 		}
 	}
 
-	//for testing
 	addNotification(): void {
 		var temp = this._notifications;
 		this._notifications = temp;
-		this._notifications.push("test Note" + this.num);
+		this._notifications.push("test Note");
 		this.firebasePut.putNewNotification(this._currentUser.key, this._notifications);
-		this.num ++;
+
+		// console.log(this._currentUser.key);
+
 	}
 
-	dismissNotification(index, slidingItem: ItemSliding): void {
-		slidingItem.close()
+	dismissNotification(index): void {
 		console.log(index)
 		var temp = this._notifications;
 		temp.splice(index, 1);
-			
-		this.firebasePut.putNewNotification(this._currentUser.key, temp);
 		this._notifications = temp;
+
 		console.log(this._notifications)
+
+		const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").set(temp);
+		notificationObjectObservable
+			.then(_ => {
+				console.log("Success!")
+
+			})
+			.catch(err => console.log(err));
 
 	}
 
 	dismissNotifications(): void {
-		
-		this.firebasePut.putNewNotification(this._currentUser.key, []);
-		this._notifications = []
-		this._currentUser.notifications = []
-	
+		const notificationObjectObservable = this.af.database.object("users/" + this._currentUser.key + "/notifications").remove();
+
+		notificationObjectObservable
+			.then(_ => {
+				console.log("Success!")
+				this._notifications = []
+				this._currentUser.notifications = []
+
+			})
+			.catch(err => console.log(err));
+
 	}
 
-	speakNotifications() {
-		var notes: string = "";
-		this._notifications.forEach(note => {
-			notes += "Notification: " + note + ", " 
-		});
-		if (notes == "")
-		{
-			notes = "No Notifications"
-		}
-		else {
-			notes += "End of notifications"
-		}
-
-		TextToSpeech.speak({text: notes ,
-            locale: 'en-GB',
-            rate: 1.4})
-			.then(() => console.log('Success'))
-			.catch((reason: any) => console.log(reason));
-	}
 }
+

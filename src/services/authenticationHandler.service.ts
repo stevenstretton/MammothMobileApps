@@ -63,9 +63,24 @@ export class AuthenticationHandler {
 		});
 	}
 
+	deleteFirebaseUser(callback): void {
+		let user = this._fb.auth().currentUser;
+
+		user.delete().then(() => {
+			console.log("Success");
+			callback();
+		}, (error) => {
+			console.log(error);
+		});
+	}
+
 	addNewUserToDatabase(credentials): void {
+
+		// Again, this is called when deleting a user as the authentication state has changed
 		this._fb.auth().onAuthStateChanged((user) => {
-			this.firebasePost.postNewUser(user, credentials);
+			if (user) {
+				this.firebasePost.postNewUser(user, credentials);
+			}
 		});
 	}
 
@@ -75,11 +90,16 @@ export class AuthenticationHandler {
 
 	setCurrentUser(): void {
 		// TODO: Figure out why this is being hit on logout
+
+		// This is being hit because the authentication has changed
 		this.af.auth.subscribe((user) => {
 			// check to see if there actually is a user
+			console.log(user);
 			if (user) {
 				this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
-					this._currentUser = currentUser;
+					if (currentUser) {
+						this._currentUser = currentUser;
+					}
 				});
 			}
 		});
@@ -96,5 +116,23 @@ export class AuthenticationHandler {
 
 	logoutFacebook(): void {
 		this.af.auth.logout();
+	}
+
+	sendPasswordReset(email: string): void {
+		this._fb.auth().sendPasswordResetEmail(email).then(() => {
+			console.log("Email sent");
+		}, (error) => {
+			console.log(error);
+		});
+	}
+
+	sendEmailVerification(): void {
+		console.log(this._fb.auth().currentUser);
+
+		this._fb.auth().currentUser.sendEmailVerification().then(() => {
+			console.log("Email sent");
+		}, (error) => {
+			console.log(error);
+		});
 	}
 }
