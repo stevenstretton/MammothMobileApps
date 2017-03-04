@@ -87,7 +87,10 @@ export class Login {
 		let forgottenPassModal = this.modalCtrl.create(ForgotPasswordModal);
 
 		forgottenPassModal.onDidDismiss((email) => {
-			this.authenticationHandler.sendPasswordReset(email);
+			if (email != null)
+			{
+				this.authenticationHandler.sendPasswordReset(email);
+			}		
 		});
 		forgottenPassModal.present();
 	}

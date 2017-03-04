@@ -43,7 +43,6 @@ export class FirebasePUT {
 			path = object.toLowerCase() + "/" + attribute.toLowerCase();
 		}
 		let tripObjectObservable = this.af.database.object("trips/" + tripID + "/" + path);
-
 		tripObjectObservable.set(newValue);
 	}
 

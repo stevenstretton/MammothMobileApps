@@ -62,7 +62,7 @@ export class Account {
 
 	logout(): void {
 		this.authenticationHandler.logoutFirebase();
-
+		
 		this.app.getRootNav().setRoot(Login);
 	}
 

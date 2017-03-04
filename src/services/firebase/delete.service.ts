@@ -11,7 +11,7 @@ private _fb: any;
 
 	deleteTrip(tripID): void {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID).remove();
-
+		
 		tripObjectObservable
 			.then(_ => console.log("Success!"))
 			.catch(err => console.log(err));
@@ -78,11 +78,13 @@ private _fb: any;
 		
 		var storageRef = this._fb.storage().ref('/trip_images/');
 
+		console.log(storageRef.child(photoID).child("trip_image.jpeg"));
 		// Delete the file
 		storageRef.child(photoID).child("trip_image.jpeg").delete().then(function() {
-		// File deleted successfully
+			// File deleted successfully
 		}).catch(function(error) {
-		// Uh-oh, an error occurred!
+			// Uh-oh, an error occurred!
+			console.log("photo in storage does not exist");
 		});
 	}
 
@@ -92,9 +94,10 @@ private _fb: any;
 
 		// Delete the file
 		storageRef.child(userID).child("profile_image.jpeg").delete().then(function() {
-		// File deleted successfully
+			// File deleted successfully
 		}).catch(function(error) {
-		// Uh-oh, an error occurred!
+			// Uh-oh, an error occurred!
+			console.log("photo in storage does not exist");
 		});
 	}
 }

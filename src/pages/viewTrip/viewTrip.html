@@ -87,12 +87,15 @@
                     </ion-avatar>
                     <h2>{{ member.firstName }} {{ member.lastName }}</h2>
                 </ion-item>
-                <ion-item-options *ngIf="_trip.lead.key === _currentUser.key" side="right">
+                <ion-item-options *ngIf="_trip.lead.key === _currentUser.key || _currentUser.key === member.key" side="right">
                     <button ion-button icon-only color="danger" (click)="removeMemberFromTrip(member)">
 						<ion-icon name="trash"></ion-icon>
 					</button>
                 </ion-item-options>
             </ion-item-sliding>
+            <ion-item [hidden]="_tripMembers.length > 0">
+                No Friends On Trip
+            </ion-item>
         </ion-list>
 
         <ion-list>
@@ -118,8 +121,8 @@
             </ion-item-sliding>
         </ion-list>
 
-        <ion-item padding-bottom padding-top>
-            <button ion-button color="danger" block *ngIf="_trip.lead.key === _currentUser.key" (click)="deleteTrip()">Delete Trip</button>
+        <ion-item padding-bottom padding-top *ngIf="_trip.lead.key === _currentUser.key">
+            <button ion-button color="danger" block (click)="deleteTrip()">Delete Trip</button>
         </ion-item>
     </ion-card>
 </ion-content>

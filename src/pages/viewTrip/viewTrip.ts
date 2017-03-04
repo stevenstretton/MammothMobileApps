@@ -74,6 +74,7 @@ export class ViewTrip {
 						formData.forEach((person) => {
 							peopleIDs.push(person.key);
 						});
+
 						newValue = peopleIDs;
 					} else if (title === "Items") {
 						newValue = formData;
@@ -162,9 +163,11 @@ export class ViewTrip {
 					text: 'Yes',
 					handler: () => {
 						this.firebaseDelete.deleteTrip(this._trip.trip.key);
+						console.log(this._trip.trip.coverPhotoID)
 						this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
 						this._callback({
 							justDeletedTrip: true
+							
 						}).then(() => {
 							this.navCtrl.pop();
 						});
@@ -191,7 +194,17 @@ export class ViewTrip {
 					handler: () => {
 						this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
 						this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
-						this.showEditToast('Friends');
+						if (member.key === this._currentUser.key)
+						{
+							this._callback({
+								justDeletedUser: true
+							}).then(() => {
+								this.navCtrl.pop();
+							});
+						}
+						else{
+							this.showEditToast('Friends');
+						}
 					}
 				}
 			]

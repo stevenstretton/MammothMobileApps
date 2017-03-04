@@ -40,6 +40,7 @@ export class FirebaseGET {
 						date: snapVal.end.date
 					},
 					coverPhotoUrl: snapVal.coverPhotoUrl,
+					coverPhotoID: snapVal.coverPhotoID,
 					friends: snapVal.friends,
 					transport: snapVal.transport,
 					items: snapVal.items
@@ -167,6 +168,7 @@ export class FirebaseGET {
 						name: snapVal.name,
 						description: snapVal.description,
 						coverPhotoUrl: snapVal.coverPhotoUrl,
+						coverPhotoID: snapVal.coverPhotoID,
 						transport: snapVal.transport,
 						items: snapVal.items
 					});

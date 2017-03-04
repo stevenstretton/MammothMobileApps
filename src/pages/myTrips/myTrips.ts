@@ -22,16 +22,15 @@ export class MyTrips {
 		console.log("myTrips constructor");
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-
-		this.sortIfUserInTrip();
+		this.firebaseGet.setAllTrips(() => {
+			this.sortIfUserInTrip();
+		})
 	}
 
 	// Why is this being done?
-	// ionViewWillEnter() {
-    	//this.firebaseGet.setAllTrips(() => {
-	//		this.sortIfUserInTrip();
-	//	});
-	//}
+	// ionViewDidEnter() {
+    // 	this.sortIfUserInTrip();
+	// }
 
 	sortIfUserInTrip(): void {
 		console.log("sortIfUserInTrip");
@@ -44,7 +43,19 @@ export class MyTrips {
 				{
 					if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
 						this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
-							console.log(leadOrganiser);
+							if (leadOrganiser != null)
+							this._trips.push({
+								lead: leadOrganiser,
+								trip: trip
+							});
+
+						});
+					}
+				}
+				else
+				{
+					if (trip.leadOrganiser === this._currentUser.key) {
+						this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
 							if (leadOrganiser != null)
 							this._trips.push({
 								lead: leadOrganiser,
@@ -84,6 +95,15 @@ export class MyTrips {
 				return new Promise((resolve, reject) => {
 					if (_params.justDeletedTrip) {
 						this.showCreateDeleteTripToast('Trip deleted successfully!');
+						this.firebaseGet.setAllTrips(() => {
+							this.sortIfUserInTrip();
+						})
+					}
+					if (_params.justDeletedUser) {
+						this.showCreateDeleteTripToast('Removed from trip successfully!');
+						this.firebaseGet.setAllTrips(() => {
+							this.sortIfUserInTrip();
+						})
 					}
 					resolve()
 				});

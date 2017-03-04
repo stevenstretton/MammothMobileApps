@@ -126,6 +126,9 @@ export class AddMembersModal {
 	dismiss(): void {
 		this.viewCtrl.dismiss(this._friendsToBeOnTrip);
 	}
+	close() : void {
+		this.viewCtrl.dismiss();
+	}
 
 	ifInArray(person): boolean {
 		return (this._friendsToBeOnTrip.indexOf(person) > -1);
