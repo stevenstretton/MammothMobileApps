@@ -28,6 +28,14 @@ $ git clone git@bitbucket.org:darrylhall/mammoth-v2.git
 When pulled, run the following:
 
 - ```bash
+  $ npm install @types/lodash@4.14.50
+  ```
+
+- ```bash
+  $ $npm install @types/jasmine@2.5.41
+  ```
+
+- ```bash
   $ npm install
   ```
   *To install all dependencies in `packages.json`*
