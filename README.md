@@ -48,7 +48,7 @@ We have encountered an error with the latest webpack version that comes with ion
  
 In `node_modules/webpack-sources/node_modules/source-map/lib/source-node.js`, please change the following lines:
 
-- **94 & 114:** `var nextLine = remainingLines[0];` to `var nextLine = remainingLines[0]; || '';` 
+- **94 & 114:** `var nextLine = remainingLines[0];` to `var nextLine = remainingLines[0] || '';` 
 
 ## Building & running
 - To clean the project, run:
@@ -71,4 +71,3 @@ When deploying to a device, the `--prod` or `--release` flags can be set but the
 ```bash
 $ ionic run android --prod
 ```
- 
