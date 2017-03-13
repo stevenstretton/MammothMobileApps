@@ -19,6 +19,7 @@ export class Notifications {
 		private firebasePut: FirebasePUT,
 	) {
 
+
 		this._notifications = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.getNotifications();
