@@ -150,6 +150,7 @@ export class ViewTrip {
 
 	goToMap() {
 		this.navCtrl.push(Map, {
+			currentUser: this._currentUser,
 			tripMembers: this._tripMembers
 		});
 	}
