@@ -83,6 +83,5 @@ export class PresetsModal {
 	{
 		this._firebasePresets = []
 		this._firebasePresets = this.firebaseGet.getAllPresets();
-		console.log(this._firebasePresets);
 	}
 }

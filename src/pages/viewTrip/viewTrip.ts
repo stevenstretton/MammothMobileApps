@@ -248,6 +248,12 @@ export class ViewTrip {
 			.catch((reason: any) => console.log(reason));
 	}
 
+	stopSpeak() {
+		TextToSpeech.speak("")
+			.then(() => console.log('Stopped'))
+			.catch((reason: any) => console.log(reason));
+	}
+
 	presentActionSheet() {
 		let cameraOptions = {
 			quality: 90,

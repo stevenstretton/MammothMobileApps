@@ -4,7 +4,7 @@
             {{ _trip.trip.name }}
         </ion-title>
         <ion-buttons end>
-            <button ion-button icon-only (click)="speakTrip()">
+            <button ion-button icon-only (tap)="speakTrip()" (press)="stopSpeak()">
 			<ion-icon name="volume-up"></ion-icon>
 		</button>
         </ion-buttons>
