@@ -44,7 +44,7 @@ export class TabsPage {
 		}
 		if(notes.length > this.num){
 			this.num = notes.length;
-			this.gotNewNotificationToast('You have recieved a new notification');
+			this.gotNewNotificationToast(notes[notes.length-1]);
 		}
 		if(notes.length < this.num){
 			this.num = notes.length;
