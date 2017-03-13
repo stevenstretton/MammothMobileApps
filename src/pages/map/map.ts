@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { MapModal } from "./modals/modals";
 
 declare var google;
 
@@ -14,13 +15,31 @@ export class Map {
 
   _currentUser: any;
   _tripMembers: any;
+  _users : any;
+  _directionDisplay : any;
+  _directionsService : any;
 
   constructor(
     public navCtrl: NavController,
-    public navParams: NavParams) {
+    public navParams: NavParams,
+    public modalCtrl: ModalController) {
 
     this._currentUser = navParams.get('currentUser');
     this._tripMembers = navParams.get('tripMembers');
+  }
+
+  presentModal() {
+    let modal = this.modalCtrl.create(MapModal, {
+      tripMembers: this._tripMembers
+    });
+    modal.present();
+
+    modal.onDidDismiss(memberId => {
+      
+      if(memberId != null){
+        this.createRoute(memberId);
+      }
+    });
   }
 
   ionViewDidLoad() {
@@ -40,12 +59,12 @@ export class Map {
 
     //*********** ARRAY OF MEMBER OBJECTS ****************//
 
-    var users = [
+    this._users = [
       {
         username: this._currentUser.username,
         firstName: this._currentUser.firstName,
         lastName: this._currentUser.lastName,
-        position: this._currentUser.location,
+        location: this._currentUser.location,
         image: this._currentUser.photoUrl
       }
     ];
@@ -55,17 +74,19 @@ export class Map {
         username: tripMember.username,
         firstName: tripMember.firstName,
         lastName: tripMember.lastName,
-        position: tripMember.location,
+        location: tripMember.location,
         image: tripMember.photoUrl
       }
-      users.push(member);
+      this._users.push(member);
     };
 
     //*********** ADD MARKERS ****************//
 
-    for (var i = 0, user; user = users[i]; i++) {
-      this.addMarker(user);
-    }
+    for (var i = 0, user; user = this._users[i]; i++) {
+      if (this._users[i].location != null) {
+        this.addMarker(user);
+      }
+    };
 
     //*********** OVERLAY TO STYLE MARKERS ****************//
 
@@ -75,33 +96,44 @@ export class Map {
     };
     myoverlay.setMap(this.map);
 
+    //*********** INITIALISE ROUTERS ****************//
+
+    this._directionDisplay = new google.maps.DirectionsRenderer();
+    this._directionDisplay.setMap(this.map);
+    this._directionDisplay.setOptions({ suppressMarkers: true });
+    this._directionsService = new google.maps.DirectionsService();
+  };
+  
+
+  createRoute(memberId) {
+
     //*********** ROUTING ****************//
-
-    //Initialize the Direction Services
-    var directionsService = new google.maps.DirectionsService();
-    var directionsDisplay = new google.maps.DirectionsRenderer();
-    directionsDisplay.setMap(this.map);
-    directionsDisplay.setOptions( { suppressMarkers: true } );
-
-    var src = new google.maps.LatLng(users[0].position);
+    
+    // location services source should always be current user
+    var src = new google.maps.LatLng(this._users[0].location);
 
     //Loop and Draw Path Route between the Points on MAP
-    for (var i = 1; i < users.length; i++) {
 
-      var des = new google.maps.LatLng(users[i].position);
-      var route = {
-        origin: src,
-        destination: des,
-        travelMode: google.maps.DirectionsTravelMode.WALKING
-      };
+    if (src != null) {
 
-      directionsService.route(route, function (result, status) {
-        if (status == google.maps.DirectionsStatus.OK) {
-          directionsDisplay.setDirections(result);
-        } else {
-          alert("couldn't get directions:" + status);
-        }
-      });
+      if (this._users[memberId + 1].location != null) {
+
+        var des = new google.maps.LatLng(this._users[memberId + 1].location);
+        var route = {
+          origin: src,
+          destination: des,
+          travelMode: google.maps.DirectionsTravelMode.WALKING
+        };
+
+        this._directionsService.route(route, (result, status) => {
+          if (status == google.maps.DirectionsStatus.OK) {
+            
+            this._directionDisplay.setDirections(result);
+          } else {
+            alert("couldn't get directions:" + status);
+          }
+        });
+      }
     }
   }
   addMarker(user) {
@@ -118,7 +150,7 @@ export class Map {
 
     let marker = new google.maps.Marker({
       map: this.map,
-      position: user.position,
+      position: user.location,
       icon: icon,
       optimized: false
     });
