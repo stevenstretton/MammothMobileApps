@@ -20,6 +20,7 @@ export class Notifications {
 	            private af: AngularFire,
 	            // private firebasePost: FirebasePOST,
 	            private firebasePut: FirebasePUT,
+				
 	            private firebaseGet: FirebaseGET) {
 
 		this._notifications = [];
@@ -84,6 +85,7 @@ export class Notifications {
 			.catch(err => console.log(err));
 
 	}
+
 
 }
 
