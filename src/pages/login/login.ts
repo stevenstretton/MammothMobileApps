@@ -44,7 +44,9 @@ export class Login {
 		this.firebaseGet.setAllTrips(() => {
 			// unused callback
 		});
-		this.firebaseGet.setAllUsers();
+		this.firebaseGet.setAllUsers(() => {
+			// unused callback
+		});
 	}
 
 	showRegistrationToast(): void {

@@ -58,7 +58,7 @@ export class FirebaseGET {
 		return _.uniqBy(this._allTrips, 'key');
 	}
 
-	setAllUsers(): void {
+	setAllUsers(callback): void {
 		this._allUsers = [];
 
 		let userListObservable = this.af.database.list('/users', {
@@ -84,6 +84,7 @@ export class FirebaseGET {
                     notifications: snapVal.notifications
 				});
 			});
+			callback();
 		});
 	}
 

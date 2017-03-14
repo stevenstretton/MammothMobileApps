@@ -28,9 +28,11 @@ export class MyTrips {
 	}
 
 	// Why is this being done?
-	// ionViewDidEnter() {
-    // 	this.sortIfUserInTrip();
-	// }
+	ionViewDidEnter() {
+    	this.firebaseGet.setAllTrips(() => {
+			this.sortIfUserInTrip();
+		})
+	}
 
 	sortIfUserInTrip(): void {
 		console.log("sortIfUserInTrip");

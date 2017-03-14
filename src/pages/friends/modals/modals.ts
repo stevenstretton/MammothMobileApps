@@ -21,18 +21,23 @@ export class AddFriendModal {
 		this._usersThatNotFriends = [];
 
 		this._currentUser = this.params.get('currentUser');
+
 		console.log(this._currentUser);
+
 		let allUsers = this.firebaseGet.getAllUsers();
+		
 
 		allUsers.forEach((user) => {
 			if (this._currentUser.friends != null) {
 				if ((this._currentUser.friends.indexOf(user.key) <= -1) && (user.key !== this._currentUser.key)) {
+					user.checked = false;
 					this._usersThatNotFriends.push(user);
 				}
 			}
 			else
 			{
 				if (user.key !== this._currentUser.key) {
+					user.checked = false;
 					this._usersThatNotFriends.push(user);
 				}
 			}
@@ -41,22 +46,12 @@ export class AddFriendModal {
 	}
 
 
-
 	dismiss() {
-		console.log(this._people);
-		console.log(this._selectedPeople);
-		this._people = [];
-		this._usersThatNotFriends = []
 		this.viewCtrl.dismiss(this._selectedPeople);
-		this.viewCtrl._destroy
-		this._selectedPeople = [];
 	}
 
 	close() {
-		this._people = [];
-		this._usersThatNotFriends = []
 		this.viewCtrl.dismiss();
-		this._selectedPeople = [];
 	}
 
 	// TODO: There is a much simpler way to do this

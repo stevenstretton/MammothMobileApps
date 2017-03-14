@@ -12,21 +12,24 @@ export class FirebasePUT {
 
 		let currentFriendIDs = [];
 
-		this.firebaseGet.getUserWithID(userID, (user) => {
-			if ((typeof user.friends !== "undefined") && (user.friends.length > 0)) {
-				currentFriendIDs = user.friends;
-			}
-
-			if (friends.length > 0) {
-				friends.forEach((friend) => {
-					currentFriendIDs.push(friend.key);
-				});
-			}
-		});
+		if (friends.length > 0) {
+			friends.forEach((friend) => {
+				currentFriendIDs.push(friend.key);
+			});
+		}
 
 		userObjectObservable.update({
 			friends: currentFriendIDs
 		});
+	}
+
+	putUserFriendsKeys(userID, friends): void {
+		const userObjectObservable = this.af.database.object("users/" + userID);
+
+		userObjectObservable.update({
+			friends: friends
+		});
+
 	}
 
 	putTripData(tripID, itemToUpdate, newValue): void {

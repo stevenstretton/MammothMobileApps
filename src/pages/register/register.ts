@@ -11,6 +11,7 @@ import { AuthenticationHandler } from "../../services/authenticationHandler.serv
 export class Register {
 	private _registrationForm: FormGroup;
 	private _callback: Function;
+	private _error: string;
 
 	constructor(public navCtrl: NavController,
 				public authenticationHandler: AuthenticationHandler,
@@ -43,6 +44,7 @@ export class Register {
 				});
 			}).catch((errorRepsonse) => {
 				console.log(errorRepsonse);
+				this._error = errorRepsonse;
 			});
 		}
 	}

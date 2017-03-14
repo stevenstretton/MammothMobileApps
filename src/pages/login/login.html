@@ -17,10 +17,10 @@
             </div>
         </ion-list>
     </form>
-    <div padding *ngIf="_isError">{{ _error }}</div>
+    <div class="error-text" *ngIf="_isError">{{ _error }}</div>
 
     <div padding>
-        <button ion-button outline color="primary" block (click)="goToRegister()">Create An Account</button>
+        <button ion-button outline color="primary" block class="create-button" (click)="goToRegister()">Create An Account</button>
     </div>
     <div padding>
         <button ion-button clear block (click)="forgottenPassword()">Forgot your password?</button>
