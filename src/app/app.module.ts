@@ -25,6 +25,9 @@ import { Account } from '../pages/account/account';
 import { LocationModal, ChangePasswordModal } from '../pages/account/modals/modals';
 
 import { Map } from '../pages/map/map';
+import { MapModal } from '../pages/map/modals/modals';
+
+
 import { TabsPage } from '../pages/tabs/tabs';
 import { AngularFireModule, AuthProviders, AuthMethods } from 'angularfire2';
 
@@ -72,6 +75,7 @@ const firebaseAuthConfig = {
 		ChangePasswordModal,
 		AddFriendModal,
 		Map,
+		MapModal,
 		TabsPage
 	],
 	imports: [
@@ -103,6 +107,7 @@ const firebaseAuthConfig = {
 		Friends,
 		Account,
 		Map,
+		MapModal,
 		TabsPage
 	],
 	providers: [{provide: ErrorHandler, useClass: IonicErrorHandler},
