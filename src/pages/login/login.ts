@@ -18,13 +18,11 @@ export class Login {
 	private _loginForm: FormGroup;
 	private _isError: boolean;
 	private _error: string;
-	private _currentUser: any;
 
 	constructor(public navCtrl: NavController,
 	            public authenticationHandler: AuthenticationHandler,
 	            public locationHandler: LocationHandler,
 				public firebaseGet: FirebaseGET,
-				public firebasePut: FirebasePUT,
 				public navParams: NavParams,
 				public toastCtrl: ToastController,
 				public modalCtrl: ModalController,
@@ -89,10 +87,9 @@ export class Login {
 		let forgottenPassModal = this.modalCtrl.create(ForgotPasswordModal);
 
 		forgottenPassModal.onDidDismiss((email) => {
-			if (email != null)
-			{
+			if (email) {
 				this.authenticationHandler.sendPasswordReset(email);
-			}		
+			}
 		});
 		forgottenPassModal.present();
 	}

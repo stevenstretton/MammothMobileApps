@@ -54,29 +54,26 @@ export class Account {
 		});
 	}
 
-	// Apologies Tim, this is needed for when a user creates a new trip and then renavigates to the account page
-	// the constructor does not get invoked again to update the trips so this function is needed
-	ionViewWillEnter() {
+	ionViewWillEnter(): void {
 		this.setCurrentUserTrips();
 	}
 
 	logout(): void {
 		this.authenticationHandler.logoutFirebase();
-		
+
 		this.app.getRootNav().setRoot(Login);
 	}
 
 	showChangePasswordModal(slidingItem: ItemSliding): void {
 		let modal = this.modalCtrl.create(ChangePasswordModal);
+
 		modal.onDidDismiss((passwordData) => {
-			if (passwordData)
-			{
+			if (passwordData) {
 				this.authenticationHandler.changeUserPassword(passwordData.newPassword);
 				this.showChangePasswordToast();
 			}
 			slidingItem.close();
 		});
-		// slidingItem.close();
 		modal.present();
 	}
 
@@ -105,7 +102,7 @@ export class Account {
 			return allUsers;
 		};
 
-		let filterOutCurrentUser = (users) => {
+		let filterOutCurrentUser = (users: Array<any>) => {
 			let allUsers = [];
 
 			users.forEach((user) => {
@@ -198,11 +195,11 @@ export class Account {
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
-						this._userPhoto = "https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-user.png?alt=media&token=9f507196-f787-426b-8175-5c0ca1d74606";
+						this._userPhoto = "https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/" +
+							"default_image%2Fplaceholder-user.png?alt=media&token=9f507196-f787-426b-8175-5c0ca1d74606";
 						this._currentUser.photoUrl = this._userPhoto;
 						this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
 						this.showChangeProfilePhotoRemovedToast();
-						console.log('Destructive clicked');
 					}
 				}, {
 					text: 'Take Photo',
@@ -210,13 +207,11 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							//console.log(image);
 							this._userPhoto = "data:image/jpeg;base64," + image;
 							this._currentUser.photoUrl = this._userPhoto;
 							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
 							this.showChangeProfilePhotoToast();
 						});
-						console.log('Take Photo clicked');
 						Camera.cleanup();
 					}
 				}, {
@@ -228,10 +223,8 @@ export class Account {
 							this._userPhoto = "data:image/jpeg;base64," + image;
 							this._currentUser.photoUrl = this._userPhoto;
 							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
-							//console.log(image);
 							this.showChangeProfilePhotoToast();
 						});
-						console.log('Library clicked');
 						Camera.cleanup();
 					}
 				}, {
@@ -239,7 +232,6 @@ export class Account {
 					icon: !this.platform.is('ios') ? 'close' : null,
 					role: 'cancel',
 					handler: () => {
-						console.log('Cancel clicked');
 						Camera.cleanup();
 					}
 				}

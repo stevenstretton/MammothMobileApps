@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { ToastController } from 'ionic-angular';
 import { MyTrips } from '../myTrips/myTrips';
@@ -18,40 +18,32 @@ export class TabsPage {
 	tab3Root: any = NewTrip;
 	tab4Root: any = Friends;
 	tab5Root: any = Account;
-	num = 0;
 
-	constructor(public authenticationHandler: AuthenticationHandler, private toastCtrl: ToastController) {
-		this.num = this.getNotifications();
-	 }
-	
+	private _currentUser: any;
+	private _num = 0;
 
-	getNotifications(){
-		let notes = this.authenticationHandler.getCurrentUser().notifications;
-		if (notes)
-		{
-			this.checkNewNotifications(notes)
-			return notes.length
-			
-		}
-		else 
-		return 0
+	constructor(public authenticationHandler: AuthenticationHandler,
+	            private toastCtrl: ToastController) {
+		this._currentUser = this.authenticationHandler.getCurrentUser();
+
+		this._num = this.getNotifications();
 	}
 
-	checkNewNotifications(notes){
-		
-		if(notes.length == this.num){
+	getNotifications(): number {
+		if (this._currentUser.notifications) {
+			this.checkNewNotifications(this._currentUser.notifications);
 
+			return this._currentUser.notifications.length;
 		}
-		if(notes.length > this.num){
-			this.num = notes.length;
-			this.gotNewNotificationToast(notes[notes.length-1]);
-		}
-		if(notes.length < this.num){
-			this.num = notes.length;
-		}
+		return 0;
+	}
 
-		
+	checkNewNotifications(notes): void {
+		this._num = notes.length;
 
+		if (notes.length > this._num) {
+			this.gotNewNotificationToast(notes[notes.length - 1]);
+		}
 	}
 
 	gotNewNotificationToast(message): void {
@@ -61,5 +53,4 @@ export class TabsPage {
 			position: 'top'
 		}).present();
 	}
-
 }

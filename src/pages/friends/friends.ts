@@ -6,7 +6,6 @@ import { FirebasePOST } from "../../services/firebase/post.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { AddFriendModal } from "./modals/modals";
 
-
 @Component({
 	selector: 'page-friends',
 	templateUrl: 'friends.html'
@@ -15,32 +14,30 @@ export class Friends {
 	private _friends: Array<any>;
 	private _currentUser: any;
 
-	constructor(public navCtrl: NavController,
-		public firebaseGet: FirebaseGET,
-		public firebasePost: FirebasePOST,
-		public authenticationHandler: AuthenticationHandler,
-		public modalCtrl: ModalController,
-		public firebasePut: FirebasePUT) {
+	constructor(public firebaseGet: FirebaseGET,
+	            public firebasePost: FirebasePOST,
+	            public authenticationHandler: AuthenticationHandler,
+	            public modalCtrl: ModalController,
+	            public firebasePut: FirebasePUT) {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friends = [];
 		this.addFriendsToList();
-
 	}
 
-	ionViewWillEnter() {
+	ionViewWillEnter(): void {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.addFriendsToList(); 
+		this.addFriendsToList();
 	}
 
-	addFriendsToList() {
+	addFriendsToList(): void {
 		this._friends = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
-		if (this._currentUser.friends != null) {
+		if (this._currentUser.friends) {
 			this._currentUser.friends.forEach((friendID) => {
 				this.firebaseGet.getUserWithID(friendID, (friend) => {
-					if (friend != null) {
+					if (friend) {
 						this._friends.push(friend);
 					}
 				});
@@ -49,14 +46,13 @@ export class Friends {
 	}
 
 	unfriend(friend, slidingItem: ItemSliding): void {
-
 		let index = this._friends.indexOf(friend);
-		slidingItem.close()
+
+		slidingItem.close();
 		this._friends.splice(index, 1);
 		this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
-		console.log(friend);
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.removeCurrentUserFromFriendsList(friend); 
+		this.removeCurrentUserFromFriendsList(friend);
 	}
 
 	presentAddFriendModal(): void {
@@ -64,78 +60,66 @@ export class Friends {
 		let modal = this.modalCtrl.create(AddFriendModal, {
 			currentUser: this._currentUser
 		});
-		console.log(this._friends);
+
 		modal.onDidDismiss((setOfFriends) => {
-			console.log(setOfFriends);
 			if (setOfFriends) {
 				setOfFriends.forEach((friend) => {
-					let newFriend
 					this.firebaseGet.getUserWithID(friend.key, (firebaseUser) => {
-						newFriend = firebaseUser;	
-					})
-					console.log(newFriend);
-					if (this._friends.indexOf(newFriend) < 0)
-					{
-						this._friends.push(newFriend);
-					}
-					this.setFriendNotification(newFriend)
-					this.addCurrentUserToFriendsList(newFriend)
+						if (this._friends.indexOf(firebaseUser) < 0) {
+							this._friends.push(firebaseUser);
+						}
+						this.setFriendNotification(firebaseUser);
+						this.addCurrentUserToFriendsList(firebaseUser);
+					});
+
 				});
-				console.log(this._friends);
 				this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
 			}
 			this._currentUser = this.authenticationHandler.getCurrentUser();
-			console.log(this._currentUser.friends);
 		});
 		modal.present();
 	}
 
-	setFriendNotification(friend) {
-		let friendNotifications = friend.notifications
-		if (friendNotifications == null) {
-			let friendNotifications = []
-			
-			friendNotifications.push(this._currentUser.firstName + " added you as a friend")
-			this.firebasePost.postNewNotification(friend.key, friendNotifications);
-		} else {
-			
-			friendNotifications.push(this._currentUser.firstName + " added you as a friend")
-			this.firebasePut.putNewNotification(friend.key, friendNotifications);
+	setFriendNotification(friend): void {
+		let friendNotifications = friend.notifications;
+
+		if (!friendNotifications) {
+			friendNotifications = [];
 		}
+		friendNotifications.push(this._currentUser.firstName + " added you as a friend");
+		this.firebasePost.postNewNotification(friend.key, friendNotifications);
 	}
 
-	removeCurrentUserFromFriendsList(friend)
-	{
-		let currentFriendsKeys =[]
+	removeCurrentUserFromFriendsList(friend): void {
+		let currentFriendsKeys = [];
+
 		this.firebaseGet.getUserWithID(friend.key, (firebaseUser) => {
 			currentFriendsKeys = firebaseUser.friends
-		})
-		if (currentFriendsKeys != null) {
-			
-			let index = currentFriendsKeys.indexOf(this._currentUser.key)
-			console.log(index);
+		});
+
+		if (currentFriendsKeys) {
+			let index = currentFriendsKeys.indexOf(this._currentUser.key);
+
 			currentFriendsKeys.splice(index, 1);
 			this.firebasePut.putUserFriendsKeys(friend.key, currentFriendsKeys);
 		}
 	}
 
-	addCurrentUserToFriendsList(friend)
-	{
-		let currentFriendsKeys = friend.friends
-		
-		if (currentFriendsKeys == null) {
-			currentFriendsKeys = []
-			currentFriendsKeys.push(this._currentUser.key)	
-			this.firebasePut.putUserFriendsKeys(friend.key, currentFriendsKeys);
+	addCurrentUserToFriendsList(friend): void {
+		let putFriendKeys = (friendKeys) => {
+			friend.friends.push(this._currentUser.key);
+			this.firebasePut.putUserFriendsKeys(friend.key, friendKeys);
+		};
+
+		if (!friend.friends) {
+			putFriendKeys([]);
 		} else {
-			if (currentFriendsKeys.indexOf(this._currentUser.key) < 0)
-			{
-				currentFriendsKeys.push(this._currentUser.key)	
-				this.firebasePut.putUserFriendsKeys(friend.key, currentFriendsKeys);
+			if (friend.friends.indexOf(this._currentUser.key) <= -1) {
+				putFriendKeys(friend.friends);
+
 			}
 		}
 	}
-
 
 }
 

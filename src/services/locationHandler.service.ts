@@ -37,7 +37,7 @@ export class LocationHandler {
 		}
 	}
 
-	logLocation(whetherToLog): void {
+	logLocation(whetherToLog: boolean): void {
 		if (whetherToLog) {
 			this.getGeolocation((location) => {
 				this.firebasePut.putUserLocation(this._currentUser.key, location);

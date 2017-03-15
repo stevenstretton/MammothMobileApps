@@ -7,7 +7,7 @@ export class FirebasePUT {
 	constructor(private af: AngularFire,
 	            public firebaseGet: FirebaseGET) {}
 
-	putUserFriends(userID, friends): void {
+	putUserFriends(userID: string, friends: Array<any>): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		let currentFriendIDs = [];
@@ -23,16 +23,15 @@ export class FirebasePUT {
 		});
 	}
 
-	putUserFriendsKeys(userID, friends): void {
+	putUserFriendsKeys(userID: string, friends: Array<any>): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		userObjectObservable.update({
 			friends: friends
 		});
-
 	}
 
-	putTripData(tripID, itemToUpdate, newValue): void {
+	putTripData(tripID: string, itemToUpdate: string, newValue: any): void {
 		let path = itemToUpdate.toLowerCase();
 
 		if (itemToUpdate.indexOf("Cover") > -1) {
@@ -45,11 +44,11 @@ export class FirebasePUT {
 			attribute = attribute.slice(1, attribute.length);
 			path = object.toLowerCase() + "/" + attribute.toLowerCase();
 		}
-		let tripObjectObservable = this.af.database.object("trips/" + tripID + "/" + path);
+		const tripObjectObservable = this.af.database.object("trips/" + tripID + "/" + path);
 		tripObjectObservable.set(newValue);
 	}
 
-	putUserToSeeLocation(userID, tripID, usersIDsToSeeLoc): void {
+	putUserToSeeLocation(userID: string, tripID: string, usersIDsToSeeLoc: Array<number>): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		let usersToSeeLoc = [];
@@ -80,7 +79,7 @@ export class FirebasePUT {
 		});
 	}
 
-	putShareLocation(userID, shareLocation): void {
+	putShareLocation(userID: string, shareLocation: number): void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		userObjectObservable.update({
@@ -89,7 +88,7 @@ export class FirebasePUT {
 	}
 
 
-	putNewUserPhotoInDB(userID, photoUrl) : void {
+	putNewUserPhotoInDB(userID: string, photoUrl: string) : void {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		userObjectObservable.update({
@@ -97,16 +96,16 @@ export class FirebasePUT {
 		});
 	}
 
-	putNewNotification(user, notifications): void {
-		const userObjectObservable = this.af.database.object("users/" + user);
+	putNewNotification(userID: string, notifications: Array<any>): void {
+		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		userObjectObservable.update({
 			notifications: notifications
 		});
 	}
 
-	putUserLocation(user, location): void {
-		const userObjectObservable = this.af.database.object("users/" + user);
+	putUserLocation(userID: string, location: any): void {
+		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		userObjectObservable.update({
 			location: location

@@ -24,7 +24,8 @@ export class NewTrip {
 	private _itemList: Array<any>;
 	private _itemTitle: string = '';
 	private _itemDescription: string = '';
-	private _tripPhoto: string = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+	private _tripPhoto: string = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%' +
+		'2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
 	private _tripPhotoID: any;
 	private _endDate: any;
 
@@ -53,41 +54,42 @@ export class NewTrip {
 			endDate: [this._todaysDate, Validators.required],
 			transport: ['', Validators.required]
 		});
+		this.firebaseGet.setAllPresets();
 
-		this.firebaseGet.setAllPresets()
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friendsAdded = [];
 		this._itemList = [];
-
 		this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
 	}
 
-	ionViewDidEnter() {
+	ionViewDidEnter(): void {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.setDateTime();
-		this._newTripForm.patchValue({ startDate: this._todaysDate, endDate: this._todaysDate, startTime: this._nowTime })
+		this._newTripForm.patchValue({
+			startDate: this._todaysDate,
+			endDate: this._todaysDate,
+			startTime: this._nowTime
+		});
 	}
 
-	setDateTime() {
+	setDateTime(): void {
 		this._todaysDate = moment().format("Y-MM-DD");
-		console.log(this._todaysDate);
 		this._nowTime = moment().format("HH:mm");
-		console.log(this._nowTime);
 	}
 
-	endDateIsValid() : Boolean
-	{
+	endDateIsValid(): Boolean {
 		return moment(this._newTripForm.controls['startDate'].value).isSameOrBefore(this._newTripForm.controls['endDate'].value);
 	}
 
-	setEndDate(bool?:boolean){
+	setEndDate(bool?: boolean): void {
 		this._endDate = this._newTripForm.controls['startDate'].value;
-		if (!bool)
-		{
-			this._newTripForm.patchValue({endDate:  this._newTripForm.controls['startDate'].value});
+		if (!bool) {
+			this._newTripForm.patchValue({
+				endDate: this._newTripForm.controls['startDate'].value
+			});
 		}
-		
 	}
+
 	presentModal(): void {
 		let friendIDsAdded = this.buildFriendIDsAttending();
 		this._friendsAdded = [];
@@ -102,7 +104,6 @@ export class NewTrip {
 				});
 			});
 
-
 			this.modalCtrl.create(FriendsModal, {
 				selectedFriends: this._friendsAdded
 			}).present();
@@ -110,17 +111,14 @@ export class NewTrip {
 	}
 
 	presentPresetsModal(): void {
-
-		let presetModal = this.modalCtrl.create(PresetsModal)
+		let presetModal = this.modalCtrl.create(PresetsModal);
 
 		presetModal.onWillDismiss((presetData => {
-			if (presetData != null) {
-				this.setFieldsWithData(presetData)
+			if (presetData) {
+				this.setFieldsWithData(presetData);
 			}
-		}))
-
+		}));
 		presetModal.present();
-
 	}
 
 	setFieldsWithData(presetData): void {
@@ -132,9 +130,9 @@ export class NewTrip {
 			startTime: this._nowTime,
 			endDate: this._todaysDate,
 			transport: presetData.transport
-		})
+		});
 
-		this._tripPhoto = presetData.coverPhotoUrl
+		this._tripPhoto = presetData.coverPhotoUrl;
 		this._itemList = presetData.items
 	}
 
@@ -151,43 +149,32 @@ export class NewTrip {
 		return friendsAttending;
 	}
 
-	getNotifications(friendID): Array<any> {
-		let tempNotification;
+	getNotifications(friendID, callback): void {
 		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
-			tempNotification = firebaseUser.notifications
-		})
-
-		return tempNotification;
+			callback(firebaseUser.notifications);
+		});
 	}
 
 	pushTrip(formData): void {
-
 		this.buildForm(formData);
 
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-			let friends = this.buildFriendIDsAttending();
-			let name = this._currentUser.firstName;
-			let tripName = this._tripInfo.name;
+			const friends = this.buildFriendIDsAttending(),
+				name = this._currentUser.firstName,
+				tripName = this._tripInfo.name;
 
 			friends.forEach((friend) => {
-				console.log(friend)
-
-				let usernotes = this.getNotifications(friend)
-
-				console.log(usernotes)
-				if (usernotes == null) {
-					let usernotes = []
-					usernotes.push(name + " added you to " + tripName)
-					this.firebasePost.postNewNotification(friend, usernotes);
-				} else {
-					usernotes.push(name + " added you to " + tripName)
-					this.firebasePut.putNewNotification(friend, usernotes);
-				}
-
-
+				this.getNotifications(friend, (notifications) => {
+					if (!notifications) {
+						notifications = [];
+					}
+					notifications.push(name + " added you to " + tripName);
+					this.firebasePost.postNewNotification(friend, notifications);
+				});
 			});
 
-			this.clearTrip()
+			this.clearTrip();
+
 			// Doing this means that the constructor for myTrips is not invoked again
 			this.navCtrl.parent.select(0);
 			this.showCreateDeleteTripToast('Trip created successfully!');
@@ -195,8 +182,7 @@ export class NewTrip {
 		});
 	}
 
-	buildForm(formData) {
-
+	buildForm(formData): void {
 		this._tripInfo = {
 			name: formData.name,
 			location: formData.loc,
@@ -227,12 +213,13 @@ export class NewTrip {
 		}).present();
 	}
 
-	addItem() {
+	addItem(): void {
 		if (this._itemTitle != "") {
 			this._itemList.push({
 				name: this._itemTitle,
 				description: this._itemDescription
 			});
+
 			this._itemTitle = "";
 			this._itemDescription = "";
 		}
@@ -243,7 +230,7 @@ export class NewTrip {
 		this._itemList.splice(index, 1);
 	}
 
-	clearTrip() {
+	clearTrip(): void {
 		this._newTripForm.setValue({
 			name: '',
 			loc: '',
@@ -252,15 +239,15 @@ export class NewTrip {
 			startTime: this._nowTime,
 			endDate: this._todaysDate,
 			transport: ''
-		})
+		});
 
-		this._friendsAdded = []
-		this._tripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
-		this._itemList = []
-
+		this._friendsAdded = [];
+		this._tripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2F' +
+			'placeholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+		this._itemList = [];
 	}
 
-	presentActionSheet() {
+	presentActionSheet(): void {
 		let cameraOptions = {
 			quality: 90,
 			destinationType: Camera.DestinationType.DATA_URL,
@@ -272,7 +259,7 @@ export class NewTrip {
 			saveToPhotoAlbum: false
 		};
 
-		let actionSheet = this.actionSheetCtrl.create({
+		this.actionSheetCtrl.create({
 			title: 'Edit Trip Picture',
 			buttons: [
 				{
@@ -331,8 +318,6 @@ export class NewTrip {
 					}
 				}
 			]
-		});
-		actionSheet.present();
+		}).present();
 	}
-
 }

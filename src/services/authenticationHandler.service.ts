@@ -74,12 +74,12 @@ export class AuthenticationHandler {
 		});
 	}
 
-	addNewUserToDatabase(credentials): void {
+	addNewUserToDatabase(credentials: Object): void {
+		console.log(typeof credentials);
 
-		// Again, this is called when deleting a user as the authentication state has changed
 		this._fb.auth().onAuthStateChanged((user) => {
 			if (user) {
-				this.firebasePost.postNewUser(user, credentials);
+				this.firebasePost.postNewUser(user.uid, credentials);
 			}
 		});
 	}
@@ -89,12 +89,7 @@ export class AuthenticationHandler {
 	}
 
 	setCurrentUser(): void {
-		// TODO: Figure out why this is being hit on logout
-
-		// This is being hit because the authentication has changed
 		this.af.auth.subscribe((user) => {
-			// check to see if there actually is a user
-			console.log(user);
 			if (user) {
 				this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
 					if (currentUser) {
@@ -127,8 +122,6 @@ export class AuthenticationHandler {
 	}
 
 	sendEmailVerification(): void {
-		console.log(this._fb.auth().currentUser);
-
 		this._fb.auth().currentUser.sendEmailVerification().then(() => {
 			console.log("Email sent");
 		}, (error) => {

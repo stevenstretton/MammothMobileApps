@@ -43,7 +43,6 @@ export class Register {
 					this.navCtrl.pop();
 				});
 			}).catch((errorRepsonse) => {
-				console.log(errorRepsonse);
 				this._error = errorRepsonse;
 			});
 		}

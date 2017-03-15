@@ -38,7 +38,7 @@ export class ViewTrip {
 		this._trip = this.navParams.get('trip');
 		this._callback = this.navParams.get('callback');
 
-		if (this._trip.trip.friends != null) {
+		if (this._trip.trip.friends) {
 			this._trip.trip.friends.forEach((friendID) => {
 				this.firebaseGet.getUserWithID(friendID, (user) => {
 					this._tripMembers.push(user);
@@ -47,7 +47,7 @@ export class ViewTrip {
 		}
 	}
 
-	showEditModal(index): void {
+	showEditModal(index: number): void {
 		// index:
 		// ---------------
 		// 1 = description
@@ -74,8 +74,8 @@ export class ViewTrip {
 						formData.forEach((person) => {
 							peopleIDs.push(person.key);
 						});
-
 						newValue = peopleIDs;
+
 					} else if (title === "Items") {
 						newValue = formData;
 					} else {
@@ -140,7 +140,7 @@ export class ViewTrip {
 		}
 	}
 
-	showEditToast(itemUpdated): void {
+	showEditToast(itemUpdated: string): void {
 		this.toastCtrl.create({
 			message: itemUpdated + ' has been updated!',
 			duration: 3000,
@@ -148,14 +148,14 @@ export class ViewTrip {
 		}).present();
 	}
 
-	goToMap() {
+	goToMap(): void {
 		this.navCtrl.push(Map, {
 			currentUser: this._currentUser,
 			tripMembers: this._tripMembers
 		});
 	}
 
-	deleteTrip() {
+	deleteTrip(): void {
 		this.alertCtrl.create({
 			title: 'Delete',
 			message: 'Are you sure you want to delete this trip?',
@@ -168,7 +168,7 @@ export class ViewTrip {
 						this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
 						this._callback({
 							justDeletedTrip: true
-							
+
 						}).then(() => {
 							this.navCtrl.pop();
 						});
@@ -195,15 +195,13 @@ export class ViewTrip {
 					handler: () => {
 						this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
 						this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
-						if (member.key === this._currentUser.key)
-						{
+						if (member.key === this._currentUser.key) {
 							this._callback({
 								justDeletedUser: true
 							}).then(() => {
 								this.navCtrl.pop();
 							});
-						}
-						else{
+						} else {
 							this.showEditToast('Friends');
 						}
 					}
@@ -220,9 +218,11 @@ export class ViewTrip {
 				 {
 					text: 'No',
 					role: 'cancel'
-				},{
+				}, {
 					text: 'Yes',
 					handler: () => {
+						// Why is this commented out?
+
 						//this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
 						//this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
 					}
@@ -231,31 +231,34 @@ export class ViewTrip {
 		}).present();
 	}
 
-	speakTrip() {
-		var friends: string = "";
-		this._tripMembers.forEach(friend => {
+	speakTrip(): void {
+		let friends: string = "";
+
+		this._tripMembers.forEach((friend) => {
 			friends += friend.firstName + " " + friend.lastName + ", "
 		});
 
-		TextToSpeech.speak({text: "Trip Name: " + this._trip.trip.name
-			+ ", Description: " +  this._trip.trip.description
-			+ ", Location: "+ this._trip.trip.location
-			+ ", Start Date: " + this._trip.trip.start.date
-			+ ", Friends on Trip: " + friends,
+		TextToSpeech.speak({
+			text: "Trip Name: " + this._trip.trip.name
+				+ ", Description: " +  this._trip.trip.description
+				+ ", Location: "+ this._trip.trip.location
+				+ ", Start Date: " + this._trip.trip.start.date
+				+ ", Friends on Trip: " + friends,
             locale: 'en-GB',
-            rate: 1.4})
-			.then(() => console.log('Success'))
-			.catch((reason: any) => console.log(reason));
+            rate: 1.4
+		})
+		.then(() => console.log('Success'))
+		.catch((reason: any) => console.log(reason));
 	}
 
-	stopSpeak() {
+	stopSpeak(): void {
 		TextToSpeech.speak("")
 			.then(() => console.log('Stopped'))
 			.catch((reason: any) => console.log(reason));
 	}
 
-	presentActionSheet() {
-		let cameraOptions = {
+	presentActionSheet(): void {
+		const cameraOptions = {
 			quality: 90,
 			destinationType: Camera.DestinationType.DATA_URL,
 			sourceType: Camera.PictureSourceType.CAMERA,
@@ -265,73 +268,60 @@ export class ViewTrip {
 			targetHeight: 600,
 			saveToPhotoAlbum: false
 		};
-		let ID = this._trip.trip.coverPhotoID;
+		const ID = this._trip.trip.coverPhotoID;
 
-		let actionSheet = this.actionSheetCtrl.create({
-			title: 'Edit Trip Picture',
-			buttons: [
-				{
-					text: 'Reset to Default Picture',
-					icon: !this.platform.is('ios') ? 'trash' : null,
-					role: 'destructive',
-					handler: () => {
-						this._trip.trip.coverPhotoUrl = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
-						this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
-						this.showEditToast('Trip Photo Reset');
-						console.log('Destructive clicked');
+		if (this._trip.lead.key === this._currentUser.key) {
+			this.actionSheetCtrl.create({
+				title: 'Edit Trip Picture',
+				buttons: [
+					{
+						text: 'Reset to Default Picture',
+						icon: !this.platform.is('ios') ? 'trash' : null,
+						role: 'destructive',
+						handler: () => {
+							this._trip.trip.coverPhotoUrl = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.' +
+								'appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+							this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+							this.showEditToast('Trip Photo Reset');
+						}
+					}, {
+						text: 'Take Photo',
+						icon: !this.platform.is('ios') ? 'camera' : null,
+						handler: () => {
+							cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
+							Camera.getPicture(cameraOptions).then((image) => {
+								this.firebasePost.postNewTripImage(image, ID , (url) => {
+									this._trip.trip.coverPhotoUrl = url;
+									this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+								});
+								this.showEditToast('Trip Photo Added');
+							});
+							Camera.cleanup();
+						}
+					}, {
+						text: 'Choose From Library',
+						icon: !this.platform.is('ios') ? 'folder-open' : null,
+						handler: () => {
+							cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+							Camera.getPicture(cameraOptions).then((image) => {
+								this.firebasePost.postNewTripImage(image, ID , (url) => {
+									this._trip.trip.coverPhotoUrl = url;
+									this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
+								});
+								this.showEditToast('Trip Photo Added');
+							});
+							Camera.cleanup();
+						}
+					}, {
+						text: 'Cancel',
+						icon: !this.platform.is('ios') ? 'close' : null,
+						role: 'cancel',
+						handler: () => {
+							Camera.cleanup();
+						}
 					}
-				}, {
-					text: 'Take Photo',
-					icon: !this.platform.is('ios') ? 'camera' : null,
-					handler: () => {
-						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
-						Camera.getPicture(cameraOptions).then((image) => {
-							console.log("image here")
-							this.firebasePost.postNewTripImage(image, ID , (url) =>
-							{
-								console.log("storage");
-								this._trip.trip.coverPhotoUrl = url
-								this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
-							})
-							this.showEditToast('Trip Photo Added');
-						});
-						console.log('Take Photo clicked');
-
-						Camera.cleanup();
-					}
-				}, {
-					text: 'Choose From Library',
-					icon: !this.platform.is('ios') ? 'folder-open' : null,
-					handler: () => {
-						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
-						Camera.getPicture(cameraOptions).then((image) => {
-							console.log("image here")
-							this.firebasePost.postNewTripImage(image, ID , (url) =>
-							{
-								console.log("storage");
-								this._trip.trip.coverPhotoUrl = url
-								this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
-							})
-							this.showEditToast('Trip Photo Added');
-						});
-						console.log('Library clicked');
-						Camera.cleanup();
-					}
-				}, {
-					text: 'Cancel',
-					icon: !this.platform.is('ios') ? 'close' : null,
-					role: 'cancel',
-					handler: () => {
-						console.log('Cancel clicked');
-						Camera.cleanup();
-					}
-				}
-			]
-		});
-		if (this._trip.lead.key === this._currentUser.key)
-		{
-			actionSheet.present();
+				]
+			}).present();
 		}
-
 	}
 }

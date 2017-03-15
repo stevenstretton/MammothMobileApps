@@ -17,54 +17,46 @@ export class MyTrips {
 	constructor(public navCtrl: NavController,
 	            public firebaseGet: FirebaseGET,
 	            public authenticationHandler: AuthenticationHandler,
-	            public navParams: NavParams,
 	            public toastCtrl: ToastController) {
-		console.log("myTrips constructor");
+
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.firebaseGet.setAllTrips(() => {
 			this.sortIfUserInTrip();
-		})
+		});
 	}
 
 	// Why is this being done?
-	ionViewDidEnter() {
+	ionViewDidEnter(): void {
     	this.firebaseGet.setAllTrips(() => {
 			this.sortIfUserInTrip();
-		})
+		});
 	}
 
 	sortIfUserInTrip(): void {
-		console.log("sortIfUserInTrip");
-		let allTrips = this.firebaseGet.getAllTrips();
+		const allTrips = this.firebaseGet.getAllTrips();
 		this._trips = [];
-		if (allTrips != null) {
+
+		let pushTrip = (trip: any) => {
+			this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
+				this._trips.push({
+					lead: leadOrganiser,
+					trip: trip
+				});
+			});
+		};
+
+		if (allTrips) {
 			allTrips.forEach((trip) => {
+
 				// determine they are a part of the trip
-				if (trip.friends != null)
-				{
+				if (trip.friends) {
 					if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
-						this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
-							if (leadOrganiser != null)
-							this._trips.push({
-								lead: leadOrganiser,
-								trip: trip
-							});
-
-						});
+						pushTrip(trip);
 					}
-				}
-				else
-				{
+				} else {
 					if (trip.leadOrganiser === this._currentUser.key) {
-						this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
-							if (leadOrganiser != null)
-							this._trips.push({
-								lead: leadOrganiser,
-								trip: trip
-							});
-
-						});
+						pushTrip(trip);
 					}
 				}
 			});
@@ -90,7 +82,7 @@ export class MyTrips {
 		}).present();
 	}
 
-	goToTrip(trip) {
+	goToTrip(trip): void {
 		this.navCtrl.push(ViewTrip, {
 			trip: trip,
 			callback: (_params) => {
@@ -99,15 +91,15 @@ export class MyTrips {
 						this.showCreateDeleteTripToast('Trip deleted successfully!');
 						this.firebaseGet.setAllTrips(() => {
 							this.sortIfUserInTrip();
-						})
+						});
 					}
 					if (_params.justDeletedUser) {
 						this.showCreateDeleteTripToast('Removed from trip successfully!');
 						this.firebaseGet.setAllTrips(() => {
 							this.sortIfUserInTrip();
-						})
+						});
 					}
-					resolve()
+					resolve();
 				});
 			}
 		});

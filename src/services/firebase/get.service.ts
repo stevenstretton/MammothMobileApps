@@ -92,7 +92,7 @@ export class FirebaseGET {
 		return _.uniqBy(this._allUsers, "key");
 	}
 
-	getUserWithID(userID, callback): void {
+	getUserWithID(userID: string, callback): void {
 		let userObjectObservable = this.af.database.object('users/' + userID, {
 			preserveSnapshot: true
 		});
@@ -120,7 +120,7 @@ export class FirebaseGET {
 		});
 	}
 
-	getTripWithID(tripID, callback): void {
+	getTripWithID(tripID: string, callback): void {
 		let tripObjectObservable = this.af.database.object('trips/' + tripID, {
 			preserveSnapshot: true
 		});
@@ -150,37 +150,32 @@ export class FirebaseGET {
 		});
 	}
 
-	setAllPresets(): void
-	{
+	setAllPresets(): void {
 		this._allPresets = [];
 
-			let presetListObservable = this.af.database.list('/tripPresets', {
-				preserveSnapshot: true
-			});
+		let presetListObservable = this.af.database.list('/tripPresets', {
+			preserveSnapshot: true
+		});
 
+		presetListObservable.subscribe((snapshots) => {
+			snapshots.forEach((snapshot) => {
+				let snapKey = snapshot.key,
+					snapVal = snapshot.val();
 
-			presetListObservable.subscribe((snapshots) => {
-				snapshots.forEach((snapshot) => {
-					let snapKey = snapshot.key,
-						snapVal = snapshot.val();
-
-					this._allPresets.push({
-						key: snapKey,
-						name: snapVal.name,
-						description: snapVal.description,
-						coverPhotoUrl: snapVal.coverPhotoUrl,
-						coverPhotoID: snapVal.coverPhotoID,
-						transport: snapVal.transport,
-						items: snapVal.items
-					});
+				this._allPresets.push({
+					key: snapKey,
+					name: snapVal.name,
+					description: snapVal.description,
+					coverPhotoUrl: snapVal.coverPhotoUrl,
+					coverPhotoID: snapVal.coverPhotoID,
+					transport: snapVal.transport,
+					items: snapVal.items
 				});
 			});
-
-		console.log(this._allPresets);
+		});
 	}
 
-	getAllPresets(): Array<any>
-	{
+	getAllPresets(): Array<any> {
 		return this._allPresets;
 	}
 }

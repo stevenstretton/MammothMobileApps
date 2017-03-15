@@ -1,81 +1,53 @@
 import { Component } from '@angular/core';
-import { NavController, ItemSliding } from 'ionic-angular';
+import { ItemSliding } from 'ionic-angular';
 import { TextToSpeech } from 'ionic-native';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
-
 
 @Component({
 	selector: 'page-notifications',
 	templateUrl: 'notifications.html'
 })
 export class Notifications {
-	private _notifications: Array<any>;
 	private _currentUser: any;
-	private num: any;
+	private _num: any;
 
-	constructor(public navCtrl: NavController,
-		public authenticationHandler: AuthenticationHandler,
-		private firebasePut: FirebasePUT,
-	) {
-
-
-		this._notifications = [];
+	constructor(public authenticationHandler: AuthenticationHandler,
+	            private firebasePut: FirebasePUT,) {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.getNotifications();
-		console.log(this._currentUser.notifications);
-		this.num = 1;
+		this._num = 1;
 	}
 
 	ionViewWillEnter() {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.getNotifications();
-	}
-
-	getNotifications() {
-
-		if (this._currentUser.notifications != null) {
-			this._notifications = [];
-			console.log(this._currentUser);
-
-			this._notifications = this._currentUser.notifications
-		}
 	}
 
 	//for testing
 	addNotification(): void {
-		var temp = this._notifications;
-		this._notifications = temp;
-		this._notifications.push("test Note" + this.num);
-		this.firebasePut.putNewNotification(this._currentUser.key, this._notifications);
-		this.num++;
+		this._currentUser.notifications.push("test Note" + this._num);
+		this.firebasePut.putNewNotification(this._currentUser.key, this._currentUser.notifications);
+		this._num++;
 	}
 
 	dismissNotification(index, slidingItem: ItemSliding): void {
-		slidingItem.close()
-		console.log(index)
-		var temp = this._notifications;
-		temp.splice(index, 1);
+		slidingItem.close();
 
-		this.firebasePut.putNewNotification(this._currentUser.key, temp);
-		this._notifications = temp;
-		console.log(this._notifications)
-
+		this._currentUser.notifications.splice(index, 1);
+		this.firebasePut.putNewNotification(this._currentUser.key, this._currentUser.notifications);
 	}
 
 	dismissNotifications(): void {
-
 		this.firebasePut.putNewNotification(this._currentUser.key, []);
-		this._notifications = []
-		this._currentUser.notifications = []
-
+		this._currentUser.notifications = [];
 	}
 
-	speakNotifications() {
-		var notes: string = "";
-		this._notifications.forEach(note => {
+	speakNotifications(): void {
+		let notes: string = "";
+
+		this._currentUser.notifications.forEach((note) => {
 			notes += "Notification: " + note + ", "
 		});
+
 		if (notes == "") {
 			notes = "No Notifications"
 		}
@@ -92,12 +64,11 @@ export class Notifications {
 			.catch((reason: any) => console.log(reason));
 	}
 
-	stopSpeak() {
+	stopSpeak(): void {
 		TextToSpeech.speak("")
 			.then(() => console.log('Stopped'))
 			.catch((reason: any) => console.log(reason));
 	}
-
 
 }
 

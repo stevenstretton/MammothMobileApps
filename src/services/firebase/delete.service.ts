@@ -3,21 +3,22 @@ import { AngularFire, FirebaseApp } from 'angularfire2';
 
 @Injectable()
 export class FirebaseDELETE {
-private _fb: any;
+	private _fb: any;
+
 	constructor(private af: AngularFire,
-	@Inject(FirebaseApp) firebaseApp: any) {
+	            @Inject(FirebaseApp) firebaseApp: any) {
 		this._fb = firebaseApp;
 	}
 
-	deleteTrip(tripID): void {
+	deleteTrip(tripID: string): void {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID).remove();
-		
+
 		tripObjectObservable
 			.then(_ => console.log("Success!"))
 			.catch(err => console.log(err));
 	}
 
-	deleteTripMember(memberID, tripID, tripMembers): void {
+	deleteTripMember(memberID: string, tripID: string, tripMembers): void {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID);
 
 		let tripMemberIDs = [];
@@ -32,7 +33,7 @@ private _fb: any;
 		});
 	}
 
-	deleteTripItem(itemID, tripID, tripItems): void {
+	deleteTripItem(itemID: string, tripID: string, tripItems): void {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID);
 
 		let tripItemIDs = [];
@@ -47,7 +48,7 @@ private _fb: any;
 		});
 	}
 
-	deleteUserFromDB(userID): void {
+	deleteUserFromDB(userID: string): void {
 		const userObjectObservable = this.af.database.object('users/' + userID).remove();
 
 		userObjectObservable
@@ -55,7 +56,7 @@ private _fb: any;
 			.catch(err => console.log(err));
 	}
 
-	deleteUserFromAllTrips(userID, tripsUserIsOn): void {
+	deleteUserFromAllTrips(userID: string, tripsUserIsOn): void {
 		let tripObjectObservable;
 
 		tripsUserIsOn.forEach((trip) => {
@@ -74,28 +75,25 @@ private _fb: any;
 		});
 	}
 
-	deleteTripPhotoFromStorage(photoID): void {
-		
-		var storageRef = this._fb.storage().ref('/trip_images/');
+	deleteTripPhotoFromStorage(photoID: string): void {
+		const storageRef = this._fb.storage().ref('/trip_images/');
 
-		console.log(storageRef.child(photoID).child("trip_image.jpeg"));
 		// Delete the file
-		storageRef.child(photoID).child("trip_image.jpeg").delete().then(function() {
+		storageRef.child(photoID).child("trip_image.jpeg").delete().then(() => {
 			// File deleted successfully
-		}).catch(function(error) {
+		}).catch((error) => {
 			// Uh-oh, an error occurred!
 			console.log("photo in storage does not exist");
 		});
 	}
 
-	deleteUserPhotoFromStorage(userID): void {
-		
-		var storageRef = this._fb.storage().ref('/user_images/');
+	deleteUserPhotoFromStorage(userID: string): void {
+		const storageRef = this._fb.storage().ref('/user_images/');
 
 		// Delete the file
-		storageRef.child(userID).child("profile_image.jpeg").delete().then(function() {
+		storageRef.child(userID).child("profile_image.jpeg").delete().then(() => {
 			// File deleted successfully
-		}).catch(function(error) {
+		}).catch((error) => {
 			// Uh-oh, an error occurred!
 			console.log("photo in storage does not exist");
 		});

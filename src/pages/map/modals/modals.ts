@@ -6,17 +6,15 @@ import { ViewController, NavParams } from 'ionic-angular';
 	templateUrl: './templates/mapModal.html'
 })
 export class MapModal {
-	
-	_tripMembers: any;	
-	_checkedId : 0;
-
+	private _tripMembers: any;
+	private _checkedID: number = 0;
 
 	constructor(public viewCtrl: ViewController,
-		public params: NavParams) {
-				this._tripMembers = params.get('tripMembers');
+	            public params: NavParams) {
+		this._tripMembers = params.get('tripMembers');
 	}
-	dismiss() {
-		let data = this._checkedId;
-		this.viewCtrl.dismiss(data);		
+
+	dismiss(): void {
+		this.viewCtrl.dismiss(this._checkedID);
 	}
 }
