@@ -79,8 +79,6 @@ export class Map {
 
 		const overlay = new google.maps.OverlayView();
 		overlay.draw = function() {
-
-			// Where is the getPanes method?
 			this.getPanes().markerLayer.id = 'markerLayer';
 		};
 		overlay.setMap(this._map);
