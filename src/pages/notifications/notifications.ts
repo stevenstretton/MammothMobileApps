@@ -32,8 +32,18 @@ export class Notifications {
 		this.getNotifications();
 	}
 
-	getNotifications() {
+   refreshNotifications(refresher): void {
+			this.getNotifications();
 
+			// Timeout otherwise refresher is too short
+			setTimeout(() => {
+				refresher.complete();
+			}, 2000);
+		
+	}
+
+	getNotifications() {
+		this._currentUser = this.authenticationHandler.getCurrentUser();
 		if (this._currentUser.notifications != null) {
 			this._notifications = [];
 			console.log(this._currentUser);
