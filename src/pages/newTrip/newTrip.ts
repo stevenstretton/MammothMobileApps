@@ -141,6 +141,7 @@ export class NewTrip {
 
 		if (this._friendsAdded.length > 0) {
 			this._friendsAdded.forEach((friend) => {
+				console.log(friend);
 				if (friend.isAdded) {
 					friendsAttending.push(friend.user.key);
 				}
@@ -159,20 +160,19 @@ export class NewTrip {
 		this.buildForm(formData);
 
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
-			const friends = this.buildFriendIDsAttending(),
+			const friendIDs = this.buildFriendIDsAttending(),
 				name = this._currentUser.firstName,
 				tripName = this._tripInfo.name;
 
-			friends.forEach((friend) => {
-				this.getNotifications(friend, (notifications) => {
+			friendIDs.forEach((friendID) => {
+				this.getNotifications(friendID, (notifications) => {
 					if (!notifications) {
 						notifications = [];
 					}
 					notifications.push(name + " added you to " + tripName);
-					this.firebasePost.postNewNotification(friend, notifications);
+					this.firebasePost.postNewNotification(friendID, notifications);
 				});
 			});
-
 			this.clearTrip();
 
 			// Doing this means that the constructor for myTrips is not invoked again
@@ -200,9 +200,7 @@ export class NewTrip {
 			leadOrganiser: this._currentUser.key,
 			coverPhotoUrl: this._tripPhoto,
 			coverPhotoID: this._tripPhotoID
-
 		};
-
 	}
 
 	showCreateDeleteTripToast(message): void {

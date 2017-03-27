@@ -14,8 +14,6 @@ export class FirebasePOST {
 	}
 
 	postNewTrip(trip: any, callback): void {
-		console.log(typeof trip);
-
 		const promise = this.af.database.list('/trips').push(trip);
 
 		promise.then(_ => {
@@ -23,7 +21,7 @@ export class FirebasePOST {
 			callback();
 		})
 		.catch(err => {
-			console.log(err)
+			console.log(err);
 		});
 	}
 

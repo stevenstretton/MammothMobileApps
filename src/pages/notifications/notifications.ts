@@ -30,22 +30,20 @@ export class Notifications {
 	}
 
    refreshNotifications(refresher): void {
-			this.getNotifications();
+		this.getNotifications();
 
-			// Timeout otherwise refresher is too short
-			setTimeout(() => {
-				refresher.complete();
-			}, 2000);
-
+		// Timeout otherwise refresher is too short
+		setTimeout(() => {
+			refresher.complete();
+		}, 2000);
 	}
 
 	getNotifications() {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		if (this._currentUser.notifications != null) {
+		if (this._currentUser.notifications) {
 			this._notifications = [];
-			console.log(this._currentUser);
 
-			this._notifications = this._currentUser.notifications
+			this._notifications = this._currentUser.notifications;
 		}
 	}
 
@@ -77,8 +75,7 @@ export class Notifications {
 
 		if (notes == "") {
 			notes = "No Notifications"
-		}
-		else {
+		} else {
 			notes += "End of notifications"
 		}
 
