@@ -17,7 +17,7 @@ export class LocationModal {
 	            public params: NavParams) {
 		this._usersToSeeLocation = [];
 
-		this._tripMembers = []
+		this._tripMembers = [];
 		this._tripName = params.get('name');
 		this._tripMembers = params.get('members');
 
@@ -68,7 +68,7 @@ export class ChangePasswordModal {
 			oldPassword: ['', Validators.required],
 			newPassword: ['', Validators.required],
 			confirmPassword: ['', Validators.required]
-		})
+		});
 	}
 
 	dismiss() {

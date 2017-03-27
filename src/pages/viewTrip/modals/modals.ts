@@ -110,13 +110,12 @@ export class AddMembersModal {
 		this._friendsToBeOnTrip = [];
 
 		allUsers.forEach((user) => {
-			if ((friendsOnTrip.(u => u.key).indexOf(user.key) <= -1) && (this._currentUser.friends.indexOf(user.key) > -1)) {
+			if ((friendsOnTrip.map(u => u.key).indexOf(user.key) <= -1) && (this._currentUser.friends.indexOf(user.key) > -1)) {
 				this._friendsNotOnTrip.push(user);
 			}
 		});
 
-		if (friendsOnTrip != null)
-		{
+		if (friendsOnTrip) {
 			friendsOnTrip.forEach((friend) => {
 				this._friendsToBeOnTrip.push(friend);
 			});
@@ -169,11 +168,11 @@ export class AddItemsModal {
 			description: ['', Validators.required]
 		});
 
-		if (itemsForTrip != null){
+		if (itemsForTrip){
 			itemsForTrip.forEach((item) => {
 				this._itemsForTrip.push(item);
 			});
-				}
+		}
 	}
 
 	addItemFormSubmit(formData): void {

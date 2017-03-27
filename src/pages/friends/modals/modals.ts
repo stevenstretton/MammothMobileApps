@@ -16,6 +16,7 @@ export class AddFriendModal {
 	constructor(public viewCtrl: ViewController,
 		public params: NavParams,
 		public firebaseGet: FirebaseGET) {
+
 		this._people = [];
 		this._selectedPeople = [];
 		this._usersThatNotFriends = [];

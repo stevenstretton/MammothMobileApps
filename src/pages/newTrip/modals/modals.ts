@@ -52,7 +52,7 @@ export class FriendsModal {
 	templateUrl: './templates/presetsModal.html'
 })
 export class PresetsModal {
-	
+
 	private _presetData: Array<any>;
 	private _firebasePresets: Array<any>;
 
@@ -65,13 +65,11 @@ export class PresetsModal {
 				}
 
 	findIndexOfPreset(preset): number {
-		console.log(this._firebasePresets.indexOf(preset));
 		return this._firebasePresets.indexOf(preset)
 
 	}
 	submit(preset): void {
-		this._presetData = this._firebasePresets[this.findIndexOfPreset(preset)]
-		console.log(this._presetData);
+		this._presetData = this._firebasePresets[this.findIndexOfPreset(preset)];
 		this.viewCtrl.dismiss(this._presetData);
 	}
 
@@ -79,9 +77,8 @@ export class PresetsModal {
 		this.viewCtrl.dismiss();
 	}
 
-	fetchAllPresetsFromFirebase() : void
-	{
-		this._firebasePresets = []
+	fetchAllPresetsFromFirebase() : void {
+		this._firebasePresets = [];
 		this._firebasePresets = this.firebaseGet.getAllPresets();
 	}
 }
