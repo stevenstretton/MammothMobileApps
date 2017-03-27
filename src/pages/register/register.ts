@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, NavParams, AlertController } from 'ionic-angular';
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 
 @Component({
@@ -13,10 +13,11 @@ export class Register {
 	private _callback: Function;
 	private _error: string;
 
-	constructor(public navCtrl: NavController,
-				public authenticationHandler: AuthenticationHandler,
-				public formBuilder: FormBuilder,
-				public navParams: NavParams) {
+	constructor(private navCtrl: NavController,
+                private alertCtrl: AlertController,
+	            private authenticationHandler: AuthenticationHandler,
+	            private formBuilder: FormBuilder,
+	            private navParams: NavParams) {
 		this._registrationForm = this.formBuilder.group({
 			firstName: ['', Validators.required],
 			surname: ['', Validators.required],
@@ -28,23 +29,41 @@ export class Register {
 		this._callback = this.navParams.get('callback');
 	}
 
+	private showErrorAlert(errMessage: string): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
+	}
+
 	register(formData): void {
 		if (formData.password === formData.confirmPassword) {
 			let registerPromise = this.authenticationHandler.createFirebaseUser(formData);
 
-			registerPromise.then((successResponse) => {
-				this.authenticationHandler.addNewUserToDatabase(formData);
+			registerPromise
+				.then((successResponse) => {
+					this.authenticationHandler.addNewUserToDatabase(formData, (errorRes) => {
+						if (errorRes) {
+							this.showErrorAlert(errorRes);
+						}
+					});
 
-				// This can be this.navCtrl.pop() but cannot send parameters back to it
-				this._callback({
-					justRegistered: true
-				}).then(() => {
-					this.authenticationHandler.sendEmailVerification();
-					this.navCtrl.pop();
+					this._callback({
+						justRegistered: true
+					}).then(() => {
+						const sendEmailPromise = this.authenticationHandler.sendEmailVerification();
+
+						sendEmailPromise
+							.then((successRes) => {
+								this.navCtrl.pop();
+							}).catch((errorRes) => {
+								this.showErrorAlert(errorRes);
+						});
+					});
+				}).catch((errorRepsonse) => {
+					this._error = errorRepsonse;
 				});
-			}).catch((errorRepsonse) => {
-				this._error = errorRepsonse;
-			});
 		}
 	}
 }

@@ -14,7 +14,7 @@ export class FirebaseGET {
 		this._allPresets = [];
 	}
 
-	setAllTrips(callback): void {
+	public setAllTrips(callback): void {
 		this._allTrips = [];
 
 		let tripListObservable = this.af.database.list('/trips', {
@@ -50,15 +50,11 @@ export class FirebaseGET {
 		});
 	}
 
-	getAllTrips(): Array<any> {
-		// When you add a newTrip, I call to `setTrips()` again which should reset the array back to empty
-		// which does happen, however, when returning it I've realised that there are duplicates in the array
-		// I have not fixed the issue but just avoided it with lodash
-
+	public getAllTrips(): Array<any> {
 		return _.uniqBy(this._allTrips, 'key');
 	}
 
-	setAllUsers(callback): void {
+	public setAllUsers(callback): void {
 		this._allUsers = [];
 
 		let userListObservable = this.af.database.list('/users', {
@@ -88,11 +84,11 @@ export class FirebaseGET {
 		});
 	}
 
-	getAllUsers(): Array<any> {
+	public getAllUsers(): Array<any> {
 		return _.uniqBy(this._allUsers, "key");
 	}
 
-	getUserWithID(userID: string, callback): void {
+	public getUserWithID(userID: string, callback): void {
 		let userObjectObservable = this.af.database.object('users/' + userID, {
 			preserveSnapshot: true
 		});
@@ -119,7 +115,9 @@ export class FirebaseGET {
 		});
 	}
 
-	getTripWithID(tripID: string, callback): void {
+
+	// TODO: This is never actually used...shall we either use it or remove it?
+	public getTripWithID(tripID: string, callback): void {
 		let tripObjectObservable = this.af.database.object('trips/' + tripID, {
 			preserveSnapshot: true
 		});
@@ -149,7 +147,7 @@ export class FirebaseGET {
 		});
 	}
 
-	setAllPresets(): void {
+	public setAllPresets(): void {
 		this._allPresets = [];
 
 		let presetListObservable = this.af.database.list('/tripPresets', {
@@ -174,7 +172,7 @@ export class FirebaseGET {
 		});
 	}
 
-	getAllPresets(): Array<any> {
+	public getAllPresets(): Array<any> {
 		return this._allPresets;
 	}
 }

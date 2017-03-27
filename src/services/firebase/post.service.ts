@@ -7,67 +7,93 @@ export class FirebasePOST {
 	private _fb: any;
 
 	constructor(private af: AngularFire,
-		public firebaseGet: FirebaseGET,
-		@Inject(FirebaseApp) firebaseApp: any) {
+	            private firebaseGet: FirebaseGET,
+	            @Inject(FirebaseApp) firebaseApp: any) {
 
 		this._fb = firebaseApp;
 	}
 
-	postNewTrip(trip: any, callback): void {
-		const promise = this.af.database.list('/trips').push(trip);
+	public postNewTrip(trip: any): Promise<any> {
+		const tripListObservable = this.af.database.list('/trips');
 
-		promise.then(_ => {
-			console.log("trip posted!");
-			callback();
+		return new Promise((resolve, reject) => {
+			tripListObservable
+				.push(trip)
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		})
-		.catch(err => {
-			console.log(err);
-		});
 	}
 
-	postNewAccountPhoto(image, userID: string, callback) {
+	public postNewAccountPhoto(image, userID: string): Promise<any> {
 		const storageRef = this._fb.storage().ref('/user_images/');
 
 		let metadata = {
 			contentType: 'image/jpeg'
 		};
 
-		storageRef.child(userID).child("profile_image.jpeg").putString(image, 'base64', metadata).then((snapshot) => {
-			callback(snapshot.downloadURL)
+		return new Promise((resolve, reject) => {
+			storageRef.child(userID).child("profile_image.jpeg").putString(image, 'base64', metadata)
+				.then((snapshot) => {
+					resolve(snapshot.downloadURL);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	postNewTripImage(image, tripID: string, callback) {
+	public postNewTripImage(image, tripID: string): Promise<any> {
 		const storageRef = this._fb.storage().ref('/trip_images/');
 
 		let metadata = {
 			contentType: 'image/jpeg'
 		};
 
-		storageRef.child(tripID).child("trip_image.jpeg").putString(image, 'base64', metadata).then((snapshot) => {
-			callback(snapshot.downloadURL)
+		return new Promise((resolve, reject) => {
+			storageRef.child(tripID).child("trip_image.jpeg").putString(image, 'base64', metadata)
+				.then((snapshot) => {
+					resolve(snapshot.downloadURL);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 
 	}
 
-	postNewUser(userID: string, credentials: any): void {
+	public postNewUser(userID: string, credentials: any): Promise<any> {
 		const usersTable = this.af.database.object("users/" + userID);
 
-		this._fb.storage().ref("default_image/placeholder-user.png").getDownloadURL().then((placeholderPhotoUrl) => {
-			usersTable.set({
-				email: credentials.email,
-				firstName: credentials.firstName,
-				lastName: credentials.surname,
-				username: credentials.username,
-				shareLocation: 0,
-				photoUrl: placeholderPhotoUrl
+		return new Promise((resolve, reject) => {
+			this._fb.storage().ref("default_image/placeholder-user.png").getDownloadURL().then((placeholderPhotoUrl) => {
+				usersTable.set({
+					email: credentials.email,
+					firstName: credentials.firstName,
+					lastName: credentials.surname,
+					username: credentials.username,
+					shareLocation: 0,
+					photoUrl: placeholderPhotoUrl
+				}).then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
 			});
 		});
 	}
 
-    postNewNotification(userID, notifications): void {
+	public postNewNotification(userID, notifications): Promise<any> {
 		const userObjectObservable = this.af.database.object("users/" + userID + "/notifications");
 
-		userObjectObservable.set(notifications);
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(notifications)
+				.then((succesRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
 	}
 }

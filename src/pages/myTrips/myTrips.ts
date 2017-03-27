@@ -14,10 +14,10 @@ export class MyTrips {
 	private _currentUser: any;
 	private _trips: Array<any>;
 
-	constructor(public navCtrl: NavController,
-	            public firebaseGet: FirebaseGET,
-	            public authenticationHandler: AuthenticationHandler,
-	            public toastCtrl: ToastController) {
+	constructor(private navCtrl: NavController,
+	            private firebaseGet: FirebaseGET,
+	            private authenticationHandler: AuthenticationHandler,
+	            private toastCtrl: ToastController) {
 
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
@@ -26,14 +26,13 @@ export class MyTrips {
 		});
 	}
 
-	// Why is this being done?
-	ionViewDidEnter(): void {
-    	this.firebaseGet.setAllTrips(() => {
-			this.sortIfUserInTrip();
-		});
-	}
+	// public ionViewDidEnter(): void {
+	//   this.firebaseGet.setAllTrips(() => {
+	//	 	 this.sortIfUserInTrip();
+	//	 });
+	// }
 
-	sortIfUserInTrip(): void {
+	private sortIfUserInTrip(): void {
 		const allTrips = this.firebaseGet.getAllTrips();
 		this._trips = [];
 
@@ -63,7 +62,7 @@ export class MyTrips {
 		}
 	}
 
-	refreshTrips(refresher): void {
+	public refreshTrips(refresher): void {
 		this.firebaseGet.setAllTrips(() => {
 			this.sortIfUserInTrip();
 
@@ -74,7 +73,7 @@ export class MyTrips {
 		});
 	}
 
-	showCreateDeleteTripToast(message): void {
+	private showCreateDeleteTripToast(message): void {
 		this.toastCtrl.create({
 			message: message,
 			duration: 3000,
@@ -82,7 +81,7 @@ export class MyTrips {
 		}).present();
 	}
 
-	goToTrip(trip): void {
+	public goToTrip(trip): void {
 		this.navCtrl.push(ViewTrip, {
 			trip: trip,
 			callback: (_params) => {

@@ -14,8 +14,8 @@ export class AddFriendModal {
 	private _selectedPeople: Array<any>;
 
 	constructor(public viewCtrl: ViewController,
-		public params: NavParams,
-		public firebaseGet: FirebaseGET) {
+	            public params: NavParams,
+	            public firebaseGet: FirebaseGET) {
 
 		this._people = [];
 		this._selectedPeople = [];
@@ -54,7 +54,7 @@ export class AddFriendModal {
 		if (currentVal && currentVal.trim() != '') {
 			this._people = this._people.filter((person) => {
 				return ((person.firstName.toLowerCase().indexOf(currentVal.toLowerCase()) > -1) ||
-					(person.lastName.toLowerCase().indexOf(currentVal.toLowerCase()) > -1));
+				(person.lastName.toLowerCase().indexOf(currentVal.toLowerCase()) > -1));
 			});
 		}
 	}

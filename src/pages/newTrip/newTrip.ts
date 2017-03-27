@@ -4,7 +4,7 @@ import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePOST } from '../../services/firebase/post.service';
 import { FirebasePUT } from '../../services/firebase/put.service';
 import { AuthenticationHandler } from '../../services/authenticationHandler.service';
-import { NavController, ActionSheetController, Platform, ModalController, ToastController } from 'ionic-angular';
+import { NavController, ActionSheetController, Platform, ModalController, ToastController, AlertController } from 'ionic-angular';
 import { FriendsModal, PresetsModal } from './modals/modals';
 import { Camera } from 'ionic-native';
 import * as moment from 'moment';
@@ -29,16 +29,15 @@ export class NewTrip {
 	private _tripPhotoID: any;
 	private _endDate: any;
 
-	// private _presetData: Array<any>;
-
-	constructor(public navCtrl: NavController,
-	            public actionSheetCtrl: ActionSheetController,
-	            public platform: Platform,
-	            public firebaseGet: FirebaseGET,
-	            public authenticationHandler: AuthenticationHandler,
-	            public modalCtrl: ModalController,
-	            public firebasePost: FirebasePOST,
-	            public firebasePut: FirebasePUT,
+	constructor(private navCtrl: NavController,
+	            private actionSheetCtrl: ActionSheetController,
+	            private platform: Platform,
+	            private firebaseGet: FirebaseGET,
+	            private authenticationHandler: AuthenticationHandler,
+	            private modalCtrl: ModalController,
+	            private alertCtrl: AlertController,
+	            private firebasePost: FirebasePOST,
+	            private firebasePut: FirebasePUT,
 	            private toastCtrl: ToastController,
 	            private formBuilder: FormBuilder) {
 
@@ -62,7 +61,7 @@ export class NewTrip {
 		this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
 	}
 
-	ionViewDidEnter(): void {
+	public ionViewDidEnter(): void {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.setDateTime();
 		this._newTripForm.patchValue({
@@ -72,16 +71,16 @@ export class NewTrip {
 		});
 	}
 
-	setDateTime(): void {
+	private setDateTime(): void {
 		this._todaysDate = moment().format("Y-MM-DD");
 		this._nowTime = moment().format("HH:mm");
 	}
 
-	endDateIsValid(): Boolean {
+	public endDateIsValid(): Boolean {
 		return moment(this._newTripForm.controls['startDate'].value).isSameOrBefore(this._newTripForm.controls['endDate'].value);
 	}
 
-	setEndDate(bool?: boolean): void {
+	public setEndDate(bool?: boolean): void {
 		this._endDate = this._newTripForm.controls['startDate'].value;
 		if (!bool) {
 			this._newTripForm.patchValue({
@@ -90,7 +89,7 @@ export class NewTrip {
 		}
 	}
 
-	presentModal(): void {
+	public presentModal(): void {
 		let friendIDsAdded = this.buildFriendIDsAttending();
 		this._friendsAdded = [];
 
@@ -110,7 +109,7 @@ export class NewTrip {
 		}
 	}
 
-	presentPresetsModal(): void {
+	public presentPresetsModal(): void {
 		let presetModal = this.modalCtrl.create(PresetsModal);
 
 		presetModal.onWillDismiss((presetData => {
@@ -121,7 +120,7 @@ export class NewTrip {
 		presetModal.present();
 	}
 
-	setFieldsWithData(presetData): void {
+	private setFieldsWithData(presetData): void {
 		this._newTripForm.setValue({
 			name: presetData.name,
 			loc: "",
@@ -136,7 +135,7 @@ export class NewTrip {
 		this._itemList = presetData.items
 	}
 
-	buildFriendIDsAttending(): Array<any> {
+	public buildFriendIDsAttending(): Array<any> {
 		let friendsAttending = [];
 
 		if (this._friendsAdded.length > 0) {
@@ -149,49 +148,68 @@ export class NewTrip {
 		return friendsAttending;
 	}
 
-	getNotifications(friendID, callback): void {
+	private getNotifications(friendID, callback): void {
 		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
-			console.log("callback");
 			callback(firebaseUser.notifications);
 		});
 	}
 
-	pushTrip(formData): void {
+	public pushTrip(formData): void {
 		let friendsAndNotifications = [];
 
 		this.buildForm(formData);
-		this.firebasePost.postNewTrip(this._tripInfo, () => {
-			const friendIDs = this.buildFriendIDsAttending(),
-				name = this._currentUser.firstName,
-				tripName = this._tripInfo.name;
+		const postNewTripPromise = this.firebasePost.postNewTrip(this._tripInfo);
 
-			friendIDs.forEach((friendID) => {
-				this.getNotifications(friendID, (notifications) => {
-					if (!notifications) {
-						notifications = [];
-					}
-					notifications.push(name + " added you to " + tripName);
+		postNewTripPromise
+			.then((successRes) => {
+				const friendIDs = this.buildFriendIDsAttending(),
+					name = this._currentUser.firstName,
+					tripName = this._tripInfo.name;
 
-					friendsAndNotifications.push({
-						id: friendID,
-						notifications: notifications
+				friendIDs.forEach((friendID) => {
+					this.getNotifications(friendID, (notifications) => {
+						if (!notifications) {
+							notifications = [];
+						}
+						notifications.push(name + " added you to " + tripName);
+
+						friendsAndNotifications.push({
+							id: friendID,
+							notifications: notifications
+						});
 					});
 				});
-			});
 
-			friendsAndNotifications.forEach((friendAndNote) => {
-				this.firebasePost.postNewNotification(friendAndNote.id, friendAndNote.notifications);
-			});
-			this.clearTrip();
+				friendsAndNotifications.forEach((friendAndNote) => {
+					const postNotificationsPromise = this.firebasePost.postNewNotification(friendAndNote.id, friendAndNote.notifications);
 
-			// Doing this means that the constructor for myTrips is not invoked again
-			this.navCtrl.parent.select(0);
-			this.showCreateDeleteTripToast('Trip created successfully!');
-			this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
+					postNotificationsPromise
+						.then((successRes) => {
+							// Returns 'null'
+						}).catch((errorRes) => {
+							this.showErrorAlert(errorRes);
+					});
+				});
+				this.clearTrip();
+
+				// Doing this means that the constructor for myTrips is not invoked again
+				this.navCtrl.parent.select(0);
+				this.showCreateDeleteTripToast('Trip created successfully!');
+				this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
+			}).catch((errorRes) => {
+				this.showErrorAlert(errorRes);
 		});
 	}
 
-	buildForm(formData): void {
+	private showErrorAlert(errMessage): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
+	}
+
+	private buildForm(formData): void {
 		this._tripInfo = {
 			name: formData.name,
 			location: formData.loc,
@@ -212,7 +230,7 @@ export class NewTrip {
 		};
 	}
 
-	showCreateDeleteTripToast(message): void {
+	private showCreateDeleteTripToast(message): void {
 		this.toastCtrl.create({
 			message: message,
 			duration: 3000,
@@ -220,7 +238,7 @@ export class NewTrip {
 		}).present();
 	}
 
-	addItem(): void {
+	public addItem(): void {
 		if (this._itemTitle != "") {
 			this._itemList.push({
 				name: this._itemTitle,
@@ -232,12 +250,12 @@ export class NewTrip {
 		}
 	}
 
-	deleteItem(item): void {
+	public deleteItem(item): void {
 		let index = this._itemList.indexOf(item);
 		this._itemList.splice(index, 1);
 	}
 
-	clearTrip(): void {
+	public clearTrip(): void {
 		this._newTripForm.setValue({
 			name: '',
 			loc: '',
@@ -254,7 +272,7 @@ export class NewTrip {
 		this._itemList = [];
 	}
 
-	presentActionSheet(): void {
+	public presentActionSheet(): void {
 		let cameraOptions = {
 			quality: 90,
 			destinationType: Camera.DestinationType.DATA_URL,
@@ -274,8 +292,8 @@ export class NewTrip {
 					icon: !this.platform.is('ios') ? 'trash' : null,
 					role: 'destructive',
 					handler: () => {
-						this._tripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
-						console.log('Destructive clicked');
+						this._tripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/' +
+							'default_image%2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
 					}
 				}, {
 					text: 'Take Photo',
@@ -283,14 +301,15 @@ export class NewTrip {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							console.log("image here")
-							this.firebasePost.postNewTripImage(image, this._tripPhotoID, (imageURL) => {
-								console.log(imageURL);
-								this._tripPhoto = imageURL
-							})
-						});
-						console.log('Take Photo clicked');
+							const postTripImagePromise = this.firebasePost.postNewTripImage(image, this._tripPhotoID);
 
+							postTripImagePromise
+								.then((imageURL) => {
+									this._tripPhoto = imageURL;
+								}).catch((errorRes) => {
+									this.showErrorAlert(errorRes);
+							});
+						});
 						Camera.cleanup();
 					}
 				}, {
@@ -299,28 +318,28 @@ export class NewTrip {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							console.log("image here")
-							this.firebasePost.postNewTripImage(image, this._tripPhotoID, (imageURL) => {
-								console.log(imageURL);
-								this._tripPhoto = imageURL
-							})
+							const postTripImagePromise = this.firebasePost.postNewTripImage(image, this._tripPhotoID);
+
+							postTripImagePromise
+								.then((imageURL) => {
+									this._tripPhoto = imageURL;
+								}).catch((errorRes) => {
+								this.showErrorAlert(errorRes);
+							});
 						});
-						console.log('Library clicked');
 						Camera.cleanup();
 					}
 				}, {
 					text: 'Choose From Presets',
 					icon: !this.platform.is('ios') ? 'folder-open' : null,
 					handler: () => {
-						this.presentPresetsModal()
-						console.log('Presets clicked');
+						this.presentPresetsModal();
 					}
 				}, {
 					text: 'Cancel',
 					icon: !this.platform.is('ios') ? 'close' : null,
 					role: 'cancel',
 					handler: () => {
-						console.log('Cancel clicked');
 						Camera.cleanup();
 					}
 				}

@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 
-import { NavController, NavParams, ToastController, ModalController } from 'ionic-angular';
+import { NavController, NavParams, ToastController, ModalController, AlertController } from 'ionic-angular';
 import { TabsPage } from '../tabs/tabs';
 import { Register } from '../register/register';
 import { ForgotPasswordModal } from "./modals/modals";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { LocationHandler } from "../../services/locationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service"
-import { FirebasePUT } from "../../services/firebase/put.service";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
@@ -19,14 +18,15 @@ export class Login {
 	private _isError: boolean;
 	private _error: string;
 
-	constructor(public navCtrl: NavController,
-	            public authenticationHandler: AuthenticationHandler,
-	            public locationHandler: LocationHandler,
-				public firebaseGet: FirebaseGET,
-				public navParams: NavParams,
-				public toastCtrl: ToastController,
-				public modalCtrl: ModalController,
-				public formBuilder: FormBuilder) {
+	constructor(private navCtrl: NavController,
+	            private authenticationHandler: AuthenticationHandler,
+	            private locationHandler: LocationHandler,
+				private firebaseGet: FirebaseGET,
+				private navParams: NavParams,
+				private toastCtrl: ToastController,
+				private modalCtrl: ModalController,
+				private alertCtrl: AlertController,
+				private formBuilder: FormBuilder) {
 		this._isError = false;
 
 		let justRegistered = this.navParams.get('justRegistered');
@@ -47,7 +47,7 @@ export class Login {
 		});
 	}
 
-	showRegistrationToast(): void {
+	private showRegistrationToast(): void {
 		this.toastCtrl.create({
 			message: 'Registration successful',
 			duration: 3000,
@@ -55,14 +55,24 @@ export class Login {
 		}).present();
 	}
 
-	onFormSubmit(formData): void {
+	private showErrorAlert(errMessage): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
+	}
+
+	public onFormSubmit(formData): void {
 		const loginPromise = this.authenticationHandler.loginFirebase(formData.username, formData.password);
 
 		loginPromise.then((successResponse) => {
 			this.authenticationHandler.setCurrentUser();
 			this.navCtrl.setRoot(TabsPage);
 			setTimeout(() => {
-				this.locationHandler.checkUserLocation();
+				this.locationHandler.checkUserLocation((error) => {
+					this.showErrorAlert(error);
+				});
 			}, 2000);
 		}).catch((errorResponse) => {
 			this._isError = true;
@@ -70,7 +80,7 @@ export class Login {
 		});
 	}
 
-	goToRegister(): void {
+	public goToRegister(): void {
 		this.navCtrl.push(Register, {
 			callback: (_params) => {
 				return new Promise((resolve, reject) => {
@@ -83,7 +93,7 @@ export class Login {
 		});
 	}
 
-	forgottenPassword(): void {
+	public forgottenPassword(): void {
 		let forgottenPassModal = this.modalCtrl.create(ForgotPasswordModal);
 
 		forgottenPassModal.onDidDismiss((email) => {

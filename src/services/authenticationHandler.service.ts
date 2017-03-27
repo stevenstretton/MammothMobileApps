@@ -4,53 +4,55 @@ import { AngularFire, FirebaseAuthState, AuthMethods, AuthProviders, FirebaseApp
 import { FirebaseGET } from "./firebase/get.service";
 import { FirebasePOST } from "./firebase/post.service"
 
-
 @Injectable()
 export class AuthenticationHandler {
-	private _authState: any;
 	private _currentUser: any;
-
 	private _fb: any;
 
-	constructor(public firebaseGet: FirebaseGET,
-	            public firebasePost: FirebasePOST,
-				public af: AngularFire,
-				@Inject(FirebaseApp) firebaseApp: any) {
+	constructor(private firebaseGet: FirebaseGET,
+	            private firebasePost: FirebasePOST,
+	            private af: AngularFire,
+	            @Inject(FirebaseApp) firebaseApp: any) {
 
 		this._fb = firebaseApp;
 	}
 
-	loginFirebase(email, password): any {
+	public loginFirebase(email, password): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.af.auth.login({
 				email: email,
 				password: password
-			}).then((successResponse) => {
-				resolve(successResponse);
-			}).catch((errorResponse) => {
-				reject(errorResponse);
+			}).then((successRes) => {
+				resolve(successRes);
+			}).catch((errorRes) => {
+				reject(errorRes);
 			});
 		});
 	}
 
-	logoutFirebase(): void {
-//		this.af.auth.logout();
-		this._fb.auth().signOut().then(() => {
-			console.log("Signout successful!");
-		}, (err) => {
-			console.log(err);
+	public logoutFirebase(): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this._fb.auth().signOut()
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	changeUserPassword(newPassword): void {
-		this._fb.auth().currentUser.updatePassword(newPassword).then(() => {
-			console.log("Password changed")
-		}, (err) => {
-			console.log(err);
+	public changeUserPassword(newPassword: string): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this._fb.auth().currentUser.updatePassword(newPassword)
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	createFirebaseUser(emailPassCombo): any {
+	public createFirebaseUser(emailPassCombo): Promise<any> {
 		return new Promise((resolve, reject) => {
 			this.af.auth.createUser({
 				email: emailPassCombo.email,
@@ -63,32 +65,37 @@ export class AuthenticationHandler {
 		});
 	}
 
-	deleteFirebaseUser(callback): void {
-		let user = this._fb.auth().currentUser;
-
-		user.delete().then(() => {
-			console.log("Success");
-			callback();
-		}, (error) => {
-			console.log(error);
+	public deleteFirebaseUser(): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this._fb.auth().currentUser.delete()
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	addNewUserToDatabase(credentials: Object): void {
-		console.log(typeof credentials);
-
+	public addNewUserToDatabase(credentials: Object, callback: any): void {
 		this._fb.auth().onAuthStateChanged((user) => {
 			if (user) {
-				this.firebasePost.postNewUser(user.uid, credentials);
+				const postNewUserPromise = this.firebasePost.postNewUser(user.uid, credentials);
+
+				postNewUserPromise
+					.then((successRes) => {
+						callback(successRes);
+					}).catch((errorRes) => {
+						callback(errorRes)
+				});
 			}
 		});
 	}
 
-	getCurrentUser(): any {
+	public getCurrentUser(): any {
 		return this._currentUser;
 	}
 
-	setCurrentUser(): void {
+	public setCurrentUser(): void {
 		this.af.auth.subscribe((user) => {
 			if (user) {
 				this.firebaseGet.getUserWithID(user.uid, (currentUser) => {
@@ -100,32 +107,25 @@ export class AuthenticationHandler {
 		});
 	}
 
-	// This may need to change
-	// Visit: https://github.com/angular/angularfire2/blob/master/docs/5-user-authentication.md for more information
-	loginFacebook(): void {
-		this.af.auth.login({
-			provider: AuthProviders.Facebook,
-			method: AuthMethods.Popup
-		})
-	}
-
-	logoutFacebook(): void {
-		this.af.auth.logout();
-	}
-
-	sendPasswordReset(email: string): void {
-		this._fb.auth().sendPasswordResetEmail(email).then(() => {
-			console.log("Email sent");
-		}, (error) => {
-			console.log(error);
+	public sendPasswordReset(email: string): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this._fb.auth().sendPasswordResetEmail(email)
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	sendEmailVerification(): void {
-		this._fb.auth().currentUser.sendEmailVerification().then(() => {
-			console.log("Email sent");
-		}, (error) => {
-			console.log(error);
+	public sendEmailVerification(): Promise<any> {
+		return new Promise((resolve, reject) => {
+			this._fb.auth().currentUser.sendEmailVerification()
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 }

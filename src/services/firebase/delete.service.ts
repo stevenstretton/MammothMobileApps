@@ -10,61 +10,96 @@ export class FirebaseDELETE {
 		this._fb = firebaseApp;
 	}
 
-	deleteTrip(tripID: string): void {
-		const tripObjectObservable = this.af.database.object('trips/' + tripID).remove();
+	public deleteTrip(tripID: string): Promise<any> {
+		const tripObjectObservable = this.af.database.object('trips/' + tripID);
 
-		tripObjectObservable
-			.then(_ => console.log("Success!"))
-			.catch(err => console.log(err));
+		return new Promise((resolve, reject) => {
+			tripObjectObservable.remove()
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
 	}
 
-	deleteTripMember(memberID: string, tripID: string, tripMembers): void {
-		const tripObjectObservable = this.af.database.object('trips/' + tripID);
+	public deleteTripMember(memberID: string, tripID: string, tripMembers): Promise<any> {
+		const tripObjectObservable = this.af.database.object('trips/' + tripID + "friends/");
 
 		let tripMemberIDs = [];
 		tripMembers.forEach((member) => {
-			tripMemberIDs.push(member.key);
+			if (member.key !== memberID) {
+				tripMemberIDs.push(member.key);
+			}
 		});
 
-		tripMemberIDs.splice(tripMemberIDs.indexOf(memberID), 1);
-
-		tripObjectObservable.update({
-			friends: tripMemberIDs
-		});
-	}
-
-	deleteTripItem(itemID: string, tripID: string, tripItems): void {
-		const tripObjectObservable = this.af.database.object('trips/' + tripID);
-
-		let tripItemIDs = [];
-		tripItems.forEach((item) => {
-			tripItemIDs.push(item.key);
-		});
-
-		tripItemIDs.splice(tripItemIDs.indexOf(itemID), 1);
-
-		tripObjectObservable.update({
-			items: tripItemIDs
+		return new Promise((resolve, reject) => {
+			tripObjectObservable
+				.update(tripMemberIDs)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	deleteUserFromDB(userID: string): void {
-		const userObjectObservable = this.af.database.object('users/' + userID).remove();
+	public deleteTripItem(item: any, tripID: string, tripItems: Array<any>): Promise<any> {
+		let notMatchedYet = false,
+			newTripItems = [];
 
-		userObjectObservable
-			.then(_ => console.log("Success!"))
-			.catch(err => console.log(err));
+		const tripObjectObservable = this.af.database.object('trips/' + tripID + "/items");
+
+		tripItems.forEach((tripItem) => {
+			if ((tripItem.name !== item.name) && (tripItem.description !== item.description)) {
+				newTripItems.push(tripItem);
+			} else {
+				if (!notMatchedYet) {
+					newTripItems.push(tripItem);
+				}
+				// This is needed as will delete multiple items if have same name and description otherwise
+				// as items do not have IDs
+				notMatchedYet = true;
+			}
+		});
+
+		return new Promise((resolve, reject) => {
+			tripObjectObservable
+				.set(newTripItems)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
 	}
 
-	deleteUserFromAllTrips(userID: string, tripsUserIsOn): void {
-		let tripObjectObservable;
+	public deleteUserFromDB(userID: string): Promise<any> {
+		const userObjectObservable = this.af.database.object('users/' + userID);
 
+		return new Promise((resolve, reject) => {
+			userObjectObservable.remove()
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
+	}
+
+	public deleteUserFromAllTrips(userID: string, tripsUserIsOn: any, callback: any): void {
 		tripsUserIsOn.forEach((trip) => {
-			tripObjectObservable = this.af.database.object('trips/' + trip.key);
+			const tripObjectObservable = this.af.database.object('trips/' + trip.key);
+
 			if (trip.leadOrganiser === userID) {
-				tripObjectObservable.remove().then(() => {
-					console.log("Success");
-				});
+
+				// This cannot return a promise here as it would return to the loop
+				tripObjectObservable.remove()
+					.then((successRes) => {
+						callback(successRes);
+					}).catch((errorRes) => {
+						callback(errorRes);
+					});
 			} else {
 				trip.friends.splice(trip.friends.indexOf(userID), 1);
 
@@ -75,27 +110,31 @@ export class FirebaseDELETE {
 		});
 	}
 
-	deleteTripPhotoFromStorage(photoID: string): void {
+	public deleteTripPhotoFromStorage(photoID: string): Promise<any> {
 		const storageRef = this._fb.storage().ref('/trip_images/');
 
 		// Delete the file
-		storageRef.child(photoID).child("trip_image.jpeg").delete().then(() => {
-			// File deleted successfully
-		}).catch((error) => {
-			// Uh-oh, an error occurred!
-			console.log("photo in storage does not exist");
+		return new Promise((resolve, reject) => {
+			storageRef.child(photoID).child("trip_image.jpeg").delete()
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	deleteUserPhotoFromStorage(userID: string): void {
+	public deleteUserPhotoFromStorage(userID: string): Promise<any> {
 		const storageRef = this._fb.storage().ref('/user_images/');
 
 		// Delete the file
-		storageRef.child(userID).child("profile_image.jpeg").delete().then(() => {
-			// File deleted successfully
-		}).catch((error) => {
-			// Uh-oh, an error occurred!
-			console.log("photo in storage does not exist");
+		return new Promise((resolve, reject) => {
+			storageRef.child(userID).child("profile_image.jpeg").delete()
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 }

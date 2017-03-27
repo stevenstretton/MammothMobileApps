@@ -65,7 +65,6 @@ export class ChangePasswordModal {
 	            public params: NavParams,
 	            public formBuilder: FormBuilder) {
 		this._changePasswordForm = this.formBuilder.group({
-			oldPassword: ['', Validators.required],
 			newPassword: ['', Validators.required],
 			confirmPassword: ['', Validators.required]
 		});

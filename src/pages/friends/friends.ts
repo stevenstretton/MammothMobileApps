@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ModalController, ItemSliding } from 'ionic-angular';
+import { ModalController, ItemSliding, AlertController } from 'ionic-angular';
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { FirebasePOST } from "../../services/firebase/post.service";
@@ -14,23 +14,24 @@ export class Friends {
 	private _friends: Array<any>;
 	private _currentUser: any;
 
-	constructor(public firebaseGet: FirebaseGET,
-	            public firebasePost: FirebasePOST,
-	            public authenticationHandler: AuthenticationHandler,
-	            public modalCtrl: ModalController,
-	            public firebasePut: FirebasePUT) {
+	constructor(private firebaseGet: FirebaseGET,
+	            private firebasePost: FirebasePOST,
+	            private authenticationHandler: AuthenticationHandler,
+	            private modalCtrl: ModalController,
+	            private alertCtrl: AlertController,
+	            private firebasePut: FirebasePUT) {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friends = [];
 		this.addFriendsToList();
 	}
 
-	ionViewWillEnter(): void {
+	public ionViewWillEnter(): void {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.addFriendsToList();
 	}
 
-	addFriendsToList(): void {
+	private addFriendsToList(): void {
 		this._friends = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
@@ -45,24 +46,31 @@ export class Friends {
 		}
 	}
 
-	unfriend(friend: any, slidingItem: ItemSliding): void {
+	public unfriend(friend: any, slidingItem: ItemSliding): void {
 		let index = this._friends.indexOf(friend);
 
 		slidingItem.close();
 		this._friends.splice(index, 1);
-		this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+		const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+
+		putFriendsPromise
+			.then((sucessRes) => {
+				// Returns 'null'
+			}).catch((errorRes) => {
+				this.showErrorAlert(errorRes);
+		});
+
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.removeCurrentUserFromFriendsList(friend);
 	}
 
-	presentAddFriendModal(): void {
+	public presentAddFriendModal(): void {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		let modal = this.modalCtrl.create(AddFriendModal, {
 			currentUser: this._currentUser
 		});
 
 		modal.onDidDismiss((setOfFriends) => {
-			console.log(setOfFriends);
 			if (setOfFriends) {
 				setOfFriends.forEach((friend) => {
 					if (this._friends.map(f => f.key).indexOf(friend.key) <= -1) {
@@ -70,24 +78,46 @@ export class Friends {
 					}
 					this.setFriendNotification(friend);
 				});
-				this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+				const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+
+				putFriendsPromise
+					.then((successRes) => {
+						// Returns 'null'
+					}).catch((errorRes) => {
+						this.showErrorAlert(errorRes);
+				});
 			}
 			this._currentUser = this.authenticationHandler.getCurrentUser();
 		});
 		modal.present();
 	}
 
-	setFriendNotification(friend: any): void {
+	private setFriendNotification(friend: any): void {
 		let friendNotifications = friend.notifications;
 
 		if (!friendNotifications) {
 			friendNotifications = [];
 		}
 		friendNotifications.push(this._currentUser.firstName + " added you as a friend");
-		this.firebasePost.postNewNotification(friend.key, friendNotifications);
+		const postNotificationsPromise = this.firebasePost.postNewNotification(friend.key, friendNotifications);
+
+		postNotificationsPromise
+			.then((sucessRes) => {
+				// Returns 'null'
+			}).catch((errorRes) => {
+				this.showErrorAlert(errorRes);
+		});
 	}
 
-	removeCurrentUserFromFriendsList(friend: any): void {
+	private showErrorAlert(errMessage): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
+	}
+
+	private removeCurrentUserFromFriendsList(friend: any): void {
 		let currentFriendsKeys = [];
 
 		this.firebaseGet.getUserWithID(friend.key, (firebaseUser) => {
@@ -98,7 +128,14 @@ export class Friends {
 			let index = currentFriendsKeys.indexOf(this._currentUser.key);
 
 			currentFriendsKeys.splice(index, 1);
-			this.firebasePut.putUserFriends(friend.key, currentFriendsKeys);
+			const putFriendsPromise = this.firebasePut.putUserFriends(friend.key, currentFriendsKeys);
+
+			putFriendsPromise
+				.then((successRes) => {
+					// Returns 'null'
+				}).catch((errorRes) => {
+					this.showErrorAlert(errorRes);
+			});
 		}
 	}
 }

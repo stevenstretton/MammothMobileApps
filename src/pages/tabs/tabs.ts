@@ -13,11 +13,11 @@ import { Account } from '../account/account';
 export class TabsPage {
 	// this tells the tabs component which Pages
 	// should be each tab's root Page
-	tab1Root: any = MyTrips;
-	tab2Root: any = Notifications;
-	tab3Root: any = NewTrip;
-	tab4Root: any = Friends;
-	tab5Root: any = Account;
+	public tab1Root: any = MyTrips;
+	public tab2Root: any = Notifications;
+	public tab3Root: any = NewTrip;
+	public tab4Root: any = Friends;
+	public tab5Root: any = Account;
 
 	private _currentUser: any;
 	private _num = 0;
@@ -29,7 +29,7 @@ export class TabsPage {
 		this._num = this.getNotifications();
 	}
 
-	getNotifications(): number {
+	private getNotifications(): number {
 		if (this._currentUser.notifications) {
 			this.checkNewNotifications(this._currentUser.notifications);
 
@@ -38,7 +38,7 @@ export class TabsPage {
 		return 0;
 	}
 
-	checkNewNotifications(notes): void {
+	private checkNewNotifications(notes): void {
 		this._num = notes.length;
 
 		if (notes.length > this._num) {
@@ -46,7 +46,7 @@ export class TabsPage {
 		}
 	}
 
-	gotNewNotificationToast(message): void {
+	private gotNewNotificationToast(message): void {
 		this.toastCtrl.create({
 			message: message,
 			duration: 3000,

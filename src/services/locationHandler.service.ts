@@ -10,7 +10,7 @@ export class LocationHandler {
 	constructor(public firebasePut: FirebasePUT,
 				public authenticationHandler: AuthenticationHandler) {}
 
-	getGeolocation(callback): void {
+	private getGeolocation(callback): void {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition((position) => {
 				callback({
@@ -18,29 +18,37 @@ export class LocationHandler {
 					lng: position.coords.longitude
 				});
 			}, (error) => {
-				console.log(error);
+				callback(error);
 			});
 		} else {
-			console.log("Geolocation not supported");
+			callback("Geolocation not supported");
 		}
 	}
 
-	checkUserLocation() {
+	public checkUserLocation(callback) {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
 		if (this._currentUser.shareLocation) {
 			this.getGeolocation((location) => {
-				this.firebasePut.putUserLocation(this._currentUser.key, location);
+				if ((location.lat) && (location.lng)) {
+					this.firebasePut.putUserLocation(this._currentUser.key, location);
+				} else {
+					callback(location);
+				}
 			});
 		} else {
 			this.firebasePut.putUserLocation(this._currentUser.key, null);
 		}
 	}
 
-	logLocation(whetherToLog: boolean): void {
+	public logLocation(whetherToLog: boolean, callback): void {
 		if (whetherToLog) {
 			this.getGeolocation((location) => {
-				this.firebasePut.putUserLocation(this._currentUser.key, location);
+				if ((location.lat) && (location.lng)) {
+					this.firebasePut.putUserLocation(this._currentUser.key, location);
+				} else {
+					callback(location);
+				}
 			});
 		} else {
 			this.firebasePut.putUserLocation(this._currentUser.key, null);

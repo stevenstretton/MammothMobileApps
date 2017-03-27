@@ -25,17 +25,17 @@ export class Account {
 	private _userPhoto: string = '';
 
 	constructor(private app: App,
-	            public navCtrl: NavController,
-	            public actionSheetCtrl: ActionSheetController,
-	            public platform: Platform,
-	            public modalCtrl: ModalController,
-	            public authenticationHandler: AuthenticationHandler,
-	            public firebaseGet: FirebaseGET,
-	            public firebasePut: FirebasePUT,
-				public locationHandler: LocationHandler,
-                public firebaseDelete: FirebaseDELETE,
-	            public toastCtrl: ToastController,
-				public alertCtrl: AlertController) {
+	            private navCtrl: NavController,
+	            private actionSheetCtrl: ActionSheetController,
+	            private platform: Platform,
+	            private modalCtrl: ModalController,
+	            private authenticationHandler: AuthenticationHandler,
+	            private firebaseGet: FirebaseGET,
+	            private firebasePut: FirebasePUT,
+				private locationHandler: LocationHandler,
+                private firebaseDelete: FirebaseDELETE,
+	            private toastCtrl: ToastController,
+				private alertCtrl: AlertController) {
 		this._usersToSeeLocation = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
@@ -44,7 +44,7 @@ export class Account {
 		this.setCurrentUserTrips();
 	}
 
-	setCurrentUserTrips(): void {
+	public setCurrentUserTrips(): void {
 		let allTrips = this.firebaseGet.getAllTrips();
 		this._currentUserTrips = [];
 		allTrips.forEach((trip) => {
@@ -54,38 +54,41 @@ export class Account {
 		});
 	}
 
-	ionViewWillEnter(): void {
+	public ionViewWillEnter(): void {
 		this.setCurrentUserTrips();
 	}
 
-	logout(): void {
-		this.authenticationHandler.logoutFirebase();
+	public logout(): void {
+		const logoutPromise = this.authenticationHandler.logoutFirebase();
 
-		this.app.getRootNav().setRoot(Login);
+		logoutPromise
+			.then((successRes) => {
+				this.app.getRootNav().setRoot(Login);
+			}).catch((errorRes) => {
+				this.showErrorAlert(errorRes);
+		});
 	}
 
-	showChangePasswordModal(slidingItem: ItemSliding): void {
+	public showChangePasswordModal(slidingItem: ItemSliding): void {
 		let modal = this.modalCtrl.create(ChangePasswordModal);
 
 		modal.onDidDismiss((passwordData) => {
 			if (passwordData) {
-				this.authenticationHandler.changeUserPassword(passwordData.newPassword);
-				this.showChangePasswordToast();
+				const changePassPromise = this.authenticationHandler.changeUserPassword(passwordData.newPassword);
+
+				changePassPromise
+					.then((successRes) => {
+						this.showChangePasswordToast();
+					}).catch((errorRes) => {
+						this.showErrorAlert(errorRes);
+				});
 			}
 			slidingItem.close();
 		});
 		modal.present();
 	}
 
-	showChangePasswordToast(): void {
-		this.toastCtrl.create({
-			message: 'Password changed successfully!',
-			duration: 3000,
-			position: 'top'
-		}).present();
-	}
-
-	showLocationModal(trip): void {
+	public showLocationModal(trip): void {
 		let tripID = trip.key,
 			tripName = trip.name,
 			currentUsersToSeeLocationOfChosenTrip = [],
@@ -149,17 +152,21 @@ export class Account {
 		modal.present();
 	}
 
-	changeSharingLocation(): void {
+	public changeSharingLocation(): void {
 		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
 
 		if (this._currentUser.shareLocation) {
-			this.locationHandler.logLocation(true);
+			this.locationHandler.logLocation(true, (error) => {
+				this.showErrorAlert(error);
+			});
 		} else {
-			this.locationHandler.logLocation(false);
+			this.locationHandler.logLocation(false, (error) => {
+				// Unused callback
+			});
 		}
 	}
 
-	showChangeProfilePhotoToast(): void {
+	private showChangeProfilePhotoToast(): void {
 		this.toastCtrl.create({
 			message: 'Profile Picture changed successfully!',
 			duration: 2000,
@@ -167,7 +174,7 @@ export class Account {
 		}).present();
 	}
 
-	showChangeProfilePhotoRemovedToast(): void {
+	private showChangeProfilePhotoRemovedToast(): void {
 		this.toastCtrl.create({
 			message: 'Profile Picture Removed',
 			duration: 2000,
@@ -175,7 +182,23 @@ export class Account {
 		}).present();
 	}
 
-	presentActionSheet(): void {
+	private showErrorAlert(errMessage: string): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
+	}
+
+	private showChangePasswordToast(): void {
+		this.toastCtrl.create({
+			message: 'Password changed successfully!',
+			duration: 3000,
+			position: 'top'
+		}).present();
+	}
+
+	public presentActionSheet(): void {
 		let cameraOptions = {
 			quality: 50,
 			destinationType: Camera.DestinationType.DATA_URL,
@@ -240,7 +263,7 @@ export class Account {
 		actionSheet.present();
 	}
 
-	deleteAccount(): void {
+	public deleteAccount(): void {
 		this.alertCtrl.create({
 			title: 'Delete Account',
 			message: 'Are you sure you want to delete your account?',
@@ -248,11 +271,27 @@ export class Account {
 				{
 					text: 'Yes',
 					handler: () => {
-						this.firebaseDelete.deleteUserFromDB(this._currentUser.key);
-						this.firebaseDelete.deleteUserPhotoFromStorage(this._currentUser.key);
-						this.firebaseDelete.deleteUserFromAllTrips(this._currentUser.key, this._currentUserTrips);
-						this.authenticationHandler.deleteFirebaseUser(() => {
-							this.navCtrl.setRoot(Login);
+						const deleteDbUserPromise = this.firebaseDelete.deleteUserFromDB(this._currentUser.key),
+							deleteUserPhotoPromise = this.firebaseDelete.deleteUserPhotoFromStorage(this._currentUser.key),
+							deleteFbUser = this.authenticationHandler.deleteFirebaseUser();
+
+						deleteDbUserPromise
+							.then((successRes) => {
+								deleteUserPhotoPromise
+									.then((successRes) => {
+										this.firebaseDelete.deleteUserFromAllTrips(this._currentUser.key, this._currentUserTrips, (response) => {
+											deleteFbUser
+												.then((successRes) => {
+													this.navCtrl.setRoot(Login);
+												}).catch((errorRes) => {
+													this.showErrorAlert(errorRes);
+											});
+										});
+									}).catch((errorRes) => {
+										this.showErrorAlert(errorRes);
+								});
+							}).catch((errorRes) => {
+								this.showErrorAlert(errorRes);
 						});
 					}
 				}, {

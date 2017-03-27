@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ItemSliding } from 'ionic-angular';
+import { NavController, ItemSliding, AlertController } from 'ionic-angular';
 import { TextToSpeech } from 'ionic-native';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
@@ -9,64 +9,70 @@ import { AuthenticationHandler } from "../../services/authenticationHandler.serv
 	templateUrl: 'notifications.html'
 })
 export class Notifications {
-	private _notifications: Array<any>;
 	private _currentUser: any;
 	private _num: any;
 
-	constructor(public navCtrl: NavController,
-		public authenticationHandler: AuthenticationHandler,
-		private firebasePut: FirebasePUT,
-	) {
+	constructor(private navCtrl: NavController,
+	            private alertCtrl: AlertController,
+	            private authenticationHandler: AuthenticationHandler,
+	            private firebasePut: FirebasePUT,) {
 
-
-		this._notifications = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._num = 1;
 	}
 
-	ionViewWillEnter() {
+	public ionViewWillEnter() {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.getNotifications();
 	}
 
-   refreshNotifications(refresher): void {
-		this.getNotifications();
-
+	public refreshNotifications(refresher): void {
 		// Timeout otherwise refresher is too short
 		setTimeout(() => {
 			refresher.complete();
 		}, 2000);
 	}
 
-	getNotifications() {
-		this._currentUser = this.authenticationHandler.getCurrentUser();
-		if (this._currentUser.notifications) {
-			this._notifications = [];
-
-			this._notifications = this._currentUser.notifications;
-		}
+	private showErrorAlert(errMessage): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
 	}
 
 	//for testing
-	addNotification(): void {
+	public addNotification(): void {
 		this._currentUser.notifications.push("test Note" + this._num);
 		this.firebasePut.putNewNotification(this._currentUser.key, this._currentUser.notifications);
 		this._num++;
 	}
 
-	dismissNotification(index, slidingItem: ItemSliding): void {
+	public dismissNotification(index, slidingItem: ItemSliding): void {
 		slidingItem.close();
 
 		this._currentUser.notifications.splice(index, 1);
-		this.firebasePut.putNewNotification(this._currentUser.key, this._currentUser.notifications);
+		const putNotificationsPromise = this.firebasePut.putNewNotification(this._currentUser.key, this._currentUser.notifications);
+
+		putNotificationsPromise
+			.then((successRes) => {
+				// Returns 'null'
+			}).catch((errorRes) => {
+			this.showErrorAlert(errorRes);
+		});
 	}
 
-	dismissNotifications(): void {
-		this.firebasePut.putNewNotification(this._currentUser.key, []);
-		this._currentUser.notifications = [];
+	public dismissNotifications(): void {
+		const putNotificationsPromise = this.firebasePut.putNewNotification(this._currentUser.key, []);
+
+		putNotificationsPromise
+			.then((successRes) => {
+				this._currentUser.notifications = [];
+			}).catch((errorRes) => {
+			this.showErrorAlert(errorRes);
+		});
 	}
 
-	speakNotifications(): void {
+	public speakNotifications(): void {
 		let notes: string = "";
 
 		this._currentUser.notifications.forEach((note) => {
@@ -79,19 +85,29 @@ export class Notifications {
 			notes += "End of notifications"
 		}
 
-		TextToSpeech.speak({
-			text: notes,
-			locale: 'en-GB',
-			rate: 1.4
-		})
-			.then(() => console.log('Success'))
-			.catch((reason: any) => console.log(reason));
+		TextToSpeech
+			.speak({
+				text: notes,
+				locale: 'en-GB',
+				rate: 1.4
+			})
+			.then(() => {
+				// Leave
+			})
+			.catch((errorRes) => {
+				this.showErrorAlert(errorRes);
+			});
 	}
 
-	stopSpeak(): void {
-		TextToSpeech.speak("")
-			.then(() => console.log('Stopped'))
-			.catch((reason: any) => console.log(reason));
+	public stopSpeak(): void {
+		TextToSpeech
+			.speak("")
+			.then(() => {
+				// Leave
+			})
+			.catch((errorRes) => {
+				this.showErrorAlert(errorRes);
+			});
 	}
 }
 

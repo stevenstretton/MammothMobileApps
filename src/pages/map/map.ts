@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { NavParams, ModalController, AlertController } from 'ionic-angular';
 import { MapModal } from "./modals/modals";
 
 declare let google;
@@ -9,7 +9,7 @@ declare let google;
 	templateUrl: 'map.html'
 })
 export class Map {
-	@ViewChild('') mapElement: ElementRef;
+	@ViewChild('map') mapElement: ElementRef;
 
 	private _map: any;
 	private _currentUser: any;
@@ -18,14 +18,15 @@ export class Map {
 	private _directionDisplay: any;
 	private _directionsService: any;
 
-	constructor(public navParams: NavParams,
-	            public modalCtrl: ModalController) {
+	constructor(private navParams: NavParams,
+	            private modalCtrl: ModalController,
+				private alertCtrl: AlertController) {
 
 		this._currentUser = navParams.get('currentUser');
 		this._tripMembers = navParams.get('tripMembers');
 	}
 
-	presentModal(): void {
+	public presentModal(): void {
 		let modal = this.modalCtrl.create(MapModal, {
 			tripMembers: this._tripMembers
 		});
@@ -38,11 +39,11 @@ export class Map {
 		});
 	}
 
-	ionViewDidLoad(): void {
+	public ionViewDidLoad(): void {
 		this.loadMap();
 	}
 
-	loadMap(): void {
+	private loadMap(): void {
 		const mapOptions = {
 			center: new google.maps.LatLng(53.376853, -1.467352),
 			zoom: 15,
@@ -90,7 +91,7 @@ export class Map {
 		this._directionsService = new google.maps.DirectionsService();
 	};
 
-	createRoute(memberId): void {
+	private createRoute(memberId): void {
 		const src = new google.maps.LatLng(this._currentUser.location);
 
 		//Loop and Draw Path Route between the Points on MAP
@@ -105,17 +106,20 @@ export class Map {
 
 				this._directionsService.route(route, (result, status) => {
 					if (status === google.maps.DirectionsStatus.OK) {
-
 						this._directionDisplay.setDirections(result);
 					} else {
-						alert("couldn't get directions:" + status);
+						this.alertCtrl.create({
+							title: 'Error',
+							message: "Couldn't get directions",
+							buttons: ['Dismiss']
+						}).present();
 					}
 				});
 			}
 		}
 	}
 
-	addMarker(user): void {
+	private addMarker(user): void {
 		//*********** STYLE MARKER ****************//
 
 		const icon = {
@@ -142,7 +146,7 @@ export class Map {
 		this.addInfoWindow(marker, content);
 	}
 
-	addInfoWindow(marker, content): void {
+	private addInfoWindow(marker, content): void {
 		const infoWindow = new google.maps.InfoWindow({
 			content: content
 		});
