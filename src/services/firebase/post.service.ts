@@ -65,8 +65,8 @@ export class FirebasePOST {
 		});
 	}
 
-    postNewNotification(user, notifications): void {
-		const userObjectObservable = this.af.database.object("users/" + user + "/notifications");
+    postNewNotification(userID, notifications): void {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/notifications");
 
 		userObjectObservable.set(notifications);
 	}

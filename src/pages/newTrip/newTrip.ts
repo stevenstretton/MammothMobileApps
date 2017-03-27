@@ -141,7 +141,6 @@ export class NewTrip {
 
 		if (this._friendsAdded.length > 0) {
 			this._friendsAdded.forEach((friend) => {
-				console.log(friend);
 				if (friend.isAdded) {
 					friendsAttending.push(friend.user.key);
 				}
@@ -152,13 +151,15 @@ export class NewTrip {
 
 	getNotifications(friendID, callback): void {
 		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
+			console.log("callback");
 			callback(firebaseUser.notifications);
 		});
 	}
 
 	pushTrip(formData): void {
-		this.buildForm(formData);
+		let friendsAndNotifications = [];
 
+		this.buildForm(formData);
 		this.firebasePost.postNewTrip(this._tripInfo, () => {
 			const friendIDs = this.buildFriendIDsAttending(),
 				name = this._currentUser.firstName,
@@ -170,8 +171,16 @@ export class NewTrip {
 						notifications = [];
 					}
 					notifications.push(name + " added you to " + tripName);
-					this.firebasePost.postNewNotification(friendID, notifications);
+
+					friendsAndNotifications.push({
+						id: friendID,
+						notifications: notifications
+					});
 				});
+			});
+
+			friendsAndNotifications.forEach((friendAndNote) => {
+				this.firebasePost.postNewNotification(friendAndNote.id, friendAndNote.notifications);
 			});
 			this.clearTrip();
 
