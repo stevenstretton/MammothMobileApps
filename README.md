@@ -46,7 +46,7 @@ When pulled, run the following:
 ## Fixes
 We have encountered an error with the latest webpack version that comes with ionic. The issue has been raised with the ionic team but in the mean time, there is a (far from ideal) fix:
  
-In `node_modules/webpack-sources/node_modules/source-map/lib/source-node.js`, please change the following lines:
+In `node_modules/webpack-sources/node_modules/source-/lib/source-node.js`, please change the following lines:
 
 - **94 & 114:** `var nextLine = remainingLines[0];` to `var nextLine = remainingLines[0] || '';` 
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Camera, TextToSpeech } from 'ionic-native';
 import { NavController, NavParams, ActionSheetController, AlertController, Platform, ModalController, ToastController } from 'ionic-angular';
-import { Map } from '../map/map';
+import { Map } from '..//';
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebaseDELETE } from "../../services/firebase/delete.service";
 import { FirebasePUT } from "../../services/firebase/put.service";

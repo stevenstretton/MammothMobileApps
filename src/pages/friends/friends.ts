@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController, ItemSliding } from 'ionic-angular';
+import { ModalController, ItemSliding } from 'ionic-angular';
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { FirebasePOST } from "../../services/firebase/post.service";
@@ -45,7 +45,7 @@ export class Friends {
 		}
 	}
 
-	unfriend(friend, slidingItem: ItemSliding): void {
+	unfriend(friend: any, slidingItem: ItemSliding): void {
 		let index = this._friends.indexOf(friend);
 
 		slidingItem.close();
@@ -62,16 +62,13 @@ export class Friends {
 		});
 
 		modal.onDidDismiss((setOfFriends) => {
+			console.log(setOfFriends);
 			if (setOfFriends) {
 				setOfFriends.forEach((friend) => {
-					this.firebaseGet.getUserWithID(friend.key, (firebaseUser) => {
-						if (this._friends.indexOf(firebaseUser) < 0) {
-							this._friends.push(firebaseUser);
-						}
-						this.setFriendNotification(firebaseUser);
-						this.addCurrentUserToFriendsList(firebaseUser);
-					});
-
+					if (this._friends.map(f => f.key).indexOf(friend.key) <= -1) {
+						this._friends.push(friend);
+					}
+					this.setFriendNotification(friend);
 				});
 				this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
 			}
@@ -80,7 +77,7 @@ export class Friends {
 		modal.present();
 	}
 
-	setFriendNotification(friend): void {
+	setFriendNotification(friend: any): void {
 		let friendNotifications = friend.notifications;
 
 		if (!friendNotifications) {
@@ -90,7 +87,7 @@ export class Friends {
 		this.firebasePost.postNewNotification(friend.key, friendNotifications);
 	}
 
-	removeCurrentUserFromFriendsList(friend): void {
+	removeCurrentUserFromFriendsList(friend: any): void {
 		let currentFriendsKeys = [];
 
 		this.firebaseGet.getUserWithID(friend.key, (firebaseUser) => {
@@ -101,26 +98,9 @@ export class Friends {
 			let index = currentFriendsKeys.indexOf(this._currentUser.key);
 
 			currentFriendsKeys.splice(index, 1);
-			this.firebasePut.putUserFriendsKeys(friend.key, currentFriendsKeys);
+			this.firebasePut.putUserFriends(friend.key, currentFriendsKeys);
 		}
 	}
-
-	addCurrentUserToFriendsList(friend): void {
-		let putFriendKeys = (friendKeys) => {
-			friend.friends.push(this._currentUser.key);
-			this.firebasePut.putUserFriendsKeys(friend.key, friendKeys);
-		};
-
-		if (!friend.friends) {
-			putFriendKeys([]);
-		} else {
-			if (friend.friends.indexOf(this._currentUser.key) <= -1) {
-				putFriendKeys(friend.friends);
-
-			}
-		}
-	}
-
 }
 
 

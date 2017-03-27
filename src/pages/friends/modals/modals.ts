@@ -21,36 +21,28 @@ export class AddFriendModal {
 		this._usersThatNotFriends = [];
 
 		this._currentUser = this.params.get('currentUser');
-
-		console.log(this._currentUser);
-
-		let allUsers = this.firebaseGet.getAllUsers();
-		
+		const allUsers = this.firebaseGet.getAllUsers();
 
 		allUsers.forEach((user) => {
-			if (this._currentUser.friends != null) {
+			if (this._currentUser.friends) {
 				if ((this._currentUser.friends.indexOf(user.key) <= -1) && (user.key !== this._currentUser.key)) {
 					user.checked = false;
 					this._usersThatNotFriends.push(user);
 				}
-			}
-			else
-			{
+			} else {
 				if (user.key !== this._currentUser.key) {
 					user.checked = false;
 					this._usersThatNotFriends.push(user);
 				}
 			}
-
 		});
 	}
 
-
-	dismiss() {
+	dismiss(): void {
 		this.viewCtrl.dismiss(this._selectedPeople);
 	}
 
-	close() {
+	close(): void {
 		this.viewCtrl.dismiss();
 	}
 

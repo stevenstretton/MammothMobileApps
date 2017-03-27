@@ -5,11 +5,11 @@ import { MapModal } from "./modals/modals";
 declare let google;
 
 @Component({
-	selector: 'page-map',
-	templateUrl: 'map.html'
+	selector: 'page-',
+	templateUrl: '.html'
 })
 export class Map {
-	@ViewChild('map') mapElement: ElementRef;
+	@ViewChild('') mapElement: ElementRef;
 
 	private _map: any;
 	private _currentUser: any;

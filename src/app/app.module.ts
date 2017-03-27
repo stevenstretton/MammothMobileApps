@@ -33,8 +33,8 @@ import { Account } from '../pages/account/account';
 import { LocationModal, ChangePasswordModal } from '../pages/account/modals/modals';
 
 // Map
-import { Map } from '../pages/map/map';
-import { MapModal } from '../pages/map/modals/modals';
+import { Map } from '../pages//';
+import { MapModal } from '../pages//modals/modals';
 
 // Tabs
 import { TabsPage } from '../pages/tabs/tabs';

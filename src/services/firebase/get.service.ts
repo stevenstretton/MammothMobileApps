@@ -116,7 +116,6 @@ export class FirebaseGET {
 					notifications: snapVal.notifications
 				});
 			}
-			// callback();
 		});
 	}
 

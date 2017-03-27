@@ -23,14 +23,6 @@ export class FirebasePUT {
 		});
 	}
 
-	putUserFriendsKeys(userID: string, friends: Array<any>): void {
-		const userObjectObservable = this.af.database.object("users/" + userID);
-
-		userObjectObservable.update({
-			friends: friends
-		});
-	}
-
 	putTripData(tripID: string, itemToUpdate: string, newValue: any): void {
 		let path = itemToUpdate.toLowerCase();
 

@@ -110,7 +110,7 @@ export class AddMembersModal {
 		this._friendsToBeOnTrip = [];
 
 		allUsers.forEach((user) => {
-			if ((friendsOnTrip.map(u => u.key).indexOf(user.key) <= -1) && (this._currentUser.friends.indexOf(user.key) > -1)) {
+			if ((friendsOnTrip.(u => u.key).indexOf(user.key) <= -1) && (this._currentUser.friends.indexOf(user.key) > -1)) {
 				this._friendsNotOnTrip.push(user);
 			}
 		});
