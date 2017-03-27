@@ -14,6 +14,8 @@ import { Register } from '../pages/register/register';
 
 // My Trips
 import { MyTrips } from '../pages/myTrips/myTrips';
+
+// Notifications
 import { Notifications } from '../pages/notifications/notifications';
 
 // New Trip
@@ -33,8 +35,8 @@ import { Account } from '../pages/account/account';
 import { LocationModal, ChangePasswordModal } from '../pages/account/modals/modals';
 
 // Map
-import { Map } from '../pages//';
-import { MapModal } from '../pages//modals/modals';
+import { Map } from '../pages/map/map';
+import { MapModal } from '../pages/map/modals/modals';
 
 // Tabs
 import { TabsPage } from '../pages/tabs/tabs';
@@ -84,6 +86,7 @@ const firebaseAuthConfig = {
 		AddItemsModal,
 		ForgotPasswordModal,
 		ChangePasswordModal,
+		LocationModal,
 		AddFriendModal,
 		Map,
 		MapModal,
@@ -115,6 +118,7 @@ const firebaseAuthConfig = {
 		AddMembersModal,
 		AddItemsModal,
 		AddFriendModal,
+		LocationModal,
 		Friends,
 		Account,
 		Map,
