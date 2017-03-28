@@ -62,7 +62,7 @@ export class ViewTrip {
 		}
 	}
 
-	private showErrorAlert(errMessage): void {
+	private showErrorAlert(errMessage: string): void {
 		this.alertCtrl.create({
 			title: 'Error',
 			message: errMessage,
@@ -98,7 +98,7 @@ export class ViewTrip {
 					.then((successRes) => {
 						callback(formData);
 					}).catch((errorRes) => {
-					this.showErrorAlert(errorRes);
+						this.showErrorAlert(errorRes.message);
 				});
 			}
 		});
@@ -205,10 +205,10 @@ export class ViewTrip {
 											this.navCtrl.pop();
 										});
 									}).catch((errorRes) => {
-									this.showErrorAlert(errorRes);
+										this.showErrorAlert(errorRes.message);
 								});
 							}).catch((errorRes) => {
-							this.showErrorAlert(errorRes);
+								this.showErrorAlert(errorRes.message);
 						});
 					}
 				}, {
@@ -246,7 +246,7 @@ export class ViewTrip {
 									this.showEditToast('Friends');
 								}
 							}).catch((errorRes) => {
-							this.showErrorAlert(errorRes);
+								this.showErrorAlert(errorRes.message);
 						});
 					}
 				}
@@ -272,7 +272,7 @@ export class ViewTrip {
 								let indexOfItem = this._trip.trip.items.map(i => i.key).indexOf(item.key);
 								this._trip.trip.items.splice(indexOfItem, 1);
 							}).catch((errorRes) => {
-							this.showErrorAlert(errorRes);
+								this.showErrorAlert(errorRes.message);
 						});
 					}
 				}
@@ -300,7 +300,7 @@ export class ViewTrip {
 			.then(() => {
 				// Leave
 			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
@@ -310,7 +310,7 @@ export class ViewTrip {
 			.then(() => {
 				// Leave
 			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
@@ -341,10 +341,10 @@ export class ViewTrip {
 							const putTripDataPromsie = this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
 
 							putTripDataPromsie
-								.then((sucessRes) => {
+								.then((successRes) => {
 									this.showEditToast('Trip Photo Reset');
 								}).catch((errorRes) => {
-									this.showErrorAlert(errorRes);
+									this.showErrorAlert(errorRes.message);
 							});
 						}
 					}, {
@@ -364,10 +364,10 @@ export class ViewTrip {
 											.then((successRes) => {
 												// Returns 'null'
 											}).catch((errorRes) => {
-												this.showErrorAlert(errorRes);
+												this.showErrorAlert(errorRes.message);
 										});
 									}).catch((errorRes) => {
-										this.showErrorAlert(errorRes);
+										this.showErrorAlert(errorRes.message);
 								});
 								this.showEditToast('Trip Photo Added');
 							});
@@ -387,7 +387,7 @@ export class ViewTrip {
 										this.firebasePut.putTripData(this._trip.trip.key, "Cover", this._trip.trip.coverPhotoUrl);
 										this.showEditToast('Trip Photo Added');
 									}).catch((errorRes) => {
-										this.showErrorAlert(errorRes);
+										this.showErrorAlert(errorRes.message);
 								});
 							});
 							Camera.cleanup();

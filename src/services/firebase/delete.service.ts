@@ -88,6 +88,7 @@ export class FirebaseDELETE {
 	}
 
 	public deleteUserFromAllTrips(userID: string, tripsUserIsOn: any, callback: any): void {
+		console.log("deleteUserFromAllTrips");
 		tripsUserIsOn.forEach((trip) => {
 			const tripObjectObservable = this.af.database.object('trips/' + trip.key);
 
@@ -96,8 +97,12 @@ export class FirebaseDELETE {
 				// This cannot return a promise here as it would return to the loop
 				tripObjectObservable.remove()
 					.then((successRes) => {
+						console.log("Succeeding here");
+						console.log(successRes);
 						callback(successRes);
 					}).catch((errorRes) => {
+						console.log("Failing here");
+						console.log(errorRes);
 						callback(errorRes);
 					});
 			} else {

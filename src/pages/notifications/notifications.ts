@@ -32,7 +32,7 @@ export class Notifications {
 		}, 2000);
 	}
 
-	private showErrorAlert(errMessage): void {
+	private showErrorAlert(errMessage: string): void {
 		this.alertCtrl.create({
 			title: 'Error',
 			message: errMessage,
@@ -57,7 +57,7 @@ export class Notifications {
 			.then((successRes) => {
 				// Returns 'null'
 			}).catch((errorRes) => {
-			this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
@@ -68,7 +68,7 @@ export class Notifications {
 			.then((successRes) => {
 				this._currentUser.notifications = [];
 			}).catch((errorRes) => {
-			this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
@@ -95,7 +95,7 @@ export class Notifications {
 				// Leave
 			})
 			.catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 			});
 	}
 
@@ -106,7 +106,7 @@ export class Notifications {
 				// Leave
 			})
 			.catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 			});
 	}
 }

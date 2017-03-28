@@ -57,7 +57,7 @@ export class Friends {
 			.then((sucessRes) => {
 				// Returns 'null'
 			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
@@ -84,7 +84,7 @@ export class Friends {
 					.then((successRes) => {
 						// Returns 'null'
 					}).catch((errorRes) => {
-						this.showErrorAlert(errorRes);
+						this.showErrorAlert(errorRes.message);
 				});
 			}
 			this._currentUser = this.authenticationHandler.getCurrentUser();
@@ -105,11 +105,11 @@ export class Friends {
 			.then((sucessRes) => {
 				// Returns 'null'
 			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
-	private showErrorAlert(errMessage): void {
+	private showErrorAlert(errMessage: string): void {
 		this.alertCtrl.create({
 			title: 'Error',
 			message: errMessage,
@@ -134,7 +134,7 @@ export class Friends {
 				.then((successRes) => {
 					// Returns 'null'
 				}).catch((errorRes) => {
-					this.showErrorAlert(errorRes);
+					this.showErrorAlert(errorRes.message);
 			});
 		}
 	}

@@ -187,7 +187,7 @@ export class NewTrip {
 						.then((successRes) => {
 							// Returns 'null'
 						}).catch((errorRes) => {
-							this.showErrorAlert(errorRes);
+							this.showErrorAlert(errorRes.message);
 					});
 				});
 				this.clearTrip();
@@ -197,11 +197,11 @@ export class NewTrip {
 				this.showCreateDeleteTripToast('Trip created successfully!');
 				this._tripPhotoID = this._currentUser.key + Math.random().toString(36).substring(8);
 			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
-	private showErrorAlert(errMessage): void {
+	private showErrorAlert(errMessage: string): void {
 		this.alertCtrl.create({
 			title: 'Error',
 			message: errMessage,
@@ -307,7 +307,7 @@ export class NewTrip {
 								.then((imageURL) => {
 									this._tripPhoto = imageURL;
 								}).catch((errorRes) => {
-									this.showErrorAlert(errorRes);
+									this.showErrorAlert(errorRes.message);
 							});
 						});
 						Camera.cleanup();
@@ -324,7 +324,7 @@ export class NewTrip {
 								.then((imageURL) => {
 									this._tripPhoto = imageURL;
 								}).catch((errorRes) => {
-								this.showErrorAlert(errorRes);
+									this.showErrorAlert(errorRes.message);
 							});
 						});
 						Camera.cleanup();

@@ -65,7 +65,7 @@ export class Account {
 			.then((successRes) => {
 				this.app.getRootNav().setRoot(Login);
 			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes);
+				this.showErrorAlert(errorRes.message);
 		});
 	}
 
@@ -80,7 +80,7 @@ export class Account {
 					.then((successRes) => {
 						this.showChangePasswordToast();
 					}).catch((errorRes) => {
-						this.showErrorAlert(errorRes);
+						this.showErrorAlert(errorRes.message);
 				});
 			}
 			slidingItem.close();
@@ -157,7 +157,7 @@ export class Account {
 
 		if (this._currentUser.shareLocation) {
 			this.locationHandler.logLocation(true, (error) => {
-				this.showErrorAlert(error);
+				this.showErrorAlert(error.message);
 			});
 		} else {
 			this.locationHandler.logLocation(false, (error) => {
@@ -275,6 +275,7 @@ export class Account {
 							deleteUserPhotoPromise = this.firebaseDelete.deleteUserPhotoFromStorage(this._currentUser.key),
 							deleteFbUser = this.authenticationHandler.deleteFirebaseUser();
 
+						// TODO: If leadOrganiser of trip, should also delete that trips photo if one is set
 						deleteDbUserPromise
 							.then((successRes) => {
 								deleteUserPhotoPromise
@@ -284,14 +285,14 @@ export class Account {
 												.then((successRes) => {
 													this.navCtrl.setRoot(Login);
 												}).catch((errorRes) => {
-													this.showErrorAlert(errorRes);
+													this.showErrorAlert(errorRes.message);
 											});
 										});
 									}).catch((errorRes) => {
-										this.showErrorAlert(errorRes);
+										this.showErrorAlert(errorRes.message);
 								});
 							}).catch((errorRes) => {
-								this.showErrorAlert(errorRes);
+								this.showErrorAlert(errorRes.message);
 						});
 					}
 				}, {

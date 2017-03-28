@@ -47,6 +47,14 @@ export class Login {
 		});
 	}
 
+	private showPasswordResetToast(email): void {
+		this.toastCtrl.create({
+			message: 'Password reset sent to: ' + email,
+			duration: 3000,
+			position: 'top'
+		}).present();
+	}
+
 	private showRegistrationToast(): void {
 		this.toastCtrl.create({
 			message: 'Registration successful',
@@ -55,7 +63,7 @@ export class Login {
 		}).present();
 	}
 
-	private showErrorAlert(errMessage): void {
+	private showErrorAlert(errMessage: string): void {
 		this.alertCtrl.create({
 			title: 'Error',
 			message: errMessage,
@@ -71,7 +79,7 @@ export class Login {
 			this.navCtrl.setRoot(TabsPage);
 			setTimeout(() => {
 				this.locationHandler.checkUserLocation((error) => {
-					this.showErrorAlert(error);
+					this.showErrorAlert(error.message);
 				});
 			}, 2000);
 		}).catch((errorResponse) => {
@@ -98,7 +106,14 @@ export class Login {
 
 		forgottenPassModal.onDidDismiss((email) => {
 			if (email) {
-				this.authenticationHandler.sendPasswordReset(email);
+				const sendPasswordPromise = this.authenticationHandler.sendPasswordReset(email);
+
+				sendPasswordPromise
+					.then((successRes) => {
+						this.showPasswordResetToast(email);
+					}).catch((errorRes) => {
+						this.showErrorAlert(errorRes.message);
+				});
 			}
 		});
 		forgottenPassModal.present();

@@ -35,7 +35,7 @@ export class AuthenticationHandler {
 			this._fb.auth().signOut()
 				.then((successRes) => {
 					resolve(successRes);
-				}).catch((errorRes) => {
+				}, (errorRes) => {
 					reject(errorRes);
 			});
 		});
@@ -46,7 +46,7 @@ export class AuthenticationHandler {
 			this._fb.auth().currentUser.updatePassword(newPassword)
 				.then((successRes) => {
 					resolve(successRes);
-				}).catch((errorRes) => {
+				}, (errorRes) => {
 					reject(errorRes);
 			});
 		});
@@ -70,7 +70,7 @@ export class AuthenticationHandler {
 			this._fb.auth().currentUser.delete()
 				.then((successRes) => {
 					resolve(successRes);
-				}).catch((errorRes) => {
+				}, (errorRes) => {
 					reject(errorRes);
 			});
 		});
@@ -112,7 +112,7 @@ export class AuthenticationHandler {
 			this._fb.auth().sendPasswordResetEmail(email)
 				.then((successRes) => {
 					resolve(successRes);
-				}).catch((errorRes) => {
+				}, (errorRes) => {
 					reject(errorRes);
 			});
 		});
@@ -123,7 +123,7 @@ export class AuthenticationHandler {
 			this._fb.auth().currentUser.sendEmailVerification()
 				.then((successRes) => {
 					resolve(successRes);
-				}).catch((errorRes) => {
+				}, (errorRes) => {
 					reject(errorRes);
 			});
 		});

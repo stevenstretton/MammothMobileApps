@@ -21,7 +21,10 @@ export class LocationHandler {
 				callback(error);
 			});
 		} else {
-			callback("Geolocation not supported");
+			callback({
+				code: 2,
+				message: "Geolocation not supported!"
+			});
 		}
 	}
 

@@ -45,7 +45,7 @@ export class Register {
 				.then((successResponse) => {
 					this.authenticationHandler.addNewUserToDatabase(formData, (errorRes) => {
 						if (errorRes) {
-							this.showErrorAlert(errorRes);
+							this.showErrorAlert(errorRes.message);
 						}
 					});
 
@@ -58,11 +58,11 @@ export class Register {
 							.then((successRes) => {
 								this.navCtrl.pop();
 							}).catch((errorRes) => {
-								this.showErrorAlert(errorRes);
+								this.showErrorAlert(errorRes.message);
 						});
 					});
-				}).catch((errorRepsonse) => {
-					this._error = errorRepsonse;
+				}).catch((errorRes) => {
+					this._error = errorRes;
 				});
 		}
 	}
