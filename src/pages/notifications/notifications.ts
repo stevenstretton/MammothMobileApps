@@ -15,7 +15,7 @@ export class Notifications {
 	constructor(private navCtrl: NavController,
 	            private alertCtrl: AlertController,
 	            private authenticationHandler: AuthenticationHandler,
-	            private firebasePut: FirebasePUT,) {
+	            private firebasePut: FirebasePUT) {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._num = 1;
@@ -38,13 +38,6 @@ export class Notifications {
 			message: errMessage,
 			buttons: ['Dismiss']
 		}).present();
-	}
-
-	//for testing
-	public addNotification(): void {
-		this._currentUser.notifications.push("test Note" + this._num);
-		this.firebasePut.putNewNotification(this._currentUser.key, this._currentUser.notifications);
-		this._num++;
 	}
 
 	public dismissNotification(index, slidingItem: ItemSliding): void {
