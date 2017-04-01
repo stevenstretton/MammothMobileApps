@@ -39,10 +39,14 @@ export class TabsPage {
 	}
 
 	private checkNewNotifications(notes): void {
-		this._num = notes.length;
-
-		if (notes.length > this._num) {
-			this.gotNewNotificationToast(notes[notes.length - 1]);
+		if(notes.length == this._num){
+		}
+		if(notes.length > this._num){
+			this._num = notes.length;
+			this.gotNewNotificationToast(notes[notes.length-1]);
+		}
+		if(notes.length < this._num){
+			this._num = notes.length;
 		}
 	}
 
