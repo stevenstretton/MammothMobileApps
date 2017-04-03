@@ -10,15 +10,21 @@ export class LocationHandler {
 	constructor(public firebasePut: FirebasePUT,
 				public authenticationHandler: AuthenticationHandler) {}
 
-	private getGeolocation(callback): void {
+	public getGeolocation(callback): void {
+		navigator.geolocation.getCurrentPosition((position) => {
+			callback({
+				lat: position.coords.latitude,
+				lng: position.coords.longitude
+			});
+		}, (error) => {
+			callback(error);
+		});
+	}
+
+	private checkGeolocation(callback): void {
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition((position) => {
-				callback({
-					lat: position.coords.latitude,
-					lng: position.coords.longitude
-				});
-			}, (error) => {
-				callback(error);
+			this.getGeolocation((location) => {
+				callback(location);
 			});
 		} else {
 			callback({
@@ -32,7 +38,7 @@ export class LocationHandler {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
 		if (this._currentUser.shareLocation) {
-			this.getGeolocation((location) => {
+			this.checkGeolocation((location) => {
 				if ((location.lat) && (location.lng)) {
 					this.firebasePut.putUserLocation(this._currentUser.key, location);
 				} else {
@@ -46,7 +52,7 @@ export class LocationHandler {
 
 	public logLocation(whetherToLog: boolean, callback): void {
 		if (whetherToLog) {
-			this.getGeolocation((location) => {
+			this.checkGeolocation((location) => {
 				if ((location.lat) && (location.lng)) {
 					this.firebasePut.putUserLocation(this._currentUser.key, location);
 				} else {

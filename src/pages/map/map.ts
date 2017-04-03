@@ -1,6 +1,10 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { NavParams, ModalController, AlertController } from 'ionic-angular';
 import { MapModal } from "./modals/modals";
+import { LocationHandler } from "../../services/locationHandler.service";
+import { Observable } from "rxjs";
+import { FirebasePUT } from "../../services/firebase/put.service";
+import { FirebaseGET } from "../../services/firebase/get.service";
 
 declare let google;
 
@@ -17,13 +21,19 @@ export class Map {
 	private _users: any;
 	private _directionDisplay: any;
 	private _directionsService: any;
+	private _markers: Array<any>;
 
 	constructor(private navParams: NavParams,
 	            private modalCtrl: ModalController,
-				private alertCtrl: AlertController) {
+				private alertCtrl: AlertController,
+				private locationHandler: LocationHandler,
+				private firebasePut: FirebasePUT,
+				private firebaseGet: FirebaseGET) {
 
 		this._currentUser = navParams.get('currentUser');
 		this._tripMembers = navParams.get('tripMembers');
+
+		this._markers = [];
 	}
 
 	public presentModal(): void {
@@ -41,6 +51,62 @@ export class Map {
 
 	public ionViewDidLoad(): void {
 		this.loadMap();
+
+		Observable.interval(2000)
+			.subscribe(() => {
+				this.pushLocation();
+			});
+
+		Observable.interval(5000)
+			.subscribe(() => {
+				this.updateTripMembers();
+				this.updateMarkers();
+			});
+	}
+
+	private pushLocation(): void {
+		Observable.interval(3000)
+			.subscribe(() => {
+				this.locationHandler.getGeolocation((location) => {
+					if ((location.lat) && (location.lng)) {
+						this.firebasePut.putUserLocation(this._currentUser.key, location);
+					} else {
+						this.showErrorAlert(location.message);
+					}
+				});
+			});
+	}
+
+	private updateTripMembers(): void {
+		let tmp = [];
+
+		this._users.forEach((member) => {
+			this.firebaseGet.getUserWithID(member.key, (user) => {
+				if (this._currentUser.key === user.key) {
+					this._currentUser = user;
+				}
+				tmp.push(user);
+			});
+		});
+		this._tripMembers = tmp;
+	}
+
+	private updateMarkers(): void {
+		this._markers.forEach((marker) => {
+			this._users.forEach((user) => {
+				if (user.key === marker.get("id")) {
+					marker.setPosition(user.location);
+				}
+			});
+		});
+	}
+
+	private showErrorAlert(errMessage: string): void {
+		this.alertCtrl.create({
+			title: 'Error',
+			message: errMessage,
+			buttons: ['Dismiss']
+		}).present();
 	}
 
 	private loadMap(): void {
@@ -136,6 +202,11 @@ export class Map {
 			icon: icon,
 			optimized: false
 		});
+		marker.setValues({
+			type: "point",
+			id: user.username
+		});
+		this._markers.push(marker);
 
 		//*********** SET INFO WINDOW ****************//
 
