@@ -178,9 +178,14 @@ export class ViewTrip {
 	}
 
 	public goToMap(): void {
+		let allTripMembers = [];
+
+		allTripMembers = this._tripMembers;
+		allTripMembers.push(this._trip.lead);
+
 		this.navCtrl.push(Map, {
 			currentUser: this._currentUser,
-			tripMembers: this._tripMembers
+			allTripMembers: allTripMembers
 		});
 	}
 

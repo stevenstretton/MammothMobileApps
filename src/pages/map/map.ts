@@ -17,11 +17,11 @@ export class Map {
 
 	private _map: any;
 	private _currentUser: any;
-	private _tripMembers: Array<any>;
-	private _users: Array<any>;
+	private _allTripMembers: Array<any> = [];
+	private _usersToDisplay: Array<any> = [];
 	private _directionDisplay: any;
 	private _directionsService: any;
-	private _markers: Array<any>;
+	private _markers: Array<any> = [];
 	private _isOnMap: boolean;
 
 	private _pushLocationInterval: any = Observable
@@ -46,14 +46,20 @@ export class Map {
 				private firebaseGet: FirebaseGET) {
 
 		this._currentUser = navParams.get('currentUser');
-		this._tripMembers = navParams.get('tripMembers');
-
-		this._markers = [];
+		this._allTripMembers = navParams.get('allTripMembers');
 	}
 
 	public presentModal(): void {
+		let membersToShow = [];
+
+		this._allTripMembers.forEach((member) => {
+			if (member.key !== this._currentUser.key) {
+				membersToShow.push(member);
+			}
+		});
+
 		let modal = this.modalCtrl.create(MapModal, {
-			tripMembers: this._tripMembers
+			tripMembers: membersToShow
 		});
 		modal.present();
 
@@ -66,16 +72,16 @@ export class Map {
 
 	public ionViewDidLoad(): void {
 		this._isOnMap = true;
-		this.loadMap();
+		this.initLoadMap();
 
-		//this._pushLocationInterval
-		//	.subscribe(() => {
-		//		this.pushLocation();
-		//	});
+		this._pushLocationInterval
+			.subscribe(() => {
+				this.pushLocation();
+			});
 
 		this._updateInterval
 			.subscribe(() => {
-				this.updateTripMembers();
+				this.updateAllTripMembers();
 				this.updateMarkers();
 			});
 	}
@@ -94,36 +100,21 @@ export class Map {
 		});
 	}
 
-	private updateTripMembers(): void {
+	private updateAllTripMembers(): void {
 		let tmp = [];
 
-		this._tripMembers.forEach((member) => {
+		this._allTripMembers.forEach((member) => {
 			this.firebaseGet.getUserWithID(member.key, (user) => {
-				if (this._currentUser.key === user.key) {
-					this._currentUser = user;
-				}
 				tmp.push(user);
 			});
 		});
-		this._tripMembers = tmp;
-
-		this.updateCurrentUser(() => {
-			this._users = this._tripMembers;
-			this._users.push(this._currentUser);
-		});
-		console.log(this._tripMembers);
-	}
-
-	private updateCurrentUser(callback): void {
-		this.firebaseGet.getUserWithID(this._currentUser.key, (currentUser) => {
-			this._currentUser = currentUser;
-			callback();
-		});
+		this._allTripMembers = tmp;
+		this._usersToDisplay = this._allTripMembers;
 	}
 
 	private updateMarkers(): void {
 		this._markers.forEach((marker) => {
-			this._users.forEach((user) => {
+			this._usersToDisplay.forEach((user) => {
 				if (user.username === marker.get("id")) {
 					marker.setPosition(user.location);
 				}
@@ -139,7 +130,7 @@ export class Map {
 		}).present();
 	}
 
-	private loadMap(): void {
+	private initLoadMap(): void {
 		const mapOptions = {
 			center: new google.maps.LatLng(this._currentUser.location),
 			zoom: 15,
@@ -147,27 +138,11 @@ export class Map {
 		};
 		this._map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
-		// Could the current user be duplicated here?
-		this._users = [{
-				username: this._currentUser.username,
-				firstName: this._currentUser.firstName,
-				lastName: this._currentUser.lastName,
-				location: this._currentUser.location,
-				image: this._currentUser.photoUrl
-			}
-		];
-
-		this._tripMembers.forEach((tripMember) => {
-			this._users.push({
-				username: tripMember.username,
-				firstName: tripMember.firstName,
-				lastName: tripMember.lastName,
-				location: tripMember.location,
-				image: tripMember.photoUrl
-			});
+		this._allTripMembers.forEach((tripMember) => {
+			this.pushTripMember(tripMember);
 		});
 
-		this._users.forEach((user) => {
+		this._usersToDisplay.forEach((user) => {
 			if (user.location) {
 				this.addMarker(user);
 			}
@@ -186,13 +161,23 @@ export class Map {
 		this._directionsService = new google.maps.DirectionsService();
 	};
 
+	private pushTripMember(tripMember): void {
+		this._usersToDisplay.push({
+			username: tripMember.username,
+			firstName: tripMember.firstName,
+			lastName: tripMember.lastName,
+			location: tripMember.location,
+			image: tripMember.photoUrl
+		});
+	}
+
 	private createRoute(memberId): void {
 		const src = new google.maps.LatLng(this._currentUser.location);
 
 		//Loop and Draw Path Route between the Points on MAP
 		if (src) {
-			if (this._users[memberId + 1].location) {
-				const des = new google.maps.LatLng(this._users[memberId + 1].location);
+			if (this._usersToDisplay[memberId + 1].location) {
+				const des = new google.maps.LatLng(this._usersToDisplay[memberId + 1].location);
 				const route = {
 					origin: src,
 					destination: des,
@@ -215,15 +200,11 @@ export class Map {
 	}
 
 	private addMarker(user): void {
-		//*********** STYLE MARKER ****************//
-
 		const icon = {
 			url: user.image,
 			size: new google.maps.Size(40, 40),
 			scaledSize: new google.maps.Size(40, 40)
 		};
-
-		//*********** POSITION MARKER ****************//
 
 		const marker = new google.maps.Marker({
 			map: this._map,
@@ -233,8 +214,6 @@ export class Map {
 		});
 		marker.set("id", user.username);
 		this._markers.push(marker);
-
-		//*********** SET INFO WINDOW ****************//
 
 		const content = '<div class="marker-content">' +
 							'<h5 style="font-size: 12px;">' + user.username + '</h5>' +
