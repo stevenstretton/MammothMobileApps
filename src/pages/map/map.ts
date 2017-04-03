@@ -65,16 +65,13 @@ export class Map {
 	}
 
 	private pushLocation(): void {
-		Observable.interval(3000)
-			.subscribe(() => {
-				this.locationHandler.getGeolocation((location) => {
-					if ((location.lat) && (location.lng)) {
-						this.firebasePut.putUserLocation(this._currentUser.key, location);
-					} else {
-						this.showErrorAlert(location.message);
-					}
-				});
-			});
+		this.locationHandler.getGeolocation((location) => {
+			if ((location.lat) && (location.lng)) {
+				this.firebasePut.putUserLocation(this._currentUser.key, location);
+			} else {
+				this.showErrorAlert(location.message);
+			}
+		});
 	}
 
 	private updateTripMembers(): void {
