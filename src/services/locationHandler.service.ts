@@ -10,7 +10,7 @@ export class LocationHandler {
 	constructor(public firebasePut: FirebasePUT,
 				public authenticationHandler: AuthenticationHandler) {}
 
-	public getGeolocation(callback): void {
+	private getGeolocation(callback): void {
 		navigator.geolocation.getCurrentPosition((position) => {
 			callback({
 				lat: position.coords.latitude,
@@ -21,7 +21,7 @@ export class LocationHandler {
 		});
 	}
 
-	private checkGeolocation(callback): void {
+	public checkGeolocation(callback): void {
 		if (navigator.geolocation) {
 			this.getGeolocation((location) => {
 				callback(location);

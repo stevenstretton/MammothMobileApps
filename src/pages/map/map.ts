@@ -17,11 +17,26 @@ export class Map {
 
 	private _map: any;
 	private _currentUser: any;
-	private _tripMembers: any;
-	private _users: any;
+	private _tripMembers: Array<any>;
+	private _users: Array<any>;
 	private _directionDisplay: any;
 	private _directionsService: any;
 	private _markers: Array<any>;
+	private _isOnMap: boolean;
+
+	private _pushLocationInterval: any = Observable
+				.interval(2000)
+				.timeInterval()
+				.takeWhile(() => {
+					return this._isOnMap;
+				});
+
+	private _updateInterval: any = Observable
+				.interval(5000)
+				.timeInterval()
+				.takeWhile(() => {
+					return this._isOnMap;
+				});
 
 	constructor(private navParams: NavParams,
 	            private modalCtrl: ModalController,
@@ -50,22 +65,27 @@ export class Map {
 	}
 
 	public ionViewDidLoad(): void {
+		this._isOnMap = true;
 		this.loadMap();
 
-		Observable.interval(2000)
-			.subscribe(() => {
-				this.pushLocation();
-			});
+		//this._pushLocationInterval
+		//	.subscribe(() => {
+		//		this.pushLocation();
+		//	});
 
-		Observable.interval(5000)
+		this._updateInterval
 			.subscribe(() => {
 				this.updateTripMembers();
 				this.updateMarkers();
 			});
 	}
 
+	public ionViewWillLeave(): void {
+		this._isOnMap = false;
+	}
+
 	private pushLocation(): void {
-		this.locationHandler.getGeolocation((location) => {
+		this.locationHandler.checkGeolocation((location) => {
 			if ((location.lat) && (location.lng)) {
 				this.firebasePut.putUserLocation(this._currentUser.key, location);
 			} else {
@@ -77,7 +97,7 @@ export class Map {
 	private updateTripMembers(): void {
 		let tmp = [];
 
-		this._users.forEach((member) => {
+		this._tripMembers.forEach((member) => {
 			this.firebaseGet.getUserWithID(member.key, (user) => {
 				if (this._currentUser.key === user.key) {
 					this._currentUser = user;
@@ -86,12 +106,25 @@ export class Map {
 			});
 		});
 		this._tripMembers = tmp;
+
+		this.updateCurrentUser(() => {
+			this._users = this._tripMembers;
+			this._users.push(this._currentUser);
+		});
+		console.log(this._tripMembers);
+	}
+
+	private updateCurrentUser(callback): void {
+		this.firebaseGet.getUserWithID(this._currentUser.key, (currentUser) => {
+			this._currentUser = currentUser;
+			callback();
+		});
 	}
 
 	private updateMarkers(): void {
 		this._markers.forEach((marker) => {
 			this._users.forEach((user) => {
-				if (user.key === marker.get("id")) {
+				if (user.username === marker.get("id")) {
 					marker.setPosition(user.location);
 				}
 			});
@@ -108,15 +141,14 @@ export class Map {
 
 	private loadMap(): void {
 		const mapOptions = {
-			center: new google.maps.LatLng(53.376853, -1.467352),
+			center: new google.maps.LatLng(this._currentUser.location),
 			zoom: 15,
 			mapTypeId: google.maps.MapTypeId.ROADMAP
 		};
 		this._map = new google.maps.Map(this.mapElement.nativeElement, mapOptions);
 
 		// Could the current user be duplicated here?
-		this._users = [
-			{
+		this._users = [{
 				username: this._currentUser.username,
 				firstName: this._currentUser.firstName,
 				lastName: this._currentUser.lastName,
@@ -199,10 +231,7 @@ export class Map {
 			icon: icon,
 			optimized: false
 		});
-		marker.setValues({
-			type: "point",
-			id: user.username
-		});
+		marker.set("id", user.username);
 		this._markers.push(marker);
 
 		//*********** SET INFO WINDOW ****************//
