@@ -23,16 +23,17 @@ export class Map {
 	private _directionsService: any;
 	private _markers: Array<any> = [];
 	private _isOnMap: boolean;
+	private _tabsElement: any;
 
 	private _pushLocationInterval: any = Observable
-				.interval(2000)
+				.interval(5000)
 				.timeInterval()
 				.takeWhile(() => {
 					return this._isOnMap;
 				});
 
 	private _updateInterval: any = Observable
-				.interval(5000)
+				.interval(10000)
 				.timeInterval()
 				.takeWhile(() => {
 					return this._isOnMap;
@@ -45,6 +46,7 @@ export class Map {
 				private firebasePut: FirebasePUT,
 				private firebaseGet: FirebaseGET) {
 
+		this._tabsElement = document.querySelector(".tabbar.show-tabbar");
 		this._currentUser = navParams.get('currentUser');
 		this._allTripMembers = navParams.get('allTripMembers');
 	}
@@ -71,6 +73,7 @@ export class Map {
 	}
 
 	public ionViewDidLoad(): void {
+		this._tabsElement.style.display = "none";
 		this._isOnMap = true;
 		this.initLoadMap();
 
@@ -88,6 +91,7 @@ export class Map {
 
 	public ionViewWillLeave(): void {
 		this._isOnMap = false;
+		this._tabsElement.style.display = "flex";
 	}
 
 	private pushLocation(): void {
