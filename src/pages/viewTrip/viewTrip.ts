@@ -178,14 +178,11 @@ export class ViewTrip {
 	}
 
 	public goToMap(): void {
-		let allTripMembers = [];
-
-		allTripMembers = this._tripMembers;
-		allTripMembers.push(this._trip.lead);
-
 		this.navCtrl.push(Map, {
 			currentUser: this._currentUser,
-			allTripMembers: allTripMembers
+			tripMembers: this._tripMembers,
+			tripLead: this._trip.lead,
+			tripKey: this._trip.trip.key
 		});
 	}
 

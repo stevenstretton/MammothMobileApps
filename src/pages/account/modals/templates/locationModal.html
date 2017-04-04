@@ -29,7 +29,7 @@
 			</ion-avatar>
 			<ion-label>{{ member.user.firstName }} {{ member.user.lastName }}</ion-label>
 			<ion-checkbox color="positive" [(ngModel)]="member.canAlreadySee"
-			              (click)="toggleClicked(member.user.key, !member.canAlreadySee)"
+			              (click)="toggleClicked(member.user.key, member.canAlreadySee)"
 			              item-right></ion-checkbox>
 		</ion-item>
 	</ion-list>
