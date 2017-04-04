@@ -10,7 +10,7 @@ export class LocationHandler {
 	constructor(public firebasePut: FirebasePUT,
 				public authenticationHandler: AuthenticationHandler) {}
 
-	private getGeolocation(callback): void {
+	private getGeolocationCurrent(callback): void {
 		navigator.geolocation.getCurrentPosition((position) => {
 			callback({
 				lat: position.coords.latitude,
@@ -21,11 +21,28 @@ export class LocationHandler {
 		});
 	}
 
-	public checkGeolocation(callback): void {
-		if (navigator.geolocation) {
-			this.getGeolocation((location) => {
-				callback(location);
+	private watchGeolocation(callback): void {
+		navigator.geolocation.watchPosition((position) => {
+			callback({
+				lat: position.coords.latitude,
+				lng: position.coords.longitude
 			});
+		}, (error)=> {
+			callback(error);
+		});
+	}
+
+	public checkGeolocation(getCurrent: boolean, callback): void {
+		if (navigator.geolocation) {
+			if (getCurrent) {
+				this.getGeolocationCurrent((location) => {
+					callback(location);
+				});
+			} else {
+				this.watchGeolocation((location) => {
+					callback(location);
+				});
+			}
 		} else {
 			callback({
 				code: 2,
@@ -38,7 +55,7 @@ export class LocationHandler {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
 		if (this._currentUser.shareLocation) {
-			this.checkGeolocation((location) => {
+			this.checkGeolocation(true, (location) => {
 				if ((location.lat) && (location.lng)) {
 					this.firebasePut.putUserLocation(this._currentUser.key, location);
 				} else {
@@ -52,7 +69,7 @@ export class LocationHandler {
 
 	public logLocation(whetherToLog: boolean, callback): void {
 		if (whetherToLog) {
-			this.checkGeolocation((location) => {
+			this.checkGeolocation(true, (location) => {
 				if ((location.lat) && (location.lng)) {
 					this.firebasePut.putUserLocation(this._currentUser.key, location);
 				} else {

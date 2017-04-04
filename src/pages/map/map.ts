@@ -17,6 +17,7 @@ export class Map {
 
 	private _map: any;
 	private _currentUser: any;
+	private _currentUserMarker: any;
 	private _allTripMembers: Array<any> = [];
 	private _usersToDisplay: Array<any> = [];
 	private _directionDisplay: any;
@@ -34,6 +35,13 @@ export class Map {
 
 	private _updateInterval: any = Observable
 				.interval(10000)
+				.timeInterval()
+				.takeWhile(() => {
+					return this._isOnMap;
+				});
+
+	private _updateCurrentPosition: any = Observable
+				.interval(1000)
 				.timeInterval()
 				.takeWhile(() => {
 					return this._isOnMap;
@@ -77,6 +85,11 @@ export class Map {
 		this._isOnMap = true;
 		this.initLoadMap();
 
+		this._updateCurrentPosition
+			.subscribe(() => {
+				this.watchLocation();
+			});
+
 		this._pushLocationInterval
 			.subscribe(() => {
 				this.pushLocation();
@@ -89,13 +102,23 @@ export class Map {
 			});
 	}
 
+	private watchLocation(): void {
+		this.locationHandler.checkGeolocation(false, (location) => {
+			if ((location.lat) && (location.lng)) {
+				this.updateCurrentUserMarker();
+			} else {
+				this.showErrorAlert(location.message);
+			}
+		});
+	}
+
 	public ionViewWillLeave(): void {
 		this._isOnMap = false;
 		this._tabsElement.style.display = "flex";
 	}
 
 	private pushLocation(): void {
-		this.locationHandler.checkGeolocation((location) => {
+		this.locationHandler.checkGeolocation(true, (location) => {
 			if ((location.lat) && (location.lng)) {
 				this.firebasePut.putUserLocation(this._currentUser.key, location);
 			} else {
@@ -114,6 +137,10 @@ export class Map {
 		});
 		this._allTripMembers = tmp;
 		this._usersToDisplay = this._allTripMembers;
+	}
+
+	private updateCurrentUserMarker(): void {
+
 	}
 
 	private updateMarkers(): void {

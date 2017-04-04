@@ -12,7 +12,7 @@ export class Notifications {
 	private _currentUser: any;
 	private _num: any;
 	private _notifications: any;
-	
+
 
 	constructor(private navCtrl: NavController,
 	            private alertCtrl: AlertController,
@@ -23,7 +23,6 @@ export class Notifications {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this.getNotifications();
 		this._num = 1;
-	
 	}
 
 	public ionViewWillEnter() {
@@ -37,7 +36,7 @@ export class Notifications {
 		}, 2000);
 	}
 
-		getNotifications() {
+	private getNotifications(): void {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		if (this._currentUser.notifications != null) {
 			this._notifications = [];
