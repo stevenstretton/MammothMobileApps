@@ -25,28 +25,26 @@ export class TabsPage {
 	constructor(public authenticationHandler: AuthenticationHandler,
 	            private toastCtrl: ToastController) {
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-
 		this._num = this.getNotifications();
 	}
 
 	private getNotifications(): number {
 		if (this._currentUser.notifications) {
-			this.checkNewNotifications(this._currentUser.notifications);
+			this.checkNewNotifications();
 
 			return this._currentUser.notifications.length;
 		}
 		return 0;
 	}
 
-	private checkNewNotifications(notes): void {
-		if(notes.length == this._num){
-		}
-		if(notes.length > this._num){
-			this._num = notes.length;
-			this.gotNewNotificationToast(notes[notes.length-1]);
-		}
-		if(notes.length < this._num){
-			this._num = notes.length;
+	private checkNewNotifications(): void {
+		let currentUserNotifications = this._currentUser.notifications;
+
+		if (currentUserNotifications.length > this._num) {
+			this._num = currentUserNotifications.length;
+			this.gotNewNotificationToast(currentUserNotifications[currentUserNotifications.length - 1]);
+		} else if (currentUserNotifications.length < this._num) {
+			this._num = currentUserNotifications.length;
 		}
 	}
 

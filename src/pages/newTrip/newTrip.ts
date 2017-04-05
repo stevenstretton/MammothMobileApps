@@ -20,10 +20,9 @@ export class NewTrip {
 	private _nowTime: string;
 	private _currentUser: any;
 	private _newTripForm: FormGroup;
+	private _newItemForm: FormGroup;
 	private _tripInfo: any;
 	private _itemList: Array<any>;
-	private _itemTitle: string = '';
-	private _itemDescription: string = '';
 	private _tripPhoto: string = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%' +
 		'2Fplaceholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
 	private _tripPhotoID: any;
@@ -43,6 +42,11 @@ export class NewTrip {
 
 		this.setDateTime();
 		this._endDate = this._todaysDate;
+
+		this._newItemForm = this.formBuilder.group({
+			name: ['', Validators.required],
+			description: ['', Validators.required]
+		});
 
 		this._newTripForm = this.formBuilder.group({
 			name: ['', Validators.required],
@@ -148,40 +152,17 @@ export class NewTrip {
 		return friendsAttending;
 	}
 
-	private getNotifications(friendID, callback): void {
-		this.firebaseGet.getUserWithID(friendID, (firebaseUser) => {
-			callback(firebaseUser.notifications);
-		});
-	}
-
 	public pushTrip(formData): void {
-		let friendsAndNotifications = [];
-
 		this.buildForm(formData);
 		const postNewTripPromise = this.firebasePost.postNewTrip(this._tripInfo);
 
 		postNewTripPromise
 			.then((successRes) => {
-				const friendIDs = this.buildFriendIDsAttending(),
-					name = this._currentUser.firstName,
-					tripName = this._tripInfo.name;
+				const friendIDs = this.buildFriendIDsAttending();
 
 				friendIDs.forEach((friendID) => {
-					this.getNotifications(friendID, (notifications) => {
-						if (!notifications) {
-							notifications = [];
-						}
-						notifications.push(name + " added you to " + tripName);
-
-						friendsAndNotifications.push({
-							id: friendID,
-							notifications: notifications
-						});
-					});
-				});
-
-				friendsAndNotifications.forEach((friendAndNote) => {
-					const postNotificationsPromise = this.firebasePost.postNewNotification(friendAndNote.id, friendAndNote.notifications);
+					const notification =  this._currentUser.firstName + " added you to the trip: " + this._tripInfo.name,
+						postNotificationsPromise = this.firebasePost.postNewNotification(friendID, notification);
 
 					postNotificationsPromise
 						.then((successRes) => {
@@ -238,20 +219,19 @@ export class NewTrip {
 		}).present();
 	}
 
-	public addItem(): void {
-		if (this._itemTitle != "") {
-			this._itemList.push({
-				name: this._itemTitle,
-				description: this._itemDescription
-			});
+	public addItem(formData): void {
+		this._itemList.push({
+			key: Math.random().toString(36).substring(7),
+			name: formData.name,
+			description: formData.description
+		});
 
-			this._itemTitle = "";
-			this._itemDescription = "";
-		}
+		this._newItemForm.controls['name'].value = '';
+		this._newItemForm.controls['description'].value = '';
 	}
 
 	public deleteItem(item): void {
-		let index = this._itemList.indexOf(item);
+		let index = this._itemList.map(i => i.key).indexOf(item.key);
 		this._itemList.splice(index, 1);
 	}
 

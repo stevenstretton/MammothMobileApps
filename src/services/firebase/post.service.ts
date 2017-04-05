@@ -83,8 +83,19 @@ export class FirebasePOST {
 		});
 	}
 
-	public postNewNotification(userID, notifications): Promise<any> {
-		const userObjectObservable = this.af.database.object("users/" + userID + "/notifications");
+	public postNewNotification(userID, notification): Promise<any> {
+		let notifications = [];
+
+		const userObjectObservable = this.af.database.object("users/" + userID + "/notifications", {
+			preserveSnapshot: true
+		});
+
+		userObjectObservable.subscribe((snapshot) => {
+			if (snapshot.val()) {
+				notifications = snapshot.val();
+			}
+		});
+		notifications.push(notification);
 
 		return new Promise((resolve, reject) => {
 			userObjectObservable

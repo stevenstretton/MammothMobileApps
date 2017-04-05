@@ -80,25 +80,30 @@
         </ion-item>
     </ion-list>
 
-    <ion-list>
-        <ion-item-divider color="light">
-            Add custom items to trip list:
-        </ion-item-divider>
+	<form [formGroup]="_newItemForm">
+		<ion-list>
+			<ion-item-divider color="light">
+				Add custom items to trip list:
+			</ion-item-divider>
 
-        <ion-item>
-            <ion-label>Item</ion-label>
-            <ion-input type="text" placeholder="enter title..." [(ngModel)]="_itemTitle"></ion-input>
-        </ion-item>
+			<ion-item>
+				<ion-label>Item</ion-label>
+				<ion-input type="text" formControlName="name" [formControl]="_newItemForm.controls['name']"
+				           placeholder="enter title..." ngDefaultControl></ion-input>
+			</ion-item>
 
-        <ion-item>
-            <ion-label>Description</ion-label>
-            <ion-input type="text" placeholder="enter description..." [(ngModel)]="_itemDescription"></ion-input>
-        </ion-item>
+			<ion-item>
+				<ion-label>Description</ion-label>
+				<ion-input type="text" formControlName="description" [formControl]="_newItemForm.controls['description']"
+				           placeholder="enter description..." ngDefaultControl></ion-input>
+			</ion-item>
 
-        <div padding>
-            <button ion-button outline color="primary" block (click)="addItem()">Add Item</button>
-        </div>
-    </ion-list>
+			<div padding>
+				<button ion-button outline color="primary" [disabled]="_newItemForm.valid" block
+				        (click)="addItem(_newItemForm.value)">Add Item</button>
+			</div>
+		</ion-list>
+	</form>
 
     <ion-list>
         <ion-item-divider color="light">
@@ -122,12 +127,10 @@
         <ion-item item-note [hidden]="_itemList.length">
             None
         </ion-item>
-
     </ion-list>
-    <!--</ion-card>-->
 
     <div padding>
-        <button ion-button color="primary" block [disabled]="!_newTripForm.valid || buildFriendIDsAttending().length <= 0 || !endDateIsValid()" (click)="pushTrip(_newTripForm.value)">Create Trip</button>
+        <button ion-button color="primary" block [disabled]="!_newTripForm.valid || buildFriendIDsAttending().length <= 0 || !endDateIsValid()"
+                (click)="pushTrip(_newTripForm.value)">Create Trip</button>
     </div>
-
 </ion-content>

@@ -121,6 +121,10 @@
             </ion-item-sliding>
         </ion-list>
 
+	    <ion-item padding-bottom padding-top *ngIf="_trip.lead.key !== _currentUser.key">
+		    <button ion-button color="danger" block (click)="removeFromTrip()">Remove from Trip</button>
+	    </ion-item>
+
         <ion-item padding-bottom padding-top *ngIf="_trip.lead.key === _currentUser.key">
             <button ion-button color="danger" block (click)="deleteTrip()">Delete Trip</button>
         </ion-item>

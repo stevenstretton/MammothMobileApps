@@ -24,6 +24,7 @@ import {
 	AddItemsModal
 } from "./modals/modals";
 import * as moment from 'moment';
+import { MyTrips } from "../myTrips/myTrips";
 
 @Component({
 	selector: 'page-viewTrip',
@@ -89,6 +90,10 @@ export class ViewTrip {
 
 				} else if (title === "Items") {
 					newValue = formData;
+
+					newValue.forEach((item) => {
+						item.key = Math.random().toString(36).substring(7);
+					});
 				} else {
 					newValue = formData.newValue;
 				}
@@ -163,6 +168,7 @@ export class ViewTrip {
 			case 8:
 				this.createModal(AddItemsModal, 'Items', this._trip.trip.items, (formData) => {
 					this._trip.trip.items = formData;
+					console.log(this._trip.trip.items);
 					this.showEditToast('Items');
 				});
 				break;
@@ -186,29 +192,20 @@ export class ViewTrip {
 		});
 	}
 
-	public deleteTrip(): void {
+	public removeFromTrip(): void {
 		this.alertCtrl.create({
 			title: 'Delete',
-			message: 'Are you sure you want to delete this trip?',
+			message: 'Are you sure you want to remove yourself from this trip?',
 			buttons: [
 				{
 					text: 'Yes',
 					handler: () => {
-						const deleteTripPromise = this.firebaseDelete.deleteTrip(this._trip.trip.key),
-							deleteTripPhotoPromsie = this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
+						const deleteMemberPromise = this.firebaseDelete.deleteTripMember(this._currentUser.key, this._trip.trip.key, this._tripMembers);
 
-						deleteTripPromise
+						deleteMemberPromise
 							.then((successRes) => {
-								deleteTripPhotoPromsie
-									.then((successRes) => {
-										this._callback({
-											justDeletedTrip: true
-										}).then(() => {
-											this.navCtrl.pop();
-										});
-									}).catch((errorRes) => {
-										this.showErrorAlert(errorRes.message);
-								});
+								this.informUsersOfLeftMember();
+								this.navCtrl.setRoot(MyTrips);
 							}).catch((errorRes) => {
 								this.showErrorAlert(errorRes.message);
 						});
@@ -219,6 +216,100 @@ export class ViewTrip {
 				}
 			]
 		}).present();
+	}
+
+	private informUsersOfLeftMember(): void {
+		const notification = this._currentUser.firstName + " has left the trip: " + this._trip.trip.name;
+
+		let membersAndLead = this._tripMembers;
+		membersAndLead.push(this._trip.lead.key);
+
+		membersAndLead.forEach((member) => {
+			if (member.key !== this._currentUser.key) {
+				const postNotificationPromise = this.firebasePost.postNewNotification(member.key, notification);
+
+				postNotificationPromise
+					.then((successRes) => {
+						// Nothing
+					}).catch((errorRes) => {
+						this.showErrorAlert(errorRes.message);
+				});
+			}
+		});
+	}
+
+	private informUsersOfRemovedMember(removedMember): void {
+		const notification = removedMember.firstName + " has been removed from the trip: " + this._trip.trip.name;
+
+		this._tripMembers.forEach((member) => {
+			if (member.key !== removedMember.key) {
+				const postNotificationPromise = this.firebasePost.postNewNotification(member.key, notification);
+
+				postNotificationPromise
+					.then((successRes) => {
+						// Nothing
+					}).catch((errorRes) => {
+					this.showErrorAlert(errorRes.message);
+				});
+			}
+		});
+	}
+
+	public deleteTrip(): void {
+		const defaultTripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2F' +
+			'placeholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+
+		this.alertCtrl.create({
+			title: 'Delete',
+			message: 'Are you sure you want to delete this trip?',
+			buttons: [
+				{
+					text: 'Yes',
+					handler: () => {
+						const deleteTripPromise = this.firebaseDelete.deleteTrip(this._trip.trip.key),
+							deleteTripPhotoPromise = this.firebaseDelete.deleteTripPhotoFromStorage(this._trip.trip.coverPhotoID);
+
+						deleteTripPromise
+							.then((successRes) => {
+								if (this._trip.trip.coverPhotoUrl !== defaultTripPhoto) {
+									deleteTripPhotoPromise
+										.then((successRes) => {
+											this._callback({
+												justDeletedTrip: true
+											}).then(() => {
+												this.navCtrl.pop();
+											});
+										}).catch((errorRes) => {
+										this.showErrorAlert(errorRes.message);
+									});
+								}
+								this.navCtrl.pop();
+							}).catch((errorRes) => {
+								this.showErrorAlert(errorRes.message);
+						});
+						this.informUsersOfTripDeletion();
+					}
+				}, {
+					text: 'No',
+					role: 'cancel'
+				}
+			]
+		}).present();
+	}
+
+	private informUsersOfTripDeletion(): void {
+		const notification = this._currentUser.firstName + " deleted the trip: " + this._trip.trip.name;
+
+		this._tripMembers.forEach((member) => {
+			const postNotificationPromise = this.firebasePost.postNewNotification(member.key, notification);
+
+			postNotificationPromise
+				.then((successRes) => {
+					// Nothing
+				}).catch((errorRes) => {
+					this.showErrorAlert(errorRes.message);
+			});
+		});
 	}
 
 	public removeMemberFromTrip(member): void {
@@ -238,6 +329,7 @@ export class ViewTrip {
 						deleteMemberPromise
 							.then((successRes) => {
 								this._tripMembers.splice(this._tripMembers.indexOf(member), 1);
+								this.informUsersOfRemovedMember(member);
 								if (member.key === this._currentUser.key) {
 									this._callback({
 										justDeletedUser: true
@@ -257,6 +349,8 @@ export class ViewTrip {
 	}
 
 	public removeItemFromTrip(item): void {
+		console.log(item);
+
 		this.alertCtrl.create({
 			title: 'Delete Item',
 			message: 'Are you sure you want to delete this item from the trip?',
@@ -267,7 +361,7 @@ export class ViewTrip {
 				}, {
 					text: 'Yes',
 					handler: () => {
-						const deleteItemPromise = this.firebaseDelete.deleteTripItem(item, this._trip.trip.key, this._trip.trip.items);
+						const deleteItemPromise = this.firebaseDelete.deleteTripItem(item.key, this._trip.trip.key, this._trip.trip.items);
 
 						deleteItemPromise
 							.then((successRes) => {

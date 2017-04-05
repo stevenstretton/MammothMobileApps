@@ -3,6 +3,7 @@ import { ModalController, ItemSliding, AlertController } from 'ionic-angular';
 import { FirebaseGET } from '../../services/firebase/get.service';
 import { FirebasePUT } from "../../services/firebase/put.service";
 import { FirebasePOST } from "../../services/firebase/post.service";
+import { FirebaseDELETE } from "../../services/firebase/delete.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { AddFriendModal } from "./modals/modals";
 
@@ -19,7 +20,8 @@ export class Friends {
 	            private authenticationHandler: AuthenticationHandler,
 	            private modalCtrl: ModalController,
 	            private alertCtrl: AlertController,
-	            private firebasePut: FirebasePUT) {
+	            private firebasePut: FirebasePUT,
+				private firebaseDelete: FirebaseDELETE) {
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._friends = [];
@@ -47,15 +49,23 @@ export class Friends {
 	}
 
 	public unfriend(friend: any, slidingItem: ItemSliding): void {
-		let index = this._friends.indexOf(friend);
+		let index = this._friends.map(f => f.key).indexOf(friend.key);
 
 		slidingItem.close();
 		this._friends.splice(index, 1);
-		const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
+		const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends),
+			deleteCurrentAsFriendPromise = this.firebaseDelete.deleteCurrentAsFriend(friend.key, this._currentUser.key);
 
 		putFriendsPromise
 			.then((sucessRes) => {
 				// Returns 'null'
+			}).catch((errorRes) => {
+				this.showErrorAlert(errorRes.message);
+		});
+
+		deleteCurrentAsFriendPromise
+			.then((sucessRes) => {
+				// Nothing
 			}).catch((errorRes) => {
 				this.showErrorAlert(errorRes.message);
 		});
@@ -77,6 +87,15 @@ export class Friends {
 						this._friends.push(friend);
 					}
 					this.setFriendNotification(friend);
+
+					const putCurrentAsFriendPromise = this.firebasePut.putCurrentAsFriend(friend.key, this._currentUser.key);
+
+					putCurrentAsFriendPromise
+						.then((successRes) => {
+							// Nothing
+						}).catch((errorRes) => {
+							this.showErrorAlert(errorRes.message);
+					})
 				});
 				const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends);
 
@@ -93,13 +112,8 @@ export class Friends {
 	}
 
 	private setFriendNotification(friend: any): void {
-		let friendNotifications = friend.notifications;
-
-		if (!friendNotifications) {
-			friendNotifications = [];
-		}
-		friendNotifications.push(this._currentUser.firstName + " added you as a friend");
-		const postNotificationsPromise = this.firebasePost.postNewNotification(friend.key, friendNotifications);
+		const notification = this._currentUser.firstName + " added you as a friend",
+			postNotificationsPromise = this.firebasePost.postNewNotification(friend.key, notification);
 
 		postNotificationsPromise
 			.then((sucessRes) => {

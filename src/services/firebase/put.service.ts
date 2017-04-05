@@ -7,8 +7,33 @@ export class FirebasePUT {
 	constructor(private af: AngularFire,
 	            public firebaseGet: FirebaseGET) {}
 
-	public putUserFriends(userID: string, friends: Array<any>): any {
-		const userObjectObservable = this.af.database.object("users/" + userID);
+	public putCurrentAsFriend(userID: string, currentUserID: string): any {
+		let friends = [];
+
+		const userObjectObservable = this.af.database.object("users/" + userID + "/friends", {
+			preserveSnapshot: true
+		});
+
+		userObjectObservable.subscribe((snapshot) => {
+			if (snapshot.val()) {
+				friends = snapshot.val();
+			}
+			friends.push(currentUserID);
+		});
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(friends)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
+	}
+
+	public putUserFriends(userID: string, friends: Array<any>): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/friends");
 
 		let currentFriendIDs = [];
 
@@ -19,17 +44,17 @@ export class FirebasePUT {
 		}
 
 		return new Promise((resolve, reject) => {
-			userObjectObservable.update({
-				friends: currentFriendIDs
-			}).then((successRes) => {
-				resolve(null);
-			}).catch((errorRes) => {
-				reject(errorRes);
-			});
+			userObjectObservable
+				.set(currentFriendIDs)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
 		});
 	}
 
-	public putTripData(tripID: string, itemToUpdate: string, newValue: any): any {
+	public putTripData(tripID: string, itemToUpdate: string, newValue: any): Promise<any> {
 		let path = itemToUpdate.toLowerCase();
 
 		if (itemToUpdate.indexOf("Cover") > -1) {
@@ -46,7 +71,7 @@ export class FirebasePUT {
 
 		return new Promise((resolve, reject) => {
 			tripObjectObservable
-				.set(newValue)
+				.update(newValue)
 				.then((sucessRes) => {
 					resolve(null);
 				}).catch((errorRes) => {
@@ -55,8 +80,8 @@ export class FirebasePUT {
 		});
 	}
 
-	public putUserToSeeLocation(userID: string, tripID: string, usersIDsToSeeLoc: Array<number>): any {
-		const userObjectObservable = this.af.database.object("users/" + userID);
+	public putUserToSeeLocation(userID: string, tripID: string, usersIDsToSeeLoc: Array<number>): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/usersToSeeLocation");
 
 		let usersToSeeLoc = [];
 
@@ -82,40 +107,46 @@ export class FirebasePUT {
 		});
 
 		return new Promise((resolve, reject) => {
-			userObjectObservable.update({
-				usersToSeeLocation: usersToSeeLoc
-			}).then((successRes) => {
-				resolve(null);
-			}).catch((errorRes) => {
-				reject(errorRes);
-			});
+			userObjectObservable
+				.set(usersToSeeLoc)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
 		});
 	}
 
-	public putShareLocation(userID: string, shareLocation: number): any {
-		const userObjectObservable = this.af.database.object("users/" + userID);
+	public putShareLocation(userID: string, shareLocation: number): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/shareLocation");
 
 		return new Promise((resolve, reject) => {
-			userObjectObservable.update({
-				shareLocation: shareLocation
-			}).then((successRes) => {
-				resolve(null);
-			}).catch((errorRes) => {
-				reject(errorRes);
+			userObjectObservable
+				.update(shareLocation)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
+		});
+	}
+
+
+	public putNewUserPhotoInDB(userID: string, photoUrl: string) : Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/photoUrl");
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(photoUrl)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes)
 			});
 		});
 	}
 
-
-	public putNewUserPhotoInDB(userID: string, photoUrl: string) : void {
-		const userObjectObservable = this.af.database.object("users/" + userID);
-
-		userObjectObservable.update({
-			photoUrl: photoUrl
-		});
-	}
-
-	public putNewNotification(userID: string, notifications: Array<any>): any {
+	public putNewNotification(userID: string, notifications: Array<any>): Promise<any> {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		return new Promise((resolve, reject) => {
@@ -129,7 +160,7 @@ export class FirebasePUT {
 		});
 	}
 
-	public putUserLocation(userID: string, location: any): any {
+	public putUserLocation(userID: string, location: any): Promise<any> {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
 		return new Promise((resolve, reject) => {

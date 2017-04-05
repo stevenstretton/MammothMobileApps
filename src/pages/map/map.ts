@@ -288,11 +288,7 @@ export class Map {
 					if (status === google.maps.DirectionsStatus.OK) {
 						this._directionDisplay.setDirections(result);
 					} else {
-						this.alertCtrl.create({
-							title: 'Error',
-							message: "Couldn't get directions",
-							buttons: ['Dismiss']
-						}).present();
+						this.showErrorAlert("Couldn't get directions");
 					}
 				});
 			}

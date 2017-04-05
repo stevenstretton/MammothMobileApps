@@ -78,7 +78,7 @@ export class Account {
 
 				changePassPromise
 					.then((successRes) => {
-						this.showChangePasswordToast();
+						this.showChangeAccountDetailsToast("Password changed successfully!");
 					}).catch((errorRes) => {
 						this.showErrorAlert(errorRes.message);
 				});
@@ -166,18 +166,10 @@ export class Account {
 		}
 	}
 
-	private showChangeProfilePhotoToast(): void {
+	private showChangeAccountDetailsToast(message: string): void {
 		this.toastCtrl.create({
-			message: 'Profile Picture changed successfully!',
-			duration: 2000,
-			position: 'top'
-		}).present();
-	}
-
-	private showChangeProfilePhotoRemovedToast(): void {
-		this.toastCtrl.create({
-			message: 'Profile Picture Removed',
-			duration: 2000,
+			message: message,
+			duration: 3000,
 			position: 'top'
 		}).present();
 	}
@@ -187,14 +179,6 @@ export class Account {
 			title: 'Error',
 			message: errMessage,
 			buttons: ['Dismiss']
-		}).present();
-	}
-
-	private showChangePasswordToast(): void {
-		this.toastCtrl.create({
-			message: 'Password changed successfully!',
-			duration: 3000,
-			position: 'top'
 		}).present();
 	}
 
@@ -221,8 +205,14 @@ export class Account {
 						this._userPhoto = "https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/" +
 							"default_image%2Fplaceholder-user.png?alt=media&token=9f507196-f787-426b-8175-5c0ca1d74606";
 						this._currentUser.photoUrl = this._userPhoto;
-						this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
-						this.showChangeProfilePhotoRemovedToast();
+						const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+
+						putUserPhotoPromise
+							.then((successRes) => {
+								this.showChangeAccountDetailsToast("Removed profile picture successfully!");
+							}).catch((errorRes) => {
+								this.showErrorAlert(errorRes.message)
+						});
 					}
 				}, {
 					text: 'Take Photo',
@@ -232,8 +222,14 @@ export class Account {
 						Camera.getPicture(cameraOptions).then((image) => {
 							this._userPhoto = "data:image/jpeg;base64," + image;
 							this._currentUser.photoUrl = this._userPhoto;
-							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
-							this.showChangeProfilePhotoToast();
+							const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+
+							putUserPhotoPromise
+								.then((successRes) => {
+									this.showChangeAccountDetailsToast("Changed profile picture successfully!");
+								}).catch((errorRes) => {
+								this.showErrorAlert(errorRes.message)
+							});
 						});
 						Camera.cleanup();
 					}
@@ -245,8 +241,14 @@ export class Account {
 						Camera.getPicture(cameraOptions).then((image) => {
 							this._userPhoto = "data:image/jpeg;base64," + image;
 							this._currentUser.photoUrl = this._userPhoto;
-							this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
-							this.showChangeProfilePhotoToast();
+							const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+
+							putUserPhotoPromise
+								.then((successRes) => {
+									this.showChangeAccountDetailsToast("Changed profile picture successfully!");
+								}).catch((errorRes) => {
+								this.showErrorAlert(errorRes.message)
+							});
 						});
 						Camera.cleanup();
 					}
@@ -275,22 +277,29 @@ export class Account {
 							deleteUserPhotoPromise = this.firebaseDelete.deleteUserPhotoFromStorage(this._currentUser.key),
 							deleteFbUser = this.authenticationHandler.deleteFirebaseUser();
 
-						// TODO: If leadOrganiser of trip, should also delete that trips photo if one is set
 						deleteDbUserPromise
 							.then((successRes) => {
-								deleteUserPhotoPromise
-									.then((successRes) => {
-										this.firebaseDelete.deleteUserFromAllTrips(this._currentUser.key, this._currentUserTrips, (response) => {
-											deleteFbUser
-												.then((successRes) => {
-													this.navCtrl.setRoot(Login);
-												}).catch((errorRes) => {
-													this.showErrorAlert(errorRes.message);
-											});
+								this.firebaseDelete.deleteUserFromAllTrips(this._currentUser.key, this._currentUserTrips, (errorRes) => {
+									if (!errorRes) {
+										deleteFbUser
+											.then((successRes) => {
+												if (this._currentUser.photoUrl !== this._userPhoto) {
+													deleteUserPhotoPromise
+														.then((successRes) => {
+															this.navCtrl.setRoot(Login);
+														}).catch((errorRes) => {
+														this.showErrorAlert(errorRes.message);
+													});
+												}
+												this.navCtrl.setRoot(Login);
+											}).catch((errorRes) => {
+											this.showErrorAlert(errorRes.message);
 										});
-									}).catch((errorRes) => {
+									} else {
 										this.showErrorAlert(errorRes.message);
+									}
 								});
+
 							}).catch((errorRes) => {
 								this.showErrorAlert(errorRes.message);
 						});

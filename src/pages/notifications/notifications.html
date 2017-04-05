@@ -19,7 +19,7 @@
     </ion-refresher>
 
     <ion-list-header>
-        <button ion-button block small (click)="dismissNotifications()" [color]="_notifications.length ? 'danger' : 'primary'">
+        <button ion-button block small (click)="dismissNotifications()" [color]="_currentUser.notifications.length ? 'danger' : 'primary'">
           Mark all as read
 		</button>
         <br> Your Notifications...
@@ -29,7 +29,7 @@
 
     <ion-list>
 
-        <ion-item-sliding *ngFor="let notification of _notifications let i = index" #slidingItem>
+        <ion-item-sliding *ngFor="let notification of _currentUser.notifications; let i = index" #slidingItem>
             <ion-item>
                 <ion-icon name="paper-plane" item-left></ion-icon>
                 {{ notification }}

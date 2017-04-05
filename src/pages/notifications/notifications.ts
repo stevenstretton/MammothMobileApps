@@ -10,19 +10,12 @@ import { AuthenticationHandler } from "../../services/authenticationHandler.serv
 })
 export class Notifications {
 	private _currentUser: any;
-	private _num: any;
-	private _notifications: any;
-
 
 	constructor(private navCtrl: NavController,
 	            private alertCtrl: AlertController,
 	            private authenticationHandler: AuthenticationHandler,
 	            private firebasePut: FirebasePUT) {
-
-		this._notifications = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.getNotifications();
-		this._num = 1;
 	}
 
 	public ionViewWillEnter() {
@@ -32,18 +25,9 @@ export class Notifications {
 	public refreshNotifications(refresher): void {
 		// Timeout otherwise refresher is too short
 		setTimeout(() => {
+			this._currentUser = this.authenticationHandler.getCurrentUser();
 			refresher.complete();
 		}, 2000);
-	}
-
-	private getNotifications(): void {
-		this._currentUser = this.authenticationHandler.getCurrentUser();
-		if (this._currentUser.notifications != null) {
-			this._notifications = [];
-			console.log(this._currentUser);
-
-			this._notifications = this._currentUser.notifications
-		}
 	}
 
 	private showErrorAlert(errMessage: string): void {
@@ -70,7 +54,7 @@ export class Notifications {
 
 	public dismissNotifications(): void {
 		const putNotificationsPromise = this.firebasePut.putNewNotification(this._currentUser.key, []);
-		this._notifications = [];
+
 		putNotificationsPromise
 			.then((successRes) => {
 				this._currentUser.notifications = [];
