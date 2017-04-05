@@ -240,7 +240,7 @@ export class ViewTrip {
 		const notification = this._currentUser.firstName + " has left the trip: " + this._trip.trip.name;
 
 		let membersAndLead = this._tripMembers;
-		membersAndLead.push(this._trip.lead.key);
+		membersAndLead.push(this._trip.lead);
 
 		membersAndLead.forEach((member) => {
 			if (member.key !== this._currentUser.key) {
