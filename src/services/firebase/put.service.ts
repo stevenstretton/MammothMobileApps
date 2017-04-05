@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { FirebaseGET } from "./get.service"
+import {pureProxy1} from "@angular/core/src/linker/view_utils";
 
 @Injectable()
 export class FirebasePUT {
@@ -83,7 +84,9 @@ export class FirebasePUT {
 	}
 
 	public putUserToSeeLocation(userID: string, tripID: string, usersIDsToSeeLoc: Array<number>): Promise<any> {
-		const userObjectObservable = this.af.database.object("users/" + userID + "/usersToSeeLocation");
+		const userObjectObservable = this.af.database.object("users/" + userID + "/usersToSeeLocation", {
+			preserveSnapshot: true
+		});
 
 		let usersToSeeLoc = [];
 
@@ -94,18 +97,19 @@ export class FirebasePUT {
 			});
 		};
 
-		this.firebaseGet.getUserWithID(userID, (user) => {
-			if (typeof user.usersToSeeLocation !== "undefined") {
-				user.usersToSeeLocation.forEach((tripUserPair) => {
-					if (tripID !== tripUserPair.trip) {
-						pushTripObjToArray(tripUserPair.trip, tripUserPair.users);
+		userObjectObservable.subscribe((snapshot) => {
+			if (snapshot.val()) {
+				usersToSeeLoc = snapshot.val();
+
+				usersToSeeLoc.forEach((trip) => {
+					if (tripID !== trip.trip) {
+						pushTripObjToArray(trip.trip, trip.users);
 					} else {
 						pushTripObjToArray(tripID, usersIDsToSeeLoc);
 					}
 				});
-			} else {
-				pushTripObjToArray(tripID, usersIDsToSeeLoc);
 			}
+			pushTripObjToArray(tripID, usersIDsToSeeLoc);
 		});
 
 		return new Promise((resolve, reject) => {
