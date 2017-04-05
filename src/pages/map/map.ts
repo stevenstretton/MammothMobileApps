@@ -292,7 +292,7 @@ export class Map {
 			scaledSize: new google.maps.Size(40, 40)
 		};
 
-		const marker = new google.maps.Marker({
+		const marker = new SlidingMarker({
 			map: this._map,
 			position: user.location,
 			icon: icon,
