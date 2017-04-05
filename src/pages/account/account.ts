@@ -49,14 +49,15 @@ export class Account {
 	public setCurrentUserTrips(): void {
 		let allTrips = this.firebaseGet.getAllTrips();
 		this._currentUserTrips = [];
+
 		allTrips.forEach((trip) => {
 			if (trip.leadOrganiser === this._currentUser.key) {
+				this._currentUserTrips.push(trip);
+			} else {
 				if (trip.friends) {
 					if (trip.friends.indexOf(this._currentUser.key) > -1) {
 						this._currentUserTrips.push(trip);
 					}
-				} else {
-					this._currentUserTrips.push(trip);
 				}
 			}
 		});
