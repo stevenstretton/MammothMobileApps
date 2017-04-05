@@ -23,19 +23,21 @@ export class FirebaseDELETE {
 		});
 	}
 
-	public deleteTripMember(memberID: string, tripID: string, tripMembers): Promise<any> {
-		const tripObjectObservable = this.af.database.object('trips/' + tripID + "friends/");
+	public deleteTripMember(memberID: string, tripID: string): Promise<any> {
+		let tripMembers = [];
 
-		let tripMemberIDs = [];
-		tripMembers.forEach((member) => {
-			if (member.key !== memberID) {
-				tripMemberIDs.push(member.key);
-			}
+		const tripObjectObservable = this.af.database.object('trips/' + tripID + "/friends", {
+			preserveSnapshot: true
 		});
+
+		tripObjectObservable.subscribe((snapshot) => {
+			tripMembers = snapshot.val();
+		});
+		tripMembers.splice(tripMembers.indexOf(memberID), 1);
 
 		return new Promise((resolve, reject) => {
 			tripObjectObservable
-				.update(tripMemberIDs)
+				.set(tripMembers)
 				.then((successRes) => {
 					resolve(null);
 				}).catch((errorRes) => {

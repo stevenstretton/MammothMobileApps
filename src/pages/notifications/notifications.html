@@ -18,7 +18,7 @@
         </ion-refresher-content>
     </ion-refresher>
 
-    <ion-list-header>
+    <ion-list-header *ngIf="_currentUser.notifications">
         <button ion-button block small (click)="dismissNotifications()" [color]="_currentUser.notifications.length ? 'danger' : 'primary'">
           Mark all as read
 		</button>

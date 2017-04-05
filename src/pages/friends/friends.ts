@@ -71,7 +71,6 @@ export class Friends {
 		});
 
 		this._currentUser = this.authenticationHandler.getCurrentUser();
-		this.removeCurrentUserFromFriendsList(friend);
 	}
 
 	public presentAddFriendModal(): void {
@@ -129,28 +128,6 @@ export class Friends {
 			message: errMessage,
 			buttons: ['Dismiss']
 		}).present();
-	}
-
-	private removeCurrentUserFromFriendsList(friend: any): void {
-		let currentFriendsKeys = [];
-
-		this.firebaseGet.getUserWithID(friend.key, (firebaseUser) => {
-			currentFriendsKeys = firebaseUser.friends
-		});
-
-		if (currentFriendsKeys) {
-			let index = currentFriendsKeys.indexOf(this._currentUser.key);
-
-			currentFriendsKeys.splice(index, 1);
-			const putFriendsPromise = this.firebasePut.putUserFriends(friend.key, currentFriendsKeys);
-
-			putFriendsPromise
-				.then((successRes) => {
-					// Returns 'null'
-				}).catch((errorRes) => {
-					this.showErrorAlert(errorRes.message);
-			});
-		}
 	}
 }
 

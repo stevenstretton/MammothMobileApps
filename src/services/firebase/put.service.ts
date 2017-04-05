@@ -33,7 +33,9 @@ export class FirebasePUT {
 	}
 
 	public putUserFriends(userID: string, friends: Array<any>): Promise<any> {
-		const userObjectObservable = this.af.database.object("users/" + userID + "/friends");
+		const userObjectObservable = this.af.database.object("users/" + userID + "/friends", {
+			preserveSnapshot: true
+		});
 
 		let currentFriendIDs = [];
 

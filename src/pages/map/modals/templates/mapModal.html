@@ -13,23 +13,23 @@
 </ion-header>
 <ion-content>
 	<ion-list-header>
-		Select which friend to route to...
+		Are you moving?
 	</ion-list-header>
 
 	<ion-list>
-		<ion-item *ngFor="let friend of _tripMembers; let i=index">
-			<ion-avatar item-left>
-				<img src="{{ friend.photoUrl }}">
-			</ion-avatar>
-			<ion-label>{{ friend.firstName }} {{ friend.lastName }}</ion-label>
-			<ion-checkbox color="positive" item-right
-			              [ngModel]="_checkedId == i"
-			              (ngModelChange)="$event ? _checkedId = i : _checkedId = -1"
-			              [disabled]="_checkedId >= 0 && _checkedId != i"></ion-checkbox>
-		</ion-item>
+		<!--<ion-item *ngFor="let friend of _tripMembers; let i=index">-->
+			<!--<ion-avatar item-left>-->
+				<!--<img src="{{ friend.photoUrl }}">-->
+			<!--</ion-avatar>-->
+			<!--<ion-label>{{ friend.firstName }} {{ friend.lastName }}</ion-label>-->
+			<!--<ion-checkbox color="positive" item-right-->
+			              <!--[ngModel]="_checkedId == i"-->
+			              <!--(ngModelChange)="$event ? _checkedId = i : _checkedId = -1"-->
+			              <!--[disabled]="_checkedId >= 0 && _checkedId != i"></ion-checkbox>-->
+		<!--</ion-item>-->
 
 		<ion-item>
-			<ion-label>Are you moving?</ion-label>
+			<!--<ion-label>Are you moving?</ion-label>-->
 			<ion-toggle [(ngModel)]="_isMoving"></ion-toggle>
 		</ion-item>
 	</ion-list>

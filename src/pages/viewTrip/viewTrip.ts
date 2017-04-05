@@ -200,7 +200,7 @@ export class ViewTrip {
 				{
 					text: 'Yes',
 					handler: () => {
-						const deleteMemberPromise = this.firebaseDelete.deleteTripMember(this._currentUser.key, this._trip.trip.key, this._tripMembers);
+						const deleteMemberPromise = this.firebaseDelete.deleteTripMember(this._currentUser.key, this._trip.trip.key);
 
 						deleteMemberPromise
 							.then((successRes) => {
@@ -324,7 +324,7 @@ export class ViewTrip {
 				{
 					text: 'Yes',
 					handler: () => {
-						const deleteMemberPromise = this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key, this._tripMembers);
+						const deleteMemberPromise = this.firebaseDelete.deleteTripMember(member.key, this._trip.trip.key);
 
 						deleteMemberPromise
 							.then((successRes) => {
