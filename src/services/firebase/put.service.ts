@@ -124,7 +124,7 @@ export class FirebasePUT {
 
 		return new Promise((resolve, reject) => {
 			userObjectObservable
-				.update(shareLocation)
+				.set(shareLocation)
 				.then((successRes) => {
 					resolve(null);
 				}).catch((errorRes) => {

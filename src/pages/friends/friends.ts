@@ -49,35 +49,45 @@ export class Friends {
 	}
 
 	public unfriend(friend: any, slidingItem: ItemSliding): void {
-		let index = this._friends.map(f => f.key).indexOf(friend.key);
-
-		console.log("\n");
-		console.log(friend);
-		console.log(index);
-		console.log(this._friends);
-
 		slidingItem.close();
-		this._friends.splice(index, 1);
+
 		console.log(this._friends);
+		this.alertCtrl.create({
+			title: 'Unfriend',
+			message: 'Are you sure you want to unfriend ' + friend.firstName + "?",
+			buttons: [
+				{
+					text: 'Yes',
+					handler: () => {
+						let index = this._friends.map(f => f.key).indexOf(friend.key);
+						this._friends.splice(index, 1);
 
-		const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends),
-			deleteCurrentAsFriendPromise = this.firebaseDelete.deleteCurrentAsFriend(friend.key, this._currentUser.key);
+						const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends),
+							deleteCurrentAsFriendPromise = this.firebaseDelete.deleteCurrentAsFriend(friend.key, this._currentUser.key);
 
-		putFriendsPromise
-			.then((sucessRes) => {
-				// Returns 'null'
-			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes.message);
-		});
+						putFriendsPromise
+							.then((sucessRes) => {
+								// Returns 'null'
+							}).catch((errorRes) => {
+							this.showErrorAlert(errorRes.message);
+						});
 
-		deleteCurrentAsFriendPromise
-			.then((sucessRes) => {
-				// Nothing
-			}).catch((errorRes) => {
-				this.showErrorAlert(errorRes.message);
-		});
+						deleteCurrentAsFriendPromise
+							.then((sucessRes) => {
+								// Nothing
+							}).catch((errorRes) => {
+							this.showErrorAlert(errorRes.message);
+						});
 
-		this._currentUser = this.authenticationHandler.getCurrentUser();
+						this._currentUser = this.authenticationHandler.getCurrentUser();
+					}
+				}, {
+					text: 'No',
+					role: 'cancel'
+				}
+			]
+		}).present();
+
 	}
 
 	public presentAddFriendModal(): void {

@@ -23,17 +23,10 @@ export class MyTrips {
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 
-		console.log("constructor");
 		this.firebaseGet.setAllTrips(() => {
 			this.sortIfUserInTrip();
 		});
 	}
-
-	// public ionViewDidEnter(): void {
-	//   this.firebaseGet.setAllTrips(() => {
-	//	 	 this.sortIfUserInTrip();
-	//	 });
-	// }
 
 	private sortIfUserInTrip(): void {
 		const allTrips = this.firebaseGet.getAllTrips();
@@ -52,8 +45,6 @@ export class MyTrips {
 
 		if (allTrips) {
 			allTrips.forEach((trip) => {
-
-				// determine they are a part of the trip
 				if (trip.friends) {
 					if ((trip.leadOrganiser === this._currentUser.key) || (trip.friends.indexOf(this._currentUser.key) > -1)) {
 						pushTrip(trip);
@@ -64,6 +55,7 @@ export class MyTrips {
 					}
 				}
 			});
+			this._trips = _.uniqBy(this._trips, "key");
 		}
 	}
 

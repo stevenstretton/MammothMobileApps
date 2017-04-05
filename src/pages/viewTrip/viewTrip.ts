@@ -25,6 +25,7 @@ import {
 } from "./modals/modals";
 import * as moment from 'moment';
 import { MyTrips } from "../myTrips/myTrips";
+import _ from "lodash";
 
 @Component({
 	selector: 'page-viewTrip',
@@ -61,6 +62,7 @@ export class ViewTrip {
 				});
 			});
 		}
+		this._tripMembers = _.uniqBy(this._tripMembers, "key");
 	}
 
 	private showErrorAlert(errMessage: string): void {
@@ -365,8 +367,6 @@ export class ViewTrip {
 	}
 
 	public removeItemFromTrip(item): void {
-		console.log(item);
-
 		this.alertCtrl.create({
 			title: 'Delete Item',
 			message: 'Are you sure you want to delete this item from the trip?',

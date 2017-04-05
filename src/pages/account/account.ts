@@ -159,17 +159,22 @@ export class Account {
 	}
 
 	public changeSharingLocation(): void {
-		this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
+		const putShareLocationPromise = this.firebasePut.putShareLocation(this._currentUser.key, this._currentUser.shareLocation);
 
-		if (this._currentUser.shareLocation) {
-			this.locationHandler.logLocation(true, (error) => {
-				this.showErrorAlert(error.message);
-			});
-		} else {
-			this.locationHandler.logLocation(false, (error) => {
-				// Unused callback
-			});
-		}
+		putShareLocationPromise
+			.then((successRes) => {
+				if (this._currentUser.shareLocation) {
+					this.locationHandler.logLocation(true, (error) => {
+						this.showErrorAlert(error.message);
+					});
+				} else {
+					this.locationHandler.logLocation(false, (error) => {
+						// Unused callback
+					});
+				}
+			}).catch((errorRes) => {
+				this.showErrorAlert(errorRes.message);
+		})
 	}
 
 	private showChangeAccountDetailsToast(message: string): void {
