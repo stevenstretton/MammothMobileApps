@@ -44,13 +44,6 @@ export class Map {
 					return this._isOnMap;
 				});
 
-	private _updateCurrentPosition: any = Observable
-				.interval(1000)
-				.timeInterval()
-				.takeWhile(() => {
-					return this._isOnMap;
-				});
-
 	constructor(private navParams: NavParams,
 	            private modalCtrl: ModalController,
 				private alertCtrl: AlertController,
@@ -120,10 +113,7 @@ export class Map {
 	}
 
 	private startCurrentUserLocationIntervals(): void {
-		this._updateCurrentPosition
-			.subscribe(() => {
-				this.watchLocation();
-			});
+		this.watchLocation();
 
 		this._pushLocationInterval
 			.subscribe(() => {

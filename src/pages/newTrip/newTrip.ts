@@ -226,8 +226,10 @@ export class NewTrip {
 			description: formData.description
 		});
 
-		this._newItemForm.controls['name'].value = '';
-		this._newItemForm.controls['description'].value = '';
+		this._newItemForm.patchValue({
+			name: '',
+			description: ''
+		});
 	}
 
 	public deleteItem(item): void {

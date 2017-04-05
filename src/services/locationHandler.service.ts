@@ -22,6 +22,7 @@ export class LocationHandler {
 	}
 
 	private watchGeolocation(callback): void {
+		console.log("watchGeolocation");
 		navigator.geolocation.watchPosition((position) => {
 			callback({
 				lat: position.coords.latitude,

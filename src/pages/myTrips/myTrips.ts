@@ -5,6 +5,7 @@ import { ViewTrip } from '../viewTrip/viewTrip';
 import { FirebaseGET } from '../../services/firebase/get.service';
 
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
+import _ from "lodash";
 
 @Component({
 	selector: 'page-myTrips',
@@ -21,6 +22,8 @@ export class MyTrips {
 
 		this._trips = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
+
+		console.log("constructor");
 		this.firebaseGet.setAllTrips(() => {
 			this.sortIfUserInTrip();
 		});
@@ -34,11 +37,13 @@ export class MyTrips {
 
 	private sortIfUserInTrip(): void {
 		const allTrips = this.firebaseGet.getAllTrips();
+
 		this._trips = [];
 
 		let pushTrip = (trip: any) => {
 			this.firebaseGet.getUserWithID(trip.leadOrganiser, (leadOrganiser) => {
 				this._trips.push({
+					key: trip.key,
 					lead: leadOrganiser,
 					trip: trip
 				});

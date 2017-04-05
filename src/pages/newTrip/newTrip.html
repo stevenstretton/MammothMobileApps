@@ -99,7 +99,7 @@
 			</ion-item>
 
 			<div padding>
-				<button ion-button outline color="primary" [disabled]="_newItemForm.valid" block
+				<button ion-button outline color="primary" [disabled]="!_newItemForm.valid" block
 				        (click)="addItem(_newItemForm.value)">Add Item</button>
 			</div>
 		</ion-list>

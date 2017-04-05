@@ -71,6 +71,22 @@ export class ViewTrip {
 		}).present();
 	}
 
+	private postNotificationToNewMembers(newMemberIDs): void {
+		newMemberIDs.forEach((newMemberID) => {
+			if (this._tripMembers.map(tm => tm.key).indexOf(newMemberID) <= -1) {
+				const notification =  this._currentUser.firstName + " added you to the trip: " + this._trip.trip.name,
+					postNotificationsPromise = this.firebasePost.postNewNotification(newMemberID, notification);
+
+				postNotificationsPromise
+					.then((successRes) => {
+						// Returns 'null'
+					}).catch((errorRes) => {
+						this.showErrorAlert(errorRes.message);
+				});
+			}
+		});
+	}
+
 	private createModal(modal, title, oldValue, callback, minDate?): void {
 		let editModal = this.modalCtrl.create(modal, {
 			title: title,
@@ -87,6 +103,7 @@ export class ViewTrip {
 						peopleIDs.push(person.key);
 					});
 					newValue = peopleIDs;
+					this.postNotificationToNewMembers(peopleIDs);
 
 				} else if (title === "Items") {
 					newValue = formData;
@@ -168,7 +185,6 @@ export class ViewTrip {
 			case 8:
 				this.createModal(AddItemsModal, 'Items', this._trip.trip.items, (formData) => {
 					this._trip.trip.items = formData;
-					console.log(this._trip.trip.items);
 					this.showEditToast('Items');
 				});
 				break;

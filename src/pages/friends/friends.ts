@@ -51,8 +51,15 @@ export class Friends {
 	public unfriend(friend: any, slidingItem: ItemSliding): void {
 		let index = this._friends.map(f => f.key).indexOf(friend.key);
 
+		console.log("\n");
+		console.log(friend);
+		console.log(index);
+		console.log(this._friends);
+
 		slidingItem.close();
 		this._friends.splice(index, 1);
+		console.log(this._friends);
+
 		const putFriendsPromise = this.firebasePut.putUserFriends(this._currentUser.key, this._friends),
 			deleteCurrentAsFriendPromise = this.firebaseDelete.deleteCurrentAsFriend(friend.key, this._currentUser.key);
 
