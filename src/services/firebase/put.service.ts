@@ -1,35 +1,63 @@
 import { Injectable } from '@angular/core';
 import { AngularFire } from 'angularfire2';
 import { FirebaseGET } from "./get.service"
+import {pureProxy1} from "@angular/core/src/linker/view_utils";
 
 @Injectable()
 export class FirebasePUT {
 	constructor(private af: AngularFire,
 	            public firebaseGet: FirebaseGET) {}
 
-	putUserFriends(userID, friends): void {
-		const userObjectObservable = this.af.database.object("users/" + userID);
+	public putCurrentAsFriend(userID: string, currentUserID: string): any {
+		let friends = [];
 
-		let currentFriendIDs = [];
-
-		this.firebaseGet.getUserWithID(userID, (user) => {
-			if ((typeof user.friends !== "undefined") && (user.friends.length > 0)) {
-				currentFriendIDs = user.friends;
-			}
-
-			if (friends.length > 0) {
-				friends.forEach((friend) => {
-					currentFriendIDs.push(friend.key);
-				});
-			}
+		const userObjectObservable = this.af.database.object("users/" + userID + "/friends", {
+			preserveSnapshot: true
 		});
 
-		userObjectObservable.update({
-			friends: currentFriendIDs
+		userObjectObservable.subscribe((snapshot) => {
+			if (snapshot.val()) {
+				friends = snapshot.val();
+			}
+			friends.push(currentUserID);
+		});
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(friends)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	putTripData(tripID, itemToUpdate, newValue): void {
+	public putUserFriends(userID: string, friends: Array<any>): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/friends", {
+			preserveSnapshot: true
+		});
+
+		let currentFriendIDs = [];
+
+		if (friends.length > 0) {
+			friends.forEach((friend) => {
+				currentFriendIDs.push(friend.key);
+			});
+		}
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(currentFriendIDs)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
+		});
+	}
+
+	public putTripData(tripID: string, itemToUpdate: string, newValue: any): Promise<any> {
 		let path = itemToUpdate.toLowerCase();
 
 		if (itemToUpdate.indexOf("Cover") > -1) {
@@ -42,13 +70,23 @@ export class FirebasePUT {
 			attribute = attribute.slice(1, attribute.length);
 			path = object.toLowerCase() + "/" + attribute.toLowerCase();
 		}
-		let tripObjectObservable = this.af.database.object("trips/" + tripID + "/" + path);
+		const tripObjectObservable = this.af.database.object("trips/" + tripID + "/" + path);
 
-		tripObjectObservable.set(newValue);
+		return new Promise((resolve, reject) => {
+			tripObjectObservable
+				.update(newValue)
+				.then((sucessRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
 	}
 
-	putUserToSeeLocation(userID, tripID, usersIDsToSeeLoc): void {
-		const userObjectObservable = this.af.database.object("users/" + userID);
+	public putUserToSeeLocation(userID: string, tripID: string, usersIDsToSeeLoc: Array<number>): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/usersToSeeLocation", {
+			preserveSnapshot: true
+		});
 
 		let usersToSeeLoc = [];
 
@@ -59,30 +97,86 @@ export class FirebasePUT {
 			});
 		};
 
-		this.firebaseGet.getUserWithID(userID, (user) => {
-			if (typeof user.usersToSeeLocation !== "undefined") {
-				user.usersToSeeLocation.forEach((tripUserPair) => {
-					if (tripID !== tripUserPair.trip) {
-						pushTripObjToArray(tripUserPair.trip, tripUserPair.users);
+		userObjectObservable.subscribe((snapshot) => {
+			if (snapshot.val()) {
+				usersToSeeLoc = snapshot.val();
+
+				usersToSeeLoc.forEach((trip) => {
+					if (tripID !== trip.trip) {
+						pushTripObjToArray(trip.trip, trip.users);
 					} else {
 						pushTripObjToArray(tripID, usersIDsToSeeLoc);
 					}
 				});
-			} else {
-				pushTripObjToArray(tripID, usersIDsToSeeLoc);
 			}
+			pushTripObjToArray(tripID, usersIDsToSeeLoc);
 		});
 
-		userObjectObservable.update({
-			usersToSeeLocation: usersToSeeLoc
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(usersToSeeLoc)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
 		});
 	}
 
-	putShareLocation(userID, shareLocation): void {
+	public putShareLocation(userID: string, shareLocation: number): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/shareLocation");
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(shareLocation)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+				});
+		});
+	}
+
+
+	public putNewUserPhotoInDB(userID: string, photoUrl: string) : Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID + "/photoUrl");
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(photoUrl)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes)
+			});
+		});
+	}
+
+	public putNewNotification(userID: string, notifications: Array<any>): Promise<any> {
 		const userObjectObservable = this.af.database.object("users/" + userID);
 
-		userObjectObservable.update({
-			shareLocation: shareLocation
+		return new Promise((resolve, reject) => {
+			userObjectObservable.update({
+				notifications: notifications
+			}).then((sucsessRes) => {
+				resolve(null);
+			}).catch((errorRes) => {
+				reject(errorRes);
+			});
+		});
+	}
+
+	public putUserLocation(userID: string, location: any): Promise<any> {
+		const userObjectObservable = this.af.database.object("users/" + userID);
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable.update({
+				location: location
+			}).then((successRes) => {
+				resolve(null);
+			}).catch((errorRes) => {
+				reject(errorRes);
+			});
 		});
 	}
 }

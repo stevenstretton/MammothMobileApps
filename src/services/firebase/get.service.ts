@@ -6,13 +6,15 @@ import _ from 'lodash';
 export class FirebaseGET {
 	private _allUsers: Array<any>;
 	private _allTrips: Array<any>;
+	private _allPresets: Array<any>;
 
 	constructor(private af: AngularFire) {
 		this._allUsers = [];
 		this._allTrips = [];
+		this._allPresets = [];
 	}
 
-	setAllTrips(): void {
+	public setAllTrips(callback): void {
 		this._allTrips = [];
 
 		let tripListObservable = this.af.database.list('/trips', {
@@ -38,23 +40,21 @@ export class FirebaseGET {
 						date: snapVal.end.date
 					},
 					coverPhotoUrl: snapVal.coverPhotoUrl,
+					coverPhotoID: snapVal.coverPhotoID,
 					friends: snapVal.friends,
 					transport: snapVal.transport,
 					items: snapVal.items
 				});
 			});
+			callback();
 		});
 	}
 
-	getAllTrips(): Array<any> {
-		// When you add a newTrip, I call to `setTrips()` again which should reset the array back to empty
-		// which does happen, however, when returning it I've realised that there are duplicates in the array
-		// I have not fixed the issue but just avoided it with lodash
-
+	public getAllTrips(): Array<any> {
 		return _.uniqBy(this._allTrips, 'key');
 	}
 
-	setAllUsers(): void {
+	public setAllUsers(callback): void {
 		this._allUsers = [];
 
 		let userListObservable = this.af.database.list('/users', {
@@ -76,17 +76,19 @@ export class FirebaseGET {
 					photoUrl: snapVal.photoUrl,
 					usersToSeeLocation: snapVal.usersToSeeLocation,
 					friends: snapVal.friends,
-					location: snapVal.location
+					location: snapVal.location,
+                    notifications: snapVal.notifications
 				});
 			});
+			callback();
 		});
 	}
 
-	getAllUsers(): Array<any> {
-		return this._allUsers;
+	public getAllUsers(): Array<any> {
+		return _.uniqBy(this._allUsers, "key");
 	}
 
-	getUserWithID(userID, callback): void {
+	public getUserWithID(userID: string, callback): void {
 		let userObjectObservable = this.af.database.object('users/' + userID, {
 			preserveSnapshot: true
 		});
@@ -95,22 +97,27 @@ export class FirebaseGET {
 			let snapVal = snapshot.val(),
 				snapKey = snapshot.key;
 
-			callback({
-				key: snapKey,
-				email: snapVal.email,
-				firstName: snapVal.firstName,
-				lastName: snapVal.lastName,
-				username: snapVal.username,
-				shareLocation: snapVal.shareLocation,
-				photoUrl: snapVal.photoUrl,
-				usersToSeeLocation: snapVal.usersToSeeLocation,
-				friends: snapVal.friends,
-				location: snapVal.location
-			});
+			if (snapVal) {
+				callback({
+					key: snapKey,
+					email: snapVal.email,
+					firstName: snapVal.firstName,
+					lastName: snapVal.lastName,
+					username: snapVal.username,
+					shareLocation: snapVal.shareLocation,
+					photoUrl: snapVal.photoUrl,
+					usersToSeeLocation: snapVal.usersToSeeLocation,
+					friends: snapVal.friends,
+					location: snapVal.location,
+					notifications: snapVal.notifications
+				});
+			}
 		});
 	}
 
-	getTripWithID(tripID, callback): void {
+
+	// TODO: This is never actually used...shall we either use it or remove it?
+	public getTripWithID(tripID: string, callback): void {
 		let tripObjectObservable = this.af.database.object('trips/' + tripID, {
 			preserveSnapshot: true
 		});
@@ -138,5 +145,34 @@ export class FirebaseGET {
 				items: snapVal.items
 			});
 		});
+	}
+
+	public setAllPresets(): void {
+		this._allPresets = [];
+
+		let presetListObservable = this.af.database.list('/tripPresets', {
+			preserveSnapshot: true
+		});
+
+		presetListObservable.subscribe((snapshots) => {
+			snapshots.forEach((snapshot) => {
+				let snapKey = snapshot.key,
+					snapVal = snapshot.val();
+
+				this._allPresets.push({
+					key: snapKey,
+					name: snapVal.name,
+					description: snapVal.description,
+					coverPhotoUrl: snapVal.coverPhotoUrl,
+					coverPhotoID: snapVal.coverPhotoID,
+					transport: snapVal.transport,
+					items: snapVal.items
+				});
+			});
+		});
+	}
+
+	public getAllPresets(): Array<any> {
+		return this._allPresets;
 	}
 }

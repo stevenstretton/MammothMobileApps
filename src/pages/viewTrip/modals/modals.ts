@@ -19,7 +19,11 @@ export class EditModal {
 				disabled: true
 			},
 				Validators.required],
-			newValue: ['', Validators.required]
+			newValue: [{
+				value: this.navParams.get('oldValue'),
+				disabled: false
+			},
+				 Validators.required]
 		});
 	}
 
@@ -37,10 +41,12 @@ export class EditModal {
 	templateUrl: './templates/editDateModal.html'
 })
 export class EditDateModal extends EditModal {
+	private _minDate: any;
 	constructor(public viewCtrl: ViewController,
 	            public navParams: NavParams,
 	            public formBuilder: FormBuilder) {
 		super(viewCtrl, navParams, formBuilder);
+		this._minDate = this.navParams.get('minDate')
 	}
 }
 
@@ -109,13 +115,18 @@ export class AddMembersModal {
 			}
 		});
 
-		friendsOnTrip.forEach((friend) => {
-			this._friendsToBeOnTrip.push(friend);
-		});
+		if (friendsOnTrip) {
+			friendsOnTrip.forEach((friend) => {
+				this._friendsToBeOnTrip.push(friend);
+			});
+		}
 	}
 
 	dismiss(): void {
 		this.viewCtrl.dismiss(this._friendsToBeOnTrip);
+	}
+	close() : void {
+		this.viewCtrl.dismiss();
 	}
 
 	ifInArray(person): boolean {
@@ -157,9 +168,11 @@ export class AddItemsModal {
 			description: ['', Validators.required]
 		});
 
-		itemsForTrip.forEach((item) => {
-			this._itemsForTrip.push(item);
-		});
+		if (itemsForTrip){
+			itemsForTrip.forEach((item) => {
+				this._itemsForTrip.push(item);
+			});
+		}
 	}
 
 	addItemFormSubmit(formData): void {

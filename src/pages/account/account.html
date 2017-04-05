@@ -43,7 +43,7 @@
 				</ion-note>
 			</ion-item>
 
-			<ion-item-sliding>
+			<ion-item-sliding #slidingItem>
 				<ion-item>
 					Password
 					<ion-note item-right>
@@ -51,7 +51,7 @@
 					</ion-note>
 				</ion-item>
 				<ion-item-options side="right">
-					<button ion-button icon-only color="positive" (click)="showChangePasswordModal()">
+					<button ion-button icon-only color="positive" (click)="showChangePasswordModal(slidingItem)">
 						<ion-icon name="create"></ion-icon>
 					</button>
 				</ion-item-options>
@@ -76,11 +76,14 @@
 		<ion-list>
 			<ion-item *ngFor="let trip of _currentUserTrips">
 				<h2>{{ trip.name }}</h2>
-				<p>{{ trip.start.date }}</p>
+				<p>{{ trip.start.date | date:'dd/MM/y'  }}</p>
 				<p *ngIf="trip.leadOrganiser === _currentUser.uid">Lead</p>
 				<button *ngIf="trip.friends" ion-button clear item-right (click)="showLocationModal(trip)">View</button>
 			</ion-item>
 		</ion-list>
 	</ion-list>
 
+	<div padding>
+		<button ion-button outline color="danger" block (click)="deleteAccount()">Delete Account</button>
+	</div>
 </ion-content>

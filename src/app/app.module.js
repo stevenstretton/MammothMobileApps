@@ -68,9 +68,6 @@ var AppModule = (function () {
                 platform_browser_1.BrowserModule,
                 forms_1.FormsModule,
                 ionic_angular_1.IonicModule.forRoot(app_component_1.MyApp),
-                core_2.AgmCoreModule.forRoot({
-                    apiKey: "AIzaSyDUdGaRHXhN5oy5zpETRll8KsHnvx19_9Y"
-                }),
                 angularfire2_1.AngularFireModule.initializeApp(exports.firebaseConfig, firebaseAuthConfig)
             ],
             bootstrap: [ionic_angular_1.IonicApp],

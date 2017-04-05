@@ -1,7 +1,21 @@
 page-map {
+    #markerLayer img {
+        border: 2px solid #387ef5 !important;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+    }
+    .marker-content{
+        padding-right: 20px;
 
+        h5{
+            margin: 0px;
+
+            &:first-child{
+                color: #387ef5;
+                margin-bottom: 5px;
+            }
+        }
+    }
 }
 
-.sebm-google-map-container {
-	height: 300px;
-}

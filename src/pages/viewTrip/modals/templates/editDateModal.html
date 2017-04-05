@@ -1,37 +1,33 @@
 <ion-header>
-	<ion-navbar>
-		<ion-title>
-			{{ _title }}
-		</ion-title>
-		<ion-buttons start>
-			<button ion-button (click)="dismiss()">
-				<span>Clear</span>
-			</button>
-		</ion-buttons>
-	</ion-navbar>
+    <ion-toolbar>
+        <ion-title>
+            {{ _title }}
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button (click)="dismiss()">
+        <span ion-text color="primary" showWhen="ios">Close</span>
+        <ion-icon name="md-close" showWhen="android,windows"></ion-icon>
+      </button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content class="outer-content">
-	<form [formGroup]="_editForm" (ngSubmit)="onFormSubmit(_editForm.value)">
-		<ion-list>
-			<ion-item>
-				<ion-label>Old {{ _title | lowercase }}</ion-label>
-				<ion-datetime displayFormat="DD MMM YYYY" disabled="true"
-				              formControlName="oldValue" [formControl]="_editForm.controls['oldValue']"
-				              ngDefaultControl></ion-datetime>
-			</ion-item>
+    <form [formGroup]="_editForm" (ngSubmit)="onFormSubmit(_editForm.value)">
+        <ion-list>
+            <ion-item>
+                <ion-label>Old {{ _title | lowercase }}</ion-label>
+                <ion-datetime displayFormat="DDD DD MMM YYYY" disabled="true" formControlName="oldValue" [formControl]="_editForm.controls['oldValue']" ngDefaultControl></ion-datetime>
+            </ion-item>
 
-			<ion-item>
-				<ion-label>New {{ _title | lowercase }}</ion-label>
-				<ion-datetime displayFormat="DD MMM YYYY" [min]="_todaysDate" [max]="2020"
-				              formControlName="newValue" [formControl]="_editForm.controls['newValue']"
-				              ngDefaultControl></ion-datetime>
-			</ion-item>
+            <ion-item>
+                <ion-label>New {{ _title | lowercase }}</ion-label>
+                <ion-datetime displayFormat="DDD DD MMM YYYY" [min]="_minDate" [max]="2020" formControlName="newValue" [formControl]="_editForm.controls['newValue']" ngDefaultControl></ion-datetime>
+            </ion-item>
 
-			<ion-item>
-				<button ion-button color="primary" block type="submit"
-				        [disabled]="!_editForm.valid">Save</button>
-			</ion-item>
-		</ion-list>
-	</form>
+            <ion-item>
+                <button ion-button color="primary" block type="submit" [disabled]="!_editForm.valid">Save</button>
+            </ion-item>
+        </ion-list>
+    </form>
 </ion-content>

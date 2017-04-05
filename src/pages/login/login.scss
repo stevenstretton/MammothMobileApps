@@ -1,12 +1,23 @@
 page-login {
-
-  .app-title{
-    font-size: 40px;
-    font-weight: 300;
-
-    text-align: center;    
-    margin: 100px 0px 50px;
-
-    color: color($colors, primary);
-  }
+    .app-title {
+        font-size: 40px;
+        font-weight: 300;
+        text-align: center;
+        margin: 100px 0px 50px;
+        color: color($colors, primary);
+    }
+    .login-button {
+        height: 3.6rem !important;
+        font-size: 14px !important;
+    }
+    .create-button {
+        height: 3.6rem !important;
+        font-size: 14px !important;
+    }
+    .error-text {
+        text-align: center;
+        color: red;
+        font-size: 14px;
+        margin: 0px 10px 5px;
+    }
 }

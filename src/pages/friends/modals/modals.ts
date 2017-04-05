@@ -16,33 +16,39 @@ export class AddFriendModal {
 	constructor(public viewCtrl: ViewController,
 	            public params: NavParams,
 	            public firebaseGet: FirebaseGET) {
+
+		this._people = [];
 		this._selectedPeople = [];
 		this._usersThatNotFriends = [];
 
-		this._currentUser = params.get('currentUser');
-
-		let allUsers = this.firebaseGet.getAllUsers();
+		this._currentUser = this.params.get('currentUser');
+		const allUsers = this.firebaseGet.getAllUsers();
 
 		allUsers.forEach((user) => {
-			if ((this._currentUser.friends.indexOf(user.key) <= -1) && (user.key !== this._currentUser.key)) {
-				this._usersThatNotFriends.push(user);
+			if (this._currentUser.friends) {
+				if ((this._currentUser.friends.indexOf(user.key) <= -1) && (user.key !== this._currentUser.key)) {
+					user.checked = false;
+					this._usersThatNotFriends.push(user);
+				}
+			} else {
+				if (user.key !== this._currentUser.key) {
+					user.checked = false;
+					this._usersThatNotFriends.push(user);
+				}
 			}
 		});
-		this.initPeople();
 	}
 
-	initPeople(): void {
-		this._people = this._usersThatNotFriends;
-	}
-
-	dismiss() {
+	dismiss(): void {
 		this.viewCtrl.dismiss(this._selectedPeople);
+	}
+
+	close(): void {
+		this.viewCtrl.dismiss();
 	}
 
 	// TODO: There is a much simpler way to do this
 	updateSearchResults(event): void {
-		this.initPeople();
-
 		let currentVal = event.target.value;
 
 		if (currentVal && currentVal.trim() != '') {

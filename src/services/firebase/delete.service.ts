@@ -1,46 +1,170 @@
-import { Injectable } from '@angular/core';
-import { AngularFire } from 'angularfire2';
+import { Injectable, Inject } from '@angular/core';
+import { AngularFire, FirebaseApp } from 'angularfire2';
 
 @Injectable()
 export class FirebaseDELETE {
+	private _fb: any;
 
-	constructor(private af: AngularFire) {}
-
-	deleteTrip(tripID): void {
-		const tripObjectObservable = this.af.database.object('trips/' + tripID).remove();
-
-		tripObjectObservable
-			.then(_ => console.log("Success!"))
-			.catch(err => console.log(err));
+	constructor(private af: AngularFire,
+	            @Inject(FirebaseApp) firebaseApp: any) {
+		this._fb = firebaseApp;
 	}
 
-	deleteTripMember(memberID, tripID, tripMembers): void {
+	public deleteTrip(tripID: string): Promise<any> {
 		const tripObjectObservable = this.af.database.object('trips/' + tripID);
 
-		let tripMemberIDs = [];
-		tripMembers.forEach((member) => {
-			tripMemberIDs.push(member.key);
-		});
-
-		tripMemberIDs.splice(tripMemberIDs.indexOf(memberID), 1);
-
-		tripObjectObservable.update({
-			friends: tripMemberIDs
+		return new Promise((resolve, reject) => {
+			tripObjectObservable.remove()
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
 		});
 	}
 
-	deleteTripItem(itemID, tripID, tripItems): void {
-		const tripObjectObservable = this.af.database.object('trips/' + tripID);
+	public deleteTripMember(memberID: string, tripID: string): Promise<any> {
+		let tripMembers = [];
 
-		let tripItemIDs = [];
-		tripItems.forEach((item) => {
-			tripItemIDs.push(item.key);
+		const tripObjectObservable = this.af.database.object('trips/' + tripID + "/friends", {
+			preserveSnapshot: true
 		});
 
-		tripItemIDs.splice(tripItemIDs.indexOf(itemID), 1);
+		tripObjectObservable.subscribe((snapshot) => {
+			tripMembers = snapshot.val();
+		});
+		tripMembers.splice(tripMembers.indexOf(memberID), 1);
 
-		tripObjectObservable.update({
-			items: tripItemIDs
+		return new Promise((resolve, reject) => {
+			tripObjectObservable
+				.set(tripMembers)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
+	}
+
+	public deleteTripItem(itemKey: string, tripID: string, tripItems: Array<any>): Promise<any> {
+		let newTripItems = [];
+
+		const tripObjectObservable = this.af.database.object('trips/' + tripID + "/items");
+
+		tripItems.forEach((tripItem) => {
+			if (tripItem.key !== itemKey) {
+				newTripItems.push(tripItem);
+			}
+		});
+
+		return new Promise((resolve, reject) => {
+			tripObjectObservable
+				.set(newTripItems)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
+	}
+
+	public deleteUserFromDB(userID: string): Promise<any> {
+		const userObjectObservable = this.af.database.object('users/' + userID);
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable.remove()
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
+	}
+
+	public deleteUserFromAllTrips(userID: string, tripsUserIsOn: any, callback: any): void {
+		const defaultTripPhoto = 'https://firebasestorage.googleapis.com/v0/b/mammoth-d3889.appspot.com/o/default_image%2F' +
+			'placeholder-trip.jpg?alt=media&token=9774e22d-26a3-48d4-a950-8243034b5f56';
+
+		tripsUserIsOn.forEach((trip) => {
+			const tripObjectObservable = this.af.database.object('trips/' + trip.key);
+
+			if (trip.leadOrganiser === userID) {
+				const deleteTripPromise = this.deleteTrip(trip.key),
+					deleteTripPhotoPromise = this.deleteTripPhotoFromStorage(trip.coverPhotoID);
+
+				deleteTripPromise
+					.then((successRes) => {
+						if (trip.coverPhotoUrl !== defaultTripPhoto) {
+							deleteTripPhotoPromise
+								.then((successRes) => {
+									callback(successRes);
+								}).catch((errorRes) => {
+								callback(errorRes);
+							});
+						}
+						callback(successRes)
+					}).catch((errorRes) => {
+						callback(errorRes)
+				});
+			} else {
+				trip.friends.splice(trip.friends.indexOf(userID), 1);
+
+				tripObjectObservable.update({
+					friends: trip.friends
+				});
+			}
+		});
+	}
+
+	public deleteCurrentAsFriend(userID: string, currentUserID: string): Promise<any> {
+		let friends = [];
+
+		const userObjectObservable = this.af.database.object("users/" + userID + "/friends", {
+			preserveSnapshot: true
+		});
+
+		userObjectObservable.subscribe((snapshot) => {
+			friends = snapshot.val();
+		});
+		friends.splice(friends.indexOf(currentUserID), 1);
+
+		return new Promise((resolve, reject) => {
+			userObjectObservable
+				.set(friends)
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					reject(errorRes);
+			});
+		});
+	}
+
+	public deleteTripPhotoFromStorage(photoID: string): Promise<any> {
+		const storageRef = this._fb.storage().ref('/trip_images/');
+
+		// Delete the file
+		return new Promise((resolve, reject) => {
+			storageRef.child(photoID).child("trip_image.jpeg")
+				.delete()
+				.then((successRes) => {
+					resolve(null);
+				}).catch((errorRes) => {
+					// reject(errorRes);
+			});
+		});
+	}
+
+	public deleteUserPhotoFromStorage(userID: string): Promise<any> {
+		const storageRef = this._fb.storage().ref('/user_images/');
+
+		// Delete the file
+		return new Promise((resolve, reject) => {
+			storageRef.child(userID).child("profile_image.jpeg").delete()
+				.then((successRes) => {
+					resolve(successRes);
+				}).catch((errorRes) => {
+					// reject(errorRes);
+			});
 		});
 	}
 }

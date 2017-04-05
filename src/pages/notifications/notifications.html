@@ -1,11 +1,51 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Notifications
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>
+            Notifications
+        </ion-title>
+        <ion-buttons end>
+            <button ion-button icon-only (tap)="speakNotifications()" (press)="stopSpeak()">
+			<ion-icon name="volume-up"></ion-icon>
+		</button>
+        </ion-buttons>
+    </ion-navbar>
 </ion-header>
 
-<ion-content>
 
+<ion-content>
+    <ion-refresher (ionRefresh)="refreshNotifications($event)">
+        <ion-refresher-content pullingIcon="arrow-dropdown" pullingText="Pull to refresh" refreshingSpinner="circles" refreshingText="Loading Notifications...">
+        </ion-refresher-content>
+    </ion-refresher>
+
+    <ion-list-header *ngIf="_currentUser.notifications">
+        <button ion-button block small (click)="dismissNotifications()" [color]="_currentUser.notifications.length ? 'danger' : 'primary'">
+          Mark all as read
+		</button>
+        <br> Your Notifications...
+        <br><br>
+
+    </ion-list-header>
+
+    <ion-list>
+
+        <ion-item-sliding *ngFor="let notification of _currentUser.notifications; let i = index" #slidingItem>
+            <ion-item>
+                <ion-icon name="paper-plane" item-left></ion-icon>
+                {{ notification }}
+            </ion-item>
+
+            <ion-item-options side="right">
+                <button ion-button color="danger" (click)="dismissNotification(i, slidingItem)">
+					<ion-icon name="close"></ion-icon>
+					Dismiss
+				</button>
+            </ion-item-options>
+        </ion-item-sliding>
+
+        <ion-item *ngIf="!_currentUser.notifications">
+            No New Notifications
+        </ion-item>
+
+    </ion-list>
 </ion-content>

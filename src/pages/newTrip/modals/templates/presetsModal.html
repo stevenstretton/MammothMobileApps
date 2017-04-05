@@ -1,0 +1,30 @@
+<ion-header>
+	<ion-toolbar>
+		<ion-title>
+			Presets
+		</ion-title>
+		<ion-buttons start>
+			<button ion-button (click)="dismiss()">
+				<span>Cancel</span>
+			</button>
+		</ion-buttons>
+	</ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+	<ion-list-header>
+		Select from Preset list...
+	</ion-list-header>
+
+
+	<ion-list>
+		<ion-item *ngFor="let preset of _firebasePresets" (click)=submit(preset) >
+			<ion-thumbnail item-left >
+				<img src="{{ preset.coverPhotoUrl }}">
+			</ion-thumbnail>
+			<ion-label>{{ preset.key }}</ion-label>
+		</ion-item>
+	</ion-list>
+
+</ion-content>
