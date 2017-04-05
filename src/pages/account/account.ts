@@ -11,6 +11,7 @@ import { LocationHandler } from "../../services/locationHandler.service";
 import { AuthenticationHandler } from "../../services/authenticationHandler.service";
 import { FirebaseGET } from "../../services/firebase/get.service";
 import { FirebasePUT } from "../../services/firebase/put.service";
+import { FirebasePOST } from "../../services/firebase/post.service";
 import { FirebaseDELETE } from "../../services/firebase/delete.service"
 
 @Component({
@@ -25,17 +26,18 @@ export class Account {
 	private _userPhoto: string = '';
 
 	constructor(private app: App,
-	            private navCtrl: NavController,
-	            private actionSheetCtrl: ActionSheetController,
-	            private platform: Platform,
-	            private modalCtrl: ModalController,
-	            private authenticationHandler: AuthenticationHandler,
-	            private firebaseGet: FirebaseGET,
-	            private firebasePut: FirebasePUT,
-				private locationHandler: LocationHandler,
-                private firebaseDelete: FirebaseDELETE,
-	            private toastCtrl: ToastController,
-				private alertCtrl: AlertController) {
+		private navCtrl: NavController,
+		private actionSheetCtrl: ActionSheetController,
+		private platform: Platform,
+		private modalCtrl: ModalController,
+		private authenticationHandler: AuthenticationHandler,
+		private firebaseGet: FirebaseGET,
+		private firebasePut: FirebasePUT,
+		private firebasePost: FirebasePOST,
+		private locationHandler: LocationHandler,
+		private firebaseDelete: FirebaseDELETE,
+		private toastCtrl: ToastController,
+		private alertCtrl: AlertController) {
 		this._usersToSeeLocation = [];
 		this._currentUser = this.authenticationHandler.getCurrentUser();
 		this._allUsers = this.firebaseGet.getAllUsers();
@@ -72,7 +74,7 @@ export class Account {
 				this.app.getRootNav().setRoot(Login);
 			}).catch((errorRes) => {
 				this.showErrorAlert(errorRes.message);
-		});
+			});
 	}
 
 	public showChangePasswordModal(slidingItem: ItemSliding): void {
@@ -87,7 +89,7 @@ export class Account {
 						this.showChangeAccountDetailsToast("Password changed successfully!");
 					}).catch((errorRes) => {
 						this.showErrorAlert(errorRes.message);
-				});
+					});
 			}
 			slidingItem.close();
 		});
@@ -174,7 +176,7 @@ export class Account {
 				}
 			}).catch((errorRes) => {
 				this.showErrorAlert(errorRes.message);
-		})
+			})
 	}
 
 	private showChangeAccountDetailsToast(message: string): void {
@@ -223,7 +225,7 @@ export class Account {
 								this.showChangeAccountDetailsToast("Removed profile picture successfully!");
 							}).catch((errorRes) => {
 								this.showErrorAlert(errorRes.message)
-						});
+							});
 					}
 				}, {
 					text: 'Take Photo',
@@ -231,17 +233,26 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
 						Camera.getPicture(cameraOptions).then((image) => {
-							this._userPhoto = "data:image/jpeg;base64," + image;
-							this._currentUser.photoUrl = this._userPhoto;
-							const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+							const postUserPhotoInStorage = this.firebasePost.postNewAccountPhoto(image, this._currentUser.key);
 
-							putUserPhotoPromise
-								.then((successRes) => {
-									this.showChangeAccountDetailsToast("Changed profile picture successfully!");
+							postUserPhotoInStorage
+								.then((successURL) => {
+									this._userPhoto = successURL
+									this._currentUser.photoUrl = this._userPhoto;
+									const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+
+									putUserPhotoPromise
+										.then((successRes) => {
+											this.showChangeAccountDetailsToast("Changed profile picture successfully!");
+										}).catch((errorRes) => {
+											this.showErrorAlert(errorRes.message)
+										});
+
 								}).catch((errorRes) => {
-								this.showErrorAlert(errorRes.message)
-							});
+									this.showErrorAlert(errorRes.message)
+								});
 						});
+
 						Camera.cleanup();
 					}
 				}, {
@@ -250,16 +261,24 @@ export class Account {
 					handler: () => {
 						cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
 						Camera.getPicture(cameraOptions).then((image) => {
-							this._userPhoto = "data:image/jpeg;base64," + image;
-							this._currentUser.photoUrl = this._userPhoto;
-							const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+							const postUserPhotoInStorage = this.firebasePost.postNewAccountPhoto(image, this._currentUser.key);
 
-							putUserPhotoPromise
-								.then((successRes) => {
-									this.showChangeAccountDetailsToast("Changed profile picture successfully!");
+							postUserPhotoInStorage
+								.then((successURL) => {
+									this._userPhoto = successURL
+									this._currentUser.photoUrl = this._userPhoto;
+									const putUserPhotoPromise = this.firebasePut.putNewUserPhotoInDB(this._currentUser.key, this._userPhoto);
+
+									putUserPhotoPromise
+										.then((successRes) => {
+											this.showChangeAccountDetailsToast("Changed profile picture successfully!");
+										}).catch((errorRes) => {
+											this.showErrorAlert(errorRes.message)
+										});
+
 								}).catch((errorRes) => {
-								this.showErrorAlert(errorRes.message)
-							});
+									this.showErrorAlert(errorRes.message)
+								});
 						});
 						Camera.cleanup();
 					}
@@ -299,13 +318,13 @@ export class Account {
 														.then((successRes) => {
 															this.navCtrl.setRoot(Login);
 														}).catch((errorRes) => {
-														this.showErrorAlert(errorRes.message);
-													});
+															this.showErrorAlert(errorRes.message);
+														});
 												}
 												this.navCtrl.setRoot(Login);
 											}).catch((errorRes) => {
-											this.showErrorAlert(errorRes.message);
-										});
+												this.showErrorAlert(errorRes.message);
+											});
 									} else {
 										this.showErrorAlert(errorRes.message);
 									}
@@ -313,7 +332,7 @@ export class Account {
 
 							}).catch((errorRes) => {
 								this.showErrorAlert(errorRes.message);
-						});
+							});
 					}
 				}, {
 					text: 'No',

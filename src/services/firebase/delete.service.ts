@@ -149,7 +149,7 @@ export class FirebaseDELETE {
 				.then((successRes) => {
 					resolve(null);
 				}).catch((errorRes) => {
-					reject(errorRes);
+					// reject(errorRes);
 			});
 		});
 	}
@@ -163,7 +163,7 @@ export class FirebaseDELETE {
 				.then((successRes) => {
 					resolve(successRes);
 				}).catch((errorRes) => {
-					reject(errorRes);
+					// reject(errorRes);
 			});
 		});
 	}

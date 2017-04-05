@@ -29,6 +29,7 @@ export class TabsPage {
 	}
 
 	private getNotifications(): number {
+		this._currentUser = this.authenticationHandler.getCurrentUser();
 		if (this._currentUser.notifications) {
 			this.checkNewNotifications();
 
