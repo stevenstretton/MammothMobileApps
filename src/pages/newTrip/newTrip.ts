@@ -95,6 +95,7 @@ export class NewTrip {
 
 	public presentModal(): void {
 		let friendIDsAdded = this.buildFriendIDsAttending();
+
 		this._friendsAdded = [];
 
 		if (this._currentUser.friends) {

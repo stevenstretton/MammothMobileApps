@@ -300,8 +300,13 @@ export class ViewTrip {
 										}).catch((errorRes) => {
 										this.showErrorAlert(errorRes.message);
 									});
+								} else {
+									this._callback({
+										justDeletedTrip: true
+									}).then(() => {
+										this.navCtrl.pop();
+									});
 								}
-								this.navCtrl.pop();
 							}).catch((errorRes) => {
 								this.showErrorAlert(errorRes.message);
 						});

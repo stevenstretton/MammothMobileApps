@@ -83,6 +83,7 @@ export class MyTrips {
 			trip: trip,
 			callback: (_params) => {
 				return new Promise((resolve, reject) => {
+					console.log(_params.justDeletedTrip);
 					if (_params.justDeletedTrip) {
 						this.showCreateDeleteTripToast('Trip deleted successfully!');
 						this.firebaseGet.setAllTrips(() => {
